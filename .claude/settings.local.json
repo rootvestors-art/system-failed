@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "Bash(npx --yes create-vite@latest:*)",
+      "Bash(npm install:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npm run build:*)",
+      "Bash(timeout 5 npm run dev:*)"
+    ]
+  }
+}

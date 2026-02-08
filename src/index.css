@@ -1,0 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Oswald:wght@500;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-[#050505] text-gray-200 antialiased;
+  }
+}
+
+@layer components {
+  .red-border {
+    border-left: 4px solid #d90429;
+  }
+}
+
+@layer utilities {
+  .caution-stripe {
+    background: repeating-linear-gradient(
+      45deg,
+      #ffc107,
+      #ffc107 10px,
+      #000 10px,
+      #000 20px
+    );
+  }
+}
+
+/* Flip-clock animation */
+.animate-flip {
+  animation: flip 0.6s ease-in-out;
+  transform-style: preserve-3d;
+}
+
+/* Map pulse markers */
+.pulse-marker {
+  animation: pulse-red 2s ease-in-out infinite;
+}
+
+/* Dark scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+::-webkit-scrollbar-thumb {
+  background: #333;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #d90429;
+}
+
+/* Glitch hover effect for branding */
+.glitch-text:hover {
+  text-shadow: 2px 2px #d90429;
+}
