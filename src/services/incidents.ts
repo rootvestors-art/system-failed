@@ -194,19 +194,6 @@ export async function getIncidentCount(): Promise<number> {
   return count ?? 0
 }
 
-export async function getDeathCount(): Promise<number> {
-  if (useSeedData()) {
-    return seedIncidents.reduce((sum, i) => sum + i.death_count, 0)
-  }
-
-  const { data, error } = await supabase!
-    .from('incidents')
-    .select('death_count')
-
-  if (error) throw error
-  return (data ?? []).reduce((sum, row) => sum + (row.death_count ?? 0), 0)
-}
-
 // ============ HAZARD FUNCTIONS ============
 
 export interface CreateHazardInput {

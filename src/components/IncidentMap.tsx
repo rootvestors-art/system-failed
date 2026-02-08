@@ -48,7 +48,7 @@ export default function IncidentMap({
           <Popup>
             <div className="text-sm">
               <p className="font-bold">
-                {incident.victim_name}, {incident.victim_age}
+                {incident.title}
               </p>
               <p className="text-gray-600">
                 {negligenceLabel(incident.negligence_type)}
