@@ -9,10 +9,23 @@ export default function Navbar() {
     <nav className="border-b border-gray-800 bg-black sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
-          <Link to="/" className="flex items-center">
-            <span className="text-3xl font-header font-bold text-blood tracking-tighter">
+          <Link to="/" className="flex flex-col group hover:opacity-90 transition-opacity">
+            <span className="text-3xl font-header font-bold text-blood tracking-tighter leading-none">
               SYSTEM<span className="text-white">FAILED</span>
             </span>
+            <div className="flex items-center gap-2 mt-2">
+              <span className="text-xs font-header uppercase tracking-[0.15em] text-gray-400 leading-none font-semibold">
+                Document
+              </span>
+              <span className="text-gray-600 text-[10px] leading-none">•</span>
+              <span className="text-xs font-header uppercase tracking-[0.15em] text-gray-400 leading-none font-semibold">
+                Demand
+              </span>
+              <span className="text-gray-600 text-[10px] leading-none">•</span>
+              <span className="text-xs font-header uppercase tracking-[0.15em] text-gray-400 leading-none font-semibold">
+                Fix
+              </span>
+            </div>
           </Link>
 
           <div className="hidden md:flex items-center space-x-6">

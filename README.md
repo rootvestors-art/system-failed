@@ -1,4 +1,4 @@
-# SystemFailed - Value of Life
+# SystemFailed: Document. Demand. Fix. — Value of Life
 
 A platform to document and track incidents of negligence-related deaths and injuries in India, along with preventive hazard reporting to save lives before tragedies occur.
 
