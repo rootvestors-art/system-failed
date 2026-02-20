@@ -52,7 +52,7 @@ function ReportPage() {
           REPORT AN INCIDENT
         </h1>
         <p className="text-gray-500 text-center mb-10">
-          Document systemic negligence. Hold the system accountable.
+          Document. Demand. Fix. — Document systemic negligence. Hold the system accountable.
         </p>
         <ReportForm />
       </main>
