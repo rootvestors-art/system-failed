@@ -1,37 +1,45 @@
 import { useEffect, useState } from 'react'
 import { getAllIncidents, getMostUpvoted, getIncidentsPaginated } from '../../services/incidents.ts'
 import IncidentCard from '../../components/IncidentCard.tsx'
-import HierarchyCard from '../../components/HierarchyCard.tsx'
 import DeathCounter from '../../components/DeathCounter.tsx'
+import SearchAndFilters from '../../components/SearchAndFilters.tsx'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import type { Incident } from '../../types/incident.ts'
+import { useIncidentFilters } from '../../hooks/useFilterParams.ts'
+import {
+  filterIncidents,
+  getStates,
+  getCities,
+  getTypes,
+  getStatuses,
+} from '../../utils/filterIncidents.ts'
 
 export default function IncidentList() {
+  const [allIncidents, setAllIncidents] = useState<Incident[]>([])
   const [latest, setLatest] = useState<Incident | null>(null)
   const [recentIncidents, setRecentIncidents] = useState<Incident[]>([])
   const [topUpvoted, setTopUpvoted] = useState<Incident[]>([])
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(false)
-  const [total, setTotal] = useState(0)
   const pageSize = 7
 
+  const { values, isFiltered, set, clear } = useIncidentFilters()
+
+  // Load the full dataset once (used for filtering + sidebar)
   const loadData = async () => {
-    // Get latest incident separately
-    const allIncidents = await getAllIncidents()
-    if (allIncidents.length > 0) {
-      setLatest(allIncidents[0])
-    }
-    
+    const all = await getAllIncidents()
+    setAllIncidents(all)
+    if (all.length > 0) setLatest(all[0])
     getMostUpvoted(5).then(setTopUpvoted)
   }
 
+  // Paginated load for the curated "Recent cases" list
   const loadRecentCases = async (pageNum: number) => {
-    const { incidents, total: totalCount, hasMore: more } = await getIncidentsPaginated(pageNum, pageSize)
-    // Skip the first incident only on page 1 (it's shown as "Latest")
+    const { incidents, hasMore: more } = await getIncidentsPaginated(pageNum, pageSize)
+    // Skip the first incident on page 1 — it's already shown as "Latest"
     const filtered = pageNum === 1 ? incidents.slice(1) : incidents
     setRecentIncidents(filtered)
     setHasMore(more)
-    setTotal(totalCount)
     setPage(pageNum)
   }
 
@@ -40,109 +48,148 @@ export default function IncidentList() {
     loadRecentCases(1)
   }, [])
 
-  const handleNextPage = () => {
-    if (hasMore) {
-      loadRecentCases(page + 1)
-    }
-  }
+  // Build option lists from the full dataset
+  const stateOptions = getStates(allIncidents)
+  const cityOptions = getCities(allIncidents, values.state)
+  const typeOptions = getTypes(allIncidents)
+  const statusOptions = getStatuses(allIncidents)
 
-  const handlePrevPage = () => {
-    if (page > 1) {
-      loadRecentCases(page - 1)
-    }
-  }
+  // Apply client-side filters when any filter is active
+  const filteredResults = isFiltered ? filterIncidents(allIncidents, values) : []
 
   return (
     <>
       <DeathCounter />
 
       <main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
+        <SearchAndFilters
+          values={values}
+          onSet={set}
+          onClear={clear}
+          isFiltered={isFiltered}
+          placeholder="Search incidents by title or description…"
+          stateOptions={stateOptions}
+          cityOptions={cityOptions}
+          typeOptions={typeOptions}
+          statusOptions={statusOptions}
+        />
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+          {/* ── Left column (2/3) ── */}
           <div className="lg:col-span-2">
-            {latest && (
+            {isFiltered ? (
+              /* ── Filtered results view ── */
               <>
-                <div className="flex justify-between items-end mb-6">
-                  <h2 className="text-3xl font-header font-bold text-white border-l-8 border-blood pl-4">
-                    LATEST CASE FILE
-                  </h2>
-                  <span className="text-red-500 font-mono text-sm">
-                    CASE ID: {latest.case_id}
-                  </span>
-                </div>
-                <IncidentCard incident={latest} onUpvote={loadData} />
+                <p className="text-gray-500 text-sm mb-6 font-mono">
+                  Showing{' '}
+                  <span className="text-white font-bold">{filteredResults.length}</span>{' '}
+                  {filteredResults.length === 1 ? 'result' : 'results'}
+                </p>
+                {filteredResults.length > 0 ? (
+                  filteredResults.map((incident) => (
+                    <IncidentCard
+                      key={incident.id}
+                      incident={incident}
+                      compact
+                      onUpvote={loadData}
+                    />
+                  ))
+                ) : (
+                  <p className="text-gray-600 text-sm py-12 text-center">
+                    No incidents match your filters.
+                  </p>
+                )}
               </>
-            )}
+            ) : (
+              /* ── Curated layout (unchanged) ── */
+              <>
+                {latest && (
+                  <>
+                    <div className="flex justify-between items-end mb-6">
+                      <h2 className="text-3xl font-header font-bold text-white border-l-8 border-blood pl-4">
+                        LATEST CASE FILE
+                      </h2>
+                      <span className="text-red-500 font-mono text-sm">
+                        CASE ID: {latest.case_id}
+                      </span>
+                    </div>
+                    <IncidentCard incident={latest} onUpvote={loadData} />
+                  </>
+                )}
 
-            {/* More Recent Cases */}
-            {recentIncidents.length > 0 && (
-              <div className="mt-12">
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-2xl font-header font-bold text-white border-l-4 border-gray-700 pl-4">
-                    RECENT CASES
-                  </h2>
-                  <span className="text-gray-500 text-sm">
-                    Page {page}
-                  </span>
-                </div>
-                
-                {recentIncidents.map((incident) => (
-                  <IncidentCard key={incident.id} incident={incident} compact onUpvote={() => loadRecentCases(page)} />
-                ))}
+                {recentIncidents.length > 0 && (
+                  <div className="mt-12">
+                    <div className="flex justify-between items-center mb-6">
+                      <h2 className="text-2xl font-header font-bold text-white border-l-4 border-gray-700 pl-4">
+                        RECENT CASES
+                      </h2>
+                      <span className="text-gray-500 text-sm">Page {page}</span>
+                    </div>
 
-                {/* Pagination Controls */}
-                {(page > 1 || hasMore) && (
-                  <div className="flex justify-center items-center gap-4 mt-8">
-                    <button
-                      onClick={handlePrevPage}
-                      disabled={page === 1}
-                      className={`flex items-center gap-2 px-4 py-2 rounded font-bold uppercase text-sm transition ${
-                        page === 1
-                          ? 'bg-gray-800 text-gray-600 cursor-not-allowed'
-                          : 'bg-gray-800 text-white hover:bg-gray-700'
-                      }`}
-                    >
-                      <ChevronLeft size={16} /> Previous
-                    </button>
-                    
-                    <span className="text-gray-400 text-sm">
-                      Showing {recentIncidents.length} cases
-                    </span>
-                    
-                    <button
-                      onClick={handleNextPage}
-                      disabled={!hasMore}
-                      className={`flex items-center gap-2 px-4 py-2 rounded font-bold uppercase text-sm transition ${
-                        !hasMore
-                          ? 'bg-gray-800 text-gray-600 cursor-not-allowed'
-                          : 'bg-gray-800 text-white hover:bg-gray-700'
-                      }`}
-                    >
-                      Next <ChevronRight size={16} />
-                    </button>
+                    {recentIncidents.map((incident) => (
+                      <IncidentCard
+                        key={incident.id}
+                        incident={incident}
+                        compact
+                        onUpvote={() => loadRecentCases(page)}
+                      />
+                    ))}
+
+                    {(page > 1 || hasMore) && (
+                      <div className="flex justify-center items-center gap-4 mt-8">
+                        <button
+                          onClick={() => loadRecentCases(page - 1)}
+                          disabled={page === 1}
+                          className={`flex items-center gap-2 px-4 py-2 rounded font-bold uppercase text-sm transition ${
+                            page === 1
+                              ? 'bg-gray-800 text-gray-600 cursor-not-allowed'
+                              : 'bg-gray-800 text-white hover:bg-gray-700'
+                          }`}
+                        >
+                          <ChevronLeft size={16} /> Previous
+                        </button>
+                        <span className="text-gray-400 text-sm">
+                          Showing {recentIncidents.length} cases
+                        </span>
+                        <button
+                          onClick={() => loadRecentCases(page + 1)}
+                          disabled={!hasMore}
+                          className={`flex items-center gap-2 px-4 py-2 rounded font-bold uppercase text-sm transition ${
+                            !hasMore
+                              ? 'bg-gray-800 text-gray-600 cursor-not-allowed'
+                              : 'bg-gray-800 text-white hover:bg-gray-700'
+                          }`}
+                        >
+                          Next <ChevronRight size={16} />
+                        </button>
+                      </div>
+                    )}
                   </div>
                 )}
-              </div>
+              </>
             )}
           </div>
 
+          {/* ── Right column (1/3) ── */}
           <div className="lg:col-span-1">
-            {latest && (
-              <HierarchyCard entities={latest.responsible_entities} />
-            )}
-
-            {/* Most Upvoted */}
-            {topUpvoted.length > 0 && (
-              <div className="mt-10">
+            {/* Most Upvoted — hidden in filtered mode to avoid confusion */}
+            {!isFiltered && topUpvoted.length > 0 && (
+              <div className="mb-10">
                 <h3 className="text-xl font-header font-bold text-white border-l-4 border-blood pl-4 mb-4">
                   MOST UPVOTED
                 </h3>
                 {topUpvoted.slice(0, 3).map((incident) => (
-                  <IncidentCard key={incident.id} incident={incident} compact onUpvote={loadData} />
+                  <IncidentCard
+                    key={incident.id}
+                    incident={incident}
+                    compact
+                    onUpvote={loadData}
+                  />
                 ))}
               </div>
             )}
 
-            <div className="mt-10 bg-blood p-6 rounded text-center">
+            <div className="bg-blood p-6 rounded text-center">
               <h3 className="text-white font-header font-bold text-2xl uppercase">
                 Don't let them hide
               </h3>

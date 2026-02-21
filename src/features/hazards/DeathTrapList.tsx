@@ -3,14 +3,36 @@ import { Link } from 'react-router-dom'
 import { AlertTriangle } from 'lucide-react'
 import { getAllHazards } from '../../services/incidents.ts'
 import HazardCard from '../../components/HazardCard.tsx'
+import SearchAndFilters from '../../components/SearchAndFilters.tsx'
 import type { Hazard } from '../../types/incident.ts'
+import { useHazardFilters } from '../../hooks/useFilterParams.ts'
+import {
+  filterHazards,
+  getStates,
+  getCities,
+  getTypes,
+  getStatuses,
+  getSeverities,
+} from '../../utils/filterIncidents.ts'
 
 export default function DeathTrapList() {
   const [hazards, setHazards] = useState<Hazard[]>([])
 
+  const { values, isFiltered, set, clear } = useHazardFilters()
+
   useEffect(() => {
     getAllHazards().then(setHazards)
   }, [])
+
+  // Build option lists from the full dataset
+  const stateOptions = getStates(hazards)
+  const cityOptions = getCities(hazards, values.state)
+  const typeOptions = getTypes(hazards)
+  const statusOptions = getStatuses(hazards)
+  const severityOptions = getSeverities(hazards)
+
+  // Apply client-side filters when any filter is active
+  const filteredResults = isFiltered ? filterHazards(hazards, values) : []
 
   const latest = hazards[0]
 
@@ -23,7 +45,21 @@ export default function DeathTrapList() {
 
   return (
     <main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
+      <SearchAndFilters
+        values={values}
+        onSet={set}
+        onClear={clear}
+        isFiltered={isFiltered}
+        placeholder="Search by description or hazard type…"
+        stateOptions={stateOptions}
+        cityOptions={cityOptions}
+        typeOptions={typeOptions}
+        statusOptions={statusOptions}
+        severityOptions={severityOptions}
+      />
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+        {/* ── Left column (2/3) ── */}
         <div className="lg:col-span-2">
           <div className="flex justify-between items-end mb-6">
             <h2 className="text-3xl font-header font-bold text-white border-l-8 border-yellow-500 pl-4 flex items-center gap-3">
@@ -32,10 +68,28 @@ export default function DeathTrapList() {
             </h2>
           </div>
 
-          {latest ? (
+          {isFiltered ? (
+            /* ── Filtered results view ── */
+            <>
+              <p className="text-gray-500 text-sm mb-6 font-mono">
+                Showing{' '}
+                <span className="text-white font-bold">{filteredResults.length}</span>{' '}
+                {filteredResults.length === 1 ? 'result' : 'results'}
+              </p>
+              {filteredResults.length > 0 ? (
+                filteredResults.map((hazard) => (
+                  <HazardCard key={hazard.id} hazard={hazard} compact />
+                ))
+              ) : (
+                <p className="text-gray-600 text-sm py-12 text-center">
+                  No death traps match your filters.
+                </p>
+              )}
+            </>
+          ) : latest ? (
+            /* ── Curated layout (unchanged) ── */
             <>
               <HazardCard hazard={latest} />
-
               {hazards.length > 1 && (
                 <div className="mt-12">
                   <h2 className="text-2xl font-header font-bold text-white border-l-4 border-gray-700 pl-4 mb-6">
@@ -66,34 +120,37 @@ export default function DeathTrapList() {
           )}
         </div>
 
+        {/* ── Right column (1/3) ── */}
         <div className="lg:col-span-1">
-          {/* Severity Breakdown */}
-          <div className="bg-[#111] border border-gray-800 rounded-lg p-6 mb-6">
-            <h3 className="text-xl font-header font-bold text-white mb-4 flex items-center gap-2">
-              <AlertTriangle size={18} className="text-yellow-500" />
-              SEVERITY BREAKDOWN
-            </h3>
-            <div className="space-y-3">
-              <div className="flex justify-between items-center border-l-4 border-red-500 pl-3">
-                <span className="text-gray-300 text-sm uppercase font-bold">Critical</span>
-                <span className="text-red-400 font-mono text-lg font-bold">{severityCounts.Critical}</span>
-              </div>
-              <div className="flex justify-between items-center border-l-4 border-orange-500 pl-3">
-                <span className="text-gray-300 text-sm uppercase font-bold">High</span>
-                <span className="text-orange-400 font-mono text-lg font-bold">{severityCounts.High}</span>
-              </div>
-              <div className="flex justify-between items-center border-l-4 border-yellow-500 pl-3">
-                <span className="text-gray-300 text-sm uppercase font-bold">Medium</span>
-                <span className="text-yellow-400 font-mono text-lg font-bold">{severityCounts.Medium}</span>
-              </div>
-              <div className="flex justify-between items-center border-l-4 border-green-500 pl-3">
-                <span className="text-gray-300 text-sm uppercase font-bold">Low</span>
-                <span className="text-green-400 font-mono text-lg font-bold">{severityCounts.Low}</span>
+          {/* Severity breakdown — hidden in filtered mode */}
+          {!isFiltered && (
+            <div className="bg-[#111] border border-gray-800 rounded-lg p-6 mb-6">
+              <h3 className="text-xl font-header font-bold text-white mb-4 flex items-center gap-2">
+                <AlertTriangle size={18} className="text-yellow-500" />
+                SEVERITY BREAKDOWN
+              </h3>
+              <div className="space-y-3">
+                <div className="flex justify-between items-center border-l-4 border-red-500 pl-3">
+                  <span className="text-gray-300 text-sm uppercase font-bold">Critical</span>
+                  <span className="text-red-400 font-mono text-lg font-bold">{severityCounts.Critical}</span>
+                </div>
+                <div className="flex justify-between items-center border-l-4 border-orange-500 pl-3">
+                  <span className="text-gray-300 text-sm uppercase font-bold">High</span>
+                  <span className="text-orange-400 font-mono text-lg font-bold">{severityCounts.High}</span>
+                </div>
+                <div className="flex justify-between items-center border-l-4 border-yellow-500 pl-3">
+                  <span className="text-gray-300 text-sm uppercase font-bold">Medium</span>
+                  <span className="text-yellow-400 font-mono text-lg font-bold">{severityCounts.Medium}</span>
+                </div>
+                <div className="flex justify-between items-center border-l-4 border-green-500 pl-3">
+                  <span className="text-gray-300 text-sm uppercase font-bold">Low</span>
+                  <span className="text-green-400 font-mono text-lg font-bold">{severityCounts.Low}</span>
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
-          {/* CTA */}
+          {/* CTA — always visible */}
           <div className="bg-yellow-700 p-6 rounded text-center">
             <h3 className="text-white font-header font-bold text-2xl uppercase">
               Spot a Death Trap?

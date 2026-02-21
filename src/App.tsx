@@ -7,6 +7,7 @@ import MapView from './features/incidents/MapView.tsx'
 import ReportForm from './components/ReportForm.tsx'
 import DeathTrapList from './features/hazards/DeathTrapList.tsx'
 import DeathTrapDetail from './features/hazards/DeathTrapDetail.tsx'
+import Toast from './components/Toast.tsx'
 
 export default function App() {
   return (
@@ -15,6 +16,7 @@ export default function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/cases" element={<HomePage />} />
           <Route path="/incident/:id" element={<DetailPage />} />
           <Route path="/map" element={<MapView />} />
           <Route path="/report" element={<ReportPage />} />
@@ -22,6 +24,7 @@ export default function App() {
           <Route path="/deathtraps/:id" element={<DeathTrapDetailPage />} />
         </Routes>
       </div>
+      <Toast />
     </BrowserRouter>
   )
 }

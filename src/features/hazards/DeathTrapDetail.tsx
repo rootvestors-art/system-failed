@@ -4,6 +4,9 @@ import { ArrowLeft, AlertTriangle } from 'lucide-react'
 import { getHazardById } from '../../services/incidents.ts'
 import HazardCard from '../../components/HazardCard.tsx'
 import type { Hazard } from '../../types/incident.ts'
+import { useDocumentMeta } from '../../hooks/useDocumentMeta.ts'
+import { getShareUrl, buildOgImageUrl } from '../../utils/share.ts'
+import LocationMap from '../../components/LocationMap.tsx'
 
 export default function DeathTrapDetail() {
   const { id } = useParams<{ id: string }>()
@@ -12,6 +15,25 @@ export default function DeathTrapDetail() {
   useEffect(() => {
     if (id) getHazardById(id).then(setHazard)
   }, [id])
+
+  // Dynamic OG meta
+  useDocumentMeta(
+    hazard
+      ? {
+          title: `⚠ DEATH TRAP — ${hazard.severity} ${hazard.negligence_type.replace(/_/g, ' ')} in ${hazard.location.city} | SystemFailed`,
+          description: `${hazard.severity} severity hazard in ${hazard.location.city}, ${hazard.location.state}. ${hazard.description.slice(0, 150)}`,
+          url: getShareUrl('hazard', hazard.id),
+          ogImage: buildOgImageUrl('hazard', {
+            city: hazard.location.city,
+            state: hazard.location.state,
+            negligence: hazard.negligence_type,
+            severity: hazard.severity,
+            description: hazard.description,
+            status: hazard.status,
+          }),
+        }
+      : null,
+  )
 
   if (!hazard) {
     return (
@@ -40,7 +62,7 @@ export default function DeathTrapDetail() {
           </div>
           <HazardCard hazard={hazard} />
         </div>
-        <div className="lg:col-span-1">
+        <div className="lg:col-span-1 flex flex-col gap-6">
           <div className="bg-[#111] border border-gray-800 rounded-lg p-6">
             <h3 className="text-xl font-header font-bold text-white mb-4 flex items-center gap-2">
               <AlertTriangle size={18} className="text-yellow-500" />
@@ -62,6 +84,11 @@ export default function DeathTrapDetail() {
               them. Share them. Force the system to act.
             </p>
           </div>
+          <LocationMap
+            location={hazard.location}
+            accentColor="yellow"
+            deepLinkId={hazard.id}
+          />
         </div>
       </div>
     </main>
