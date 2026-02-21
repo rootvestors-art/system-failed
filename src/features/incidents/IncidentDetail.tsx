@@ -5,6 +5,10 @@ import { getIncidentById } from '../../services/incidents.ts'
 import IncidentCard from '../../components/IncidentCard.tsx'
 import HierarchyCard from '../../components/HierarchyCard.tsx'
 import type { Incident } from '../../types/incident.ts'
+import { useDocumentMeta } from '../../hooks/useDocumentMeta.ts'
+import { getShareUrl, buildOgImageUrl } from '../../utils/share.ts'
+import { getTotalDeaths, getTotalInjuries } from '../../utils/victims.ts'
+import LocationMap from '../../components/LocationMap.tsx'
 
 export default function IncidentDetail() {
   const { id } = useParams<{ id: string }>()
@@ -13,6 +17,28 @@ export default function IncidentDetail() {
   useEffect(() => {
     if (id) getIncidentById(id).then(setIncident)
   }, [id])
+
+  // Dynamic OG meta — null while loading (hook is a no-op until incident arrives)
+  useDocumentMeta(
+    incident
+      ? {
+          title: `CASE ${incident.case_id} — ${incident.title} | SystemFailed`,
+          description: `${incident.location.city}, ${incident.location.state} • ${incident.negligence_type.replace(/_/g, ' ')} • ${incident.description.slice(0, 150)}`,
+          url: getShareUrl('incident', incident.id),
+          ogImage: buildOgImageUrl('incident', {
+            case_id: incident.case_id,
+            title: incident.title,
+            city: incident.location.city,
+            state: incident.location.state,
+            negligence: incident.negligence_type,
+            deaths: getTotalDeaths(incident),
+            injuries: getTotalInjuries(incident),
+            agency: incident.responsible_entities.agency,
+            status: incident.status,
+          }),
+        }
+      : null,
+  )
 
   if (!incident) {
     return (
@@ -43,8 +69,13 @@ export default function IncidentDetail() {
           </div>
           <IncidentCard incident={incident} />
         </div>
-        <div className="lg:col-span-1">
+        <div className="lg:col-span-1 flex flex-col gap-6">
           <HierarchyCard entities={incident.responsible_entities} />
+          <LocationMap
+            location={incident.location}
+            accentColor="red"
+            deepLinkId={incident.id}
+          />
         </div>
       </div>
     </main>

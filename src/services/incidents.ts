@@ -90,7 +90,13 @@ async function geocodeAddress(
   address: string,
   city: string,
   state: string,
+  coordinates?: { lat: number; lng: number },
 ): Promise<{ lat: number; lng: number }> {
+  // If coordinates are provided directly, use them
+  if (coordinates && coordinates.lat !== 0 && coordinates.lng !== 0) {
+    return coordinates
+  }
+  
   try {
     const query = [address, city, state].filter(Boolean).join(', ')
     const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1&countrycodes=in`
@@ -128,6 +134,7 @@ export interface CreateIncidentInput {
   description: string
   evidence_links?: string[]
   photo?: File | null
+  coordinates?: { lat: number; lng: number }
 }
 
 export async function createIncident(
@@ -135,7 +142,7 @@ export async function createIncident(
 ): Promise<Incident> {
   const [imageUrl, coords] = await Promise.all([
     input.photo ? uploadEvidencePhoto(input.photo) : Promise.resolve(null),
-    geocodeAddress(input.address, input.city, input.state),
+    geocodeAddress(input.address, input.city, input.state, input.coordinates),
   ])
 
   const incident: Omit<Incident, 'id' | 'created_at'> = {
@@ -205,12 +212,13 @@ export interface CreateHazardInput {
   description: string
   evidence_links?: string[]
   photo?: File | null
+  coordinates?: { lat: number; lng: number }
 }
 
 export async function createHazard(input: CreateHazardInput): Promise<Hazard> {
   const [imageUrl, coords] = await Promise.all([
     input.photo ? uploadEvidencePhoto(input.photo) : Promise.resolve(null),
-    geocodeAddress(input.address, input.city, input.state),
+    geocodeAddress(input.address, input.city, input.state, input.coordinates),
   ])
 
   const hazard: Omit<Hazard, 'id' | 'created_at'> = {

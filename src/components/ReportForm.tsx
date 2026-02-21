@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { ChevronRight, ChevronLeft, Send, Loader2, Plus, X, AlertTriangle, Skull } from 'lucide-react'
 import type { NegligenceType, OutcomeType, HazardSeverity, Victim } from '../types/incident.ts'
 import { createIncident, createHazard } from '../services/incidents.ts'
+import LocationPicker from './LocationPicker.tsx'
 
 const negligenceTypes: NegligenceType[] = [
   'Pothole',
@@ -34,6 +35,7 @@ interface FormData {
   address: string
   city: string
   state: string
+  coordinates?: { lat: number; lng: number }
   negligence_type: NegligenceType | ''
   custom_negligence_type: string
   description: string
@@ -143,6 +145,7 @@ export default function ReportForm() {
           description: form.description,
           evidence_links: form.evidence_links.filter((l) => l.trim() !== ''),
           photo: form.photo,
+          coordinates: form.coordinates,
         })
         setSubmitted(true)
         setTimeout(() => navigate(`/deathtraps/${hazard.id}`), 3000)
@@ -166,6 +169,7 @@ export default function ReportForm() {
           description: form.description,
           evidence_links: form.evidence_links.filter((l) => l.trim() !== ''),
           photo: form.photo,
+          coordinates: form.coordinates,
         })
         setSubmitted(true)
         setTimeout(() => navigate(`/incident/${incident.id}`), 3000)
@@ -494,36 +498,19 @@ export default function ReportForm() {
             </button>
           </div>
           <div>
-            <label className={labelClass}>Address</label>
-            <input
-              type="text"
-              className={inputClass}
-              placeholder="Street address or landmark"
-              value={form.address}
-              onChange={(e) => update('address', e.target.value)}
+            <label className={labelClass}>Location *</label>
+            <LocationPicker
+              address={form.address}
+              city={form.city}
+              state={form.state}
+              coordinates={form.coordinates}
+              onLocationChange={(location) => {
+                update('address', location.address)
+                update('city', location.city)
+                update('state', location.state)
+                update('coordinates', location.coordinates)
+              }}
             />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className={labelClass}>City *</label>
-              <input
-                type="text"
-                className={inputClass}
-                placeholder="City"
-                value={form.city}
-                onChange={(e) => update('city', e.target.value)}
-              />
-            </div>
-            <div>
-              <label className={labelClass}>State *</label>
-              <input
-                type="text"
-                className={inputClass}
-                placeholder="State"
-                value={form.state}
-                onChange={(e) => update('state', e.target.value)}
-              />
-            </div>
           </div>
           <div>
             <label className={labelClass}>Type of {isHazard ? 'Hazard' : 'Negligence'} *</label>
