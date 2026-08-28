@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, lazy, Suspense } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { ArrowLeft, AlertTriangle } from 'lucide-react'
 import { getHazardById } from '../../services/incidents.ts'
@@ -6,7 +6,7 @@ import HazardCard from '../../components/HazardCard.tsx'
 import type { Hazard } from '../../types/incident.ts'
 import { useDocumentMeta } from '../../hooks/useDocumentMeta.ts'
 import { getShareUrl, buildOgImageUrl } from '../../utils/share.ts'
-import LocationMap from '../../components/LocationMap.tsx'
+const LocationMap = lazy(() => import('../../components/LocationMap.tsx'))
 
 export default function DeathTrapDetail() {
   const { id } = useParams<{ id: string }>()
@@ -20,7 +20,7 @@ export default function DeathTrapDetail() {
   useDocumentMeta(
     hazard
       ? {
-          title: `⚠ DEATH TRAP — ${hazard.severity} ${hazard.negligence_type.replace(/_/g, ' ')} in ${hazard.location.city} | SystemFailed`,
+          title: `⚠ SAFETY HAZARD — ${hazard.severity} ${hazard.negligence_type.replace(/_/g, ' ')} in ${hazard.location.city} | CivicFix`,
           description: `${hazard.severity} severity hazard in ${hazard.location.city}, ${hazard.location.state}. ${hazard.description.slice(0, 150)}`,
           url: getShareUrl('hazard', hazard.id),
           ogImage: buildOgImageUrl('hazard', {
@@ -49,7 +49,7 @@ export default function DeathTrapDetail() {
         to="/deathtraps"
         className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-8 transition font-header uppercase tracking-wide text-sm"
       >
-        <ArrowLeft size={16} /> Back to Death Traps
+        <ArrowLeft size={16} /> Back to Safety Hazards
       </Link>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
@@ -57,7 +57,7 @@ export default function DeathTrapDetail() {
           <div className="flex justify-between items-end mb-6">
             <h2 className="text-3xl font-header font-bold text-white border-l-8 border-yellow-500 pl-4 flex items-center gap-3">
               <AlertTriangle size={28} className="text-yellow-500" />
-              DEATH TRAP
+              SAFETY HAZARD
             </h2>
           </div>
           <HazardCard hazard={hazard} />
@@ -66,29 +66,35 @@ export default function DeathTrapDetail() {
           <div className="bg-[#111] border border-gray-800 rounded-lg p-6">
             <h3 className="text-xl font-header font-bold text-white mb-4 flex items-center gap-2">
               <AlertTriangle size={18} className="text-yellow-500" />
-              WHAT IS A DEATH TRAP?
+              WHAT IS A SAFETY HAZARD?
             </h3>
             <p className="text-gray-400 text-sm mb-4">
-              A Death Trap is a dangerous hazard caused by civic negligence that
-              poses an immediate risk to life. These include uncovered manholes,
-              exposed electrical wires, collapsed structures, and crater-sized
-              potholes.
+              A safety hazard is a piece of public infrastructure that presents an
+              immediate danger to people using it — an uncovered manhole, an exposed
+              electrical wire, an unstable structure, an abandoned excavation.
             </p>
             <p className="text-gray-400 text-sm mb-4">
-              Unlike incident reports which document casualties that have already
-              occurred, Death Traps are preventive warnings — flagging dangers
-              before they claim lives.
+              These are reported <span className="text-white">before</span> anyone is
+              harmed, so the responsible department has a chance to fix them in time.
             </p>
             <p className="text-gray-500 text-sm">
-              Every Death Trap on this platform is a failure of the system. Report
-              them. Share them. Force the system to act.
+              Every report here has been routed to a department with a deadline attached.
+              If nothing happens, it escalates.
             </p>
           </div>
-          <LocationMap
-            location={hazard.location}
-            accentColor="yellow"
-            deepLinkId={hazard.id}
-          />
+          <Suspense
+            fallback={
+              <div className="h-64 flex items-center justify-center text-gray-500 text-sm">
+                Loading map…
+              </div>
+            }
+          >
+            <LocationMap
+              location={hazard.location}
+              accentColor="yellow"
+              deepLinkId={hazard.id}
+            />
+          </Suspense>
         </div>
       </div>
     </main>

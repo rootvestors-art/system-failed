@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
-import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet'
-import { MapPin, Link as LinkIcon, Map, Loader2 } from 'lucide-react'
+import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet'
+import { Loader2, Crosshair } from 'lucide-react'
 import type { LatLngTuple } from 'leaflet'
 import { parseGoogleMapsUrl, reverseGeocode, isValidIndiaCoordinates } from '../utils/location.ts'
+import { useTileProvider } from '../hooks/useTileProvider.ts'
 import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
 
@@ -27,8 +28,6 @@ interface LocationPickerProps {
   }) => void
 }
 
-type PickerMode = 'address' | 'link' | 'map'
-
 // Component to handle map clicks
 function MapClickHandler({
   onMapClick,
@@ -46,6 +45,20 @@ function MapClickHandler({
   return null
 }
 
+
+/**
+ * Fly the map to a new pin. Without this the MapContainer keeps its initial
+ * centre, so a location resolved from GPS or a pasted link would drop a marker
+ * somewhere off-screen and the citizen would think nothing happened.
+ */
+function RecenterMap({ center }: { center: LatLngTuple | null }) {
+  const map = useMap()
+  useEffect(() => {
+    if (center) map.flyTo(center, Math.max(map.getZoom(), 16), { duration: 0.6 })
+  }, [center, map])
+  return null
+}
+
 export default function LocationPicker({
   address,
   city,
@@ -53,15 +66,20 @@ export default function LocationPicker({
   coordinates,
   onLocationChange,
 }: LocationPickerProps) {
-  const [mode, setMode] = useState<PickerMode>('address')
   const [googleMapsLink, setGoogleMapsLink] = useState('')
   const [isProcessing, setIsProcessing] = useState(false)
   const [mapCoordinates, setMapCoordinates] = useState<LatLngTuple | null>(
     coordinates && coordinates.lat !== 0 && coordinates.lng !== 0
       ? [coordinates.lat, coordinates.lng]
-      : [28.6139, 77.2090] // Default to Delhi
+      : null,
   )
   const [error, setError] = useState<string | null>(null)
+  const [approximate, setApproximate] = useState(false)
+  const [locating, setLocating] = useState(false)
+
+  // Share the app-wide provider chain so the picker never diverges from the
+  // other maps — it used to hardcode CARTO, which now serves a watermark.
+  const { tileConfig, eventHandlers } = useTileProvider()
 
   const inputClass =
     'w-full bg-[#1a1a1a] border border-gray-700 text-white px-4 py-3 focus:border-blood focus:outline-none transition'
@@ -77,7 +95,7 @@ export default function LocationPicker({
 
   async function handleGoogleMapsLinkSubmit() {
     if (!googleMapsLink.trim()) {
-      setError('Please enter a Google Maps link')
+      setError('Paste a Google Maps link first, or tap the map.')
       return
     }
 
@@ -90,9 +108,9 @@ export default function LocationPicker({
         // Check if it's a short URL that couldn't be expanded
         const isShortUrl = /^(https?:\/\/)?(maps\.app\.goo\.gl|goo\.gl\/maps)\//i.test(googleMapsLink.trim())
         if (isShortUrl) {
-          setError('Short URLs (maps.app.goo.gl) need to be expanded. Please open the link in your browser, copy the full URL from the address bar, and paste it here. Alternatively, use the "Pick on Map" option.')
+          setError('We could not resolve that short link. Open it in your browser, copy the full URL from the address bar and paste that — or just tap the spot on the map.')
         } else {
-          setError('Could not extract coordinates from the link. Please check the URL format or use the "Pick on Map" option.')
+          setError('No location found in that link. Check it, or tap the spot on the map instead.')
         }
         setIsProcessing(false)
         return
@@ -103,6 +121,10 @@ export default function LocationPicker({
         setIsProcessing(false)
         return
       }
+
+      // A link that only named a place gives us a neighbourhood, not a pin, so
+      // tell the citizen to check it rather than letting them assume it's exact.
+      setApproximate(Boolean(coords.approximate))
 
       // Reverse geocode to get address details
       const addressData = await reverseGeocode(coords.lat, coords.lng)
@@ -131,6 +153,39 @@ export default function LocationPicker({
     } finally {
       setIsProcessing(false)
     }
+  }
+
+
+  /**
+   * Ask the device where it is. This is the fastest correct path for someone
+   * standing in front of the hazard, which is the common case.
+   */
+  async function useCurrentLocation() {
+    if (!navigator.geolocation) {
+      setError('This browser cannot share your location. Paste a Google Maps link or tap the map.')
+      return
+    }
+    setLocating(true)
+    setError(null)
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        setLocating(false)
+        const { latitude, longitude } = pos.coords
+        if (!isValidIndiaCoordinates(latitude, longitude)) {
+          setError('That location looks to be outside India. Tap the map instead.')
+          return
+        }
+        setApproximate(false)
+        await handleMapClick(latitude, longitude)
+      },
+      () => {
+        setLocating(false)
+        setError(
+          'We could not get your location. Allow location access, paste a Google Maps link, or tap the map.',
+        )
+      },
+      { enableHighAccuracy: true, timeout: 12000, maximumAge: 30000 },
+    )
   }
 
   async function handleMapClick(lat: number, lng: number) {
@@ -174,213 +229,132 @@ export default function LocationPicker({
     }
   }
 
-  function handleAddressChange(field: 'address' | 'city' | 'state', value: string) {
-    onLocationChange({
-      address: field === 'address' ? value : address,
-      city: field === 'city' ? value : city,
-      state: field === 'state' ? value : state,
-      coordinates: coordinates, // Keep existing coordinates
-    })
-  }
+  const hasPin = Boolean(mapCoordinates) && Boolean(coordinates?.lat) && coordinates!.lat !== 0
 
   return (
-    <div className="space-y-4">
-      {/* Mode selector tabs */}
-      <div className="flex gap-2 border-b border-gray-800">
+    <div className="space-y-3">
+      {/* Two ways in — GPS or a pasted link — with the map always visible below,
+          so the citizen can see exactly which spot got picked and drag it right.
+          Typing a street address by hand was removed: people do not know their
+          own ward or the official road name, and a typed address cannot be
+          verified. Coordinates come from the device, a link, or a map tap. */}
+      <div className="flex flex-col sm:flex-row gap-2">
         <button
           type="button"
-          onClick={() => setMode('address')}
-          className={`px-4 py-2 text-sm font-bold uppercase transition ${
-            mode === 'address'
-              ? 'border-b-2 border-blood text-white'
-              : 'text-gray-500 hover:text-gray-300'
-          }`}
+          onClick={useCurrentLocation}
+          disabled={locating || isProcessing}
+          className="flex-1 flex items-center justify-center gap-2 bg-blood hover:bg-red-700 disabled:opacity-50 text-white px-4 py-3 font-bold uppercase text-sm rounded transition"
         >
-          <span className="flex items-center gap-2">
-            <MapPin size={16} /> Enter Address
-          </span>
-        </button>
-        <button
-          type="button"
-          onClick={() => setMode('link')}
-          className={`px-4 py-2 text-sm font-bold uppercase transition ${
-            mode === 'link'
-              ? 'border-b-2 border-blood text-white'
-              : 'text-gray-500 hover:text-gray-300'
-          }`}
-        >
-          <span className="flex items-center gap-2">
-            <LinkIcon size={16} /> Google Maps Link
-          </span>
-        </button>
-        <button
-          type="button"
-          onClick={() => setMode('map')}
-          className={`px-4 py-2 text-sm font-bold uppercase transition ${
-            mode === 'map'
-              ? 'border-b-2 border-blood text-white'
-              : 'text-gray-500 hover:text-gray-300'
-          }`}
-        >
-          <span className="flex items-center gap-2">
-            <Map size={16} /> Pick on Map
-          </span>
-        </button>
-      </div>
-
-      {error && (
-        <div className="bg-red-900/50 border border-red-700 text-red-200 px-4 py-3 text-sm">
-          {error}
-        </div>
-      )}
-
-      {/* Address Input Mode */}
-      {mode === 'address' && (
-        <div className="space-y-4">
-          <div>
-            <label className={labelClass}>Address</label>
-            <input
-              type="text"
-              className={inputClass}
-              placeholder="Street address or landmark"
-              value={address}
-              onChange={(e) => handleAddressChange('address', e.target.value)}
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className={labelClass}>City *</label>
-              <input
-                type="text"
-                className={inputClass}
-                placeholder="City"
-                value={city}
-                onChange={(e) => handleAddressChange('city', e.target.value)}
-              />
-            </div>
-            <div>
-              <label className={labelClass}>State *</label>
-              <input
-                type="text"
-                className={inputClass}
-                placeholder="State"
-                value={state}
-                onChange={(e) => handleAddressChange('state', e.target.value)}
-              />
-            </div>
-          </div>
-          {coordinates && coordinates.lat !== 0 && coordinates.lng !== 0 && (
-            <div className="text-xs text-gray-500">
-              📍 Coordinates: {coordinates.lat.toFixed(6)}, {coordinates.lng.toFixed(6)}
-            </div>
+          {locating ? (
+            <>
+              <Loader2 size={15} className="animate-spin" /> Finding you…
+            </>
+          ) : (
+            <>
+              <Crosshair size={15} /> Use my current location
+            </>
           )}
-        </div>
-      )}
-
-      {/* Google Maps Link Mode */}
-      {mode === 'link' && (
-        <div className="space-y-4">
-          <div>
-            <label className={labelClass}>Paste Google Maps Link</label>
-            <input
-              type="url"
-              className={inputClass}
-              placeholder="https://www.google.com/maps/@28.6139,77.2090,15z or https://maps.google.com/?q=28.6139,77.2090"
-              value={googleMapsLink}
-              onChange={(e) => {
-                setGoogleMapsLink(e.target.value)
-                setError(null)
-              }}
-            />
-            <p className="text-xs text-gray-500 mt-1">
-              Paste any Google Maps link with coordinates. The address will be automatically filled.
-            </p>
-            <p className="text-xs text-yellow-600 mt-2 bg-yellow-900/20 border border-yellow-800/50 p-2 rounded">
-              <strong>Note:</strong> Short URLs (maps.app.goo.gl) may not work. If you have a short link, open it in your browser first, then copy the full URL from the address bar. Or use the "Pick on Map" option instead.
-            </p>
-          </div>
+        </button>
+        <div className="flex-1 flex gap-2">
+          <input
+            type="url"
+            className={`${inputClass} py-2.5 text-sm`}
+            placeholder="…or paste a Google Maps link"
+            value={googleMapsLink}
+            onChange={(e) => {
+              setGoogleMapsLink(e.target.value)
+              setError(null)
+            }}
+          />
           <button
             type="button"
             onClick={handleGoogleMapsLinkSubmit}
             disabled={isProcessing || !googleMapsLink.trim()}
-            className="w-full bg-blood hover:bg-red-700 disabled:opacity-50 text-white px-6 py-3 font-bold uppercase transition flex items-center justify-center gap-2"
+            className="shrink-0 border border-gray-600 hover:border-gray-400 disabled:opacity-40 text-gray-200 px-4 font-bold uppercase text-xs rounded transition"
           >
-            {isProcessing ? (
-              <>
-                <Loader2 size={16} className="animate-spin" /> Processing...
-              </>
-            ) : (
-              <>
-                <MapPin size={16} /> Extract Location
-              </>
-            )}
+            {isProcessing ? <Loader2 size={14} className="animate-spin" /> : 'Go'}
           </button>
-          {coordinates && coordinates.lat !== 0 && coordinates.lng !== 0 && (
-            <div className="text-xs text-gray-500">
-              📍 Coordinates: {coordinates.lat.toFixed(6)}, {coordinates.lng.toFixed(6)}
-            </div>
-          )}
+        </div>
+      </div>
+
+      {error && (
+        <div className="bg-red-900/50 border border-red-700 text-red-200 px-4 py-2.5 text-sm rounded">
+          {error}
         </div>
       )}
 
-      {/* Map Picker Mode */}
-      {mode === 'map' && (
-        <div className="space-y-4">
-          <div>
-            <label className={labelClass}>Click on the map to set location</label>
-            <div className="border border-gray-700 rounded overflow-hidden" style={{ height: '400px' }}>
-              <MapContainer
-                center={mapCoordinates || [28.6139, 77.2090]}
-                zoom={13}
-                className="w-full h-full"
-                style={{ background: '#1b1b1b' }}
-              >
-                <TileLayer
-                  attribution='&copy; <a href="https://carto.com/">CARTO</a>'
-                  url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-                />
-                <MapClickHandler onMapClick={handleMapClick} />
-                {mapCoordinates && (
-                  <Marker position={mapCoordinates} />
-                )}
-              </MapContainer>
+      {approximate && (
+        <p className="text-xs text-yellow-500 bg-yellow-900/20 border border-yellow-800/50 p-2 rounded">
+          That link named a place rather than exact coordinates, so this pin is approximate.
+          Tap the exact spot on the map below to correct it.
+        </p>
+      )}
+
+      {/* The map — always on screen, not behind a tab */}
+      <div>
+        <div
+          className="border border-gray-700 rounded overflow-hidden relative"
+          style={{ height: '320px' }}
+        >
+          <MapContainer
+            center={mapCoordinates || [22.5, 78.9]}
+            zoom={mapCoordinates ? 16 : 5}
+            className="w-full h-full"
+            style={{ background: '#1b1b1b' }}
+          >
+            <TileLayer
+              url={tileConfig.url}
+              attribution={tileConfig.attribution}
+              subdomains={tileConfig.subdomains}
+              className={tileConfig.className}
+              eventHandlers={eventHandlers}
+            />
+            <RecenterMap center={mapCoordinates} />
+            <MapClickHandler onMapClick={handleMapClick} />
+            {mapCoordinates && <Marker position={mapCoordinates} />}
+          </MapContainer>
+
+          {isProcessing && (
+            <div
+              className="absolute inset-x-0 bottom-0 bg-black/80 text-gray-200 text-xs px-3 py-2 flex items-center gap-2"
+              style={{ zIndex: 1000 }}
+            >
+              <Loader2 size={13} className="animate-spin" /> Looking up the address…
             </div>
-            <p className="text-xs text-gray-500 mt-2">
-              Click anywhere on the map to set the location. The address will be automatically filled.
+          )}
+        </div>
+        <p className="text-xs text-gray-500 mt-1.5">
+          {hasPin
+            ? 'Not quite right? Tap the map to move the pin.'
+            : 'Tap the map to drop a pin, or use one of the options above.'}
+        </p>
+      </div>
+
+      {/* What we resolved — read-only, because it is derived from the pin */}
+      <div className="bg-gray-900/50 border border-gray-800 rounded p-3 text-sm">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+          <div className="sm:col-span-3">
+            <span className="text-gray-500 text-xs uppercase tracking-widest">Location</span>
+            <p className="text-white">{address || 'No pin set yet'}</p>
+          </div>
+          <div>
+            <span className="text-gray-500 text-xs uppercase tracking-widest">City</span>
+            <p className="text-white">{city || '—'}</p>
+          </div>
+          <div>
+            <span className="text-gray-500 text-xs uppercase tracking-widest">State</span>
+            <p className="text-white">{state || '—'}</p>
+          </div>
+          <div>
+            <span className="text-gray-500 text-xs uppercase tracking-widest">Coordinates</span>
+            <p className="text-gray-400 font-mono text-xs mt-1">
+              {hasPin
+                ? `${coordinates!.lat.toFixed(5)}, ${coordinates!.lng.toFixed(5)}`
+                : '—'}
             </p>
           </div>
-          {isProcessing && (
-            <div className="flex items-center gap-2 text-sm text-gray-400">
-              <Loader2 size={16} className="animate-spin" /> Getting address details...
-            </div>
-          )}
-          {coordinates && coordinates.lat !== 0 && coordinates.lng !== 0 && (
-            <div className="text-xs text-gray-500">
-              📍 Coordinates: {coordinates.lat.toFixed(6)}, {coordinates.lng.toFixed(6)}
-            </div>
-          )}
         </div>
-      )}
-
-      {/* Display current location info */}
-      {(mode === 'address' || mode === 'link' || mode === 'map') && (
-        <div className="bg-gray-900/50 border border-gray-800 rounded p-3 text-sm">
-          <div className="grid grid-cols-3 gap-2">
-            <div>
-              <span className="text-gray-500 text-xs uppercase">Address</span>
-              <p className="text-white">{address || 'Not set'}</p>
-            </div>
-            <div>
-              <span className="text-gray-500 text-xs uppercase">City</span>
-              <p className="text-white">{city || 'Not set'}</p>
-            </div>
-            <div>
-              <span className="text-gray-500 text-xs uppercase">State</span>
-              <p className="text-white">{state || 'Not set'}</p>
-            </div>
-          </div>
-        </div>
-      )}
+      </div>
     </div>
   )
 }

@@ -83,7 +83,7 @@ export function buildOgImageUrl(
 // ---------------------------------------------------------------------------
 
 export function generateIncidentHashtags(incident: Incident): string[] {
-  const tags = ['#SystemFailed', '#CivicNegligence']
+  const tags = ['#CivicFix', '#CivicNegligence']
   const stateTag = STATE_HASHTAGS[incident.location.state]
   if (stateTag) tags.push(stateTag)
   const typeTag = TYPE_HASHTAGS[incident.negligence_type]
@@ -92,7 +92,7 @@ export function generateIncidentHashtags(incident: Incident): string[] {
 }
 
 export function generateHazardHashtags(hazard: Hazard): string[] {
-  const tags = ['#SystemFailed', '#RoadSafety', '#CivicNegligence']
+  const tags = ['#CivicFix', '#RoadSafety', '#CivicNegligence']
   const stateTag = STATE_HASHTAGS[hazard.location.state]
   if (stateTag) tags.push(stateTag)
   return tags
@@ -124,7 +124,7 @@ export function generateIncidentCaption(
 
   lines.push('')
   lines.push("Demand accountability. Share until it's answered.")
-  lines.push(`More on systemfailed.in: ${shareUrl}`)
+  lines.push(`More on CivicFix: ${shareUrl}`)
   lines.push(generateIncidentHashtags(incident).join(' '))
 
   return lines.join('\n')
@@ -137,7 +137,7 @@ export function generateHazardCaption(hazard: Hazard, shareUrl: string): string 
       : hazard.description
 
   const lines: string[] = [
-    `⚠ DEATH TRAP | ${hazard.location.city}, ${hazard.location.state}`,
+    `⚠ SAFETY HAZARD | ${hazard.location.city}, ${hazard.location.state}`,
     `${hazard.severity.toUpperCase()}: ${negligenceLabel(hazard.negligence_type)}`,
     desc,
     '',
@@ -163,7 +163,7 @@ export interface ShareLinks {
 export function buildShareLinks(caption: string, shareUrl: string): ShareLinks {
   const encodedText = encodeURIComponent(caption)
   const encodedUrl = encodeURIComponent(shareUrl)
-  const encodedSubject = encodeURIComponent('SystemFailed — Civic Negligence Report')
+  const encodedSubject = encodeURIComponent('CivicFix — Civic Negligence Report')
   // Twitter has a 280-char limit; use the first 3 lines + URL + hashtags
   const tweetLines = caption.split('\n')
   const tweetText = [

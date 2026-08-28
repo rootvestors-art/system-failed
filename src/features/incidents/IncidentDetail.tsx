@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, lazy, Suspense } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
 import { getIncidentById } from '../../services/incidents.ts'
@@ -8,7 +8,7 @@ import type { Incident } from '../../types/incident.ts'
 import { useDocumentMeta } from '../../hooks/useDocumentMeta.ts'
 import { getShareUrl, buildOgImageUrl } from '../../utils/share.ts'
 import { getTotalDeaths, getTotalInjuries } from '../../utils/victims.ts'
-import LocationMap from '../../components/LocationMap.tsx'
+const LocationMap = lazy(() => import('../../components/LocationMap.tsx'))
 
 export default function IncidentDetail() {
   const { id } = useParams<{ id: string }>()
@@ -22,7 +22,7 @@ export default function IncidentDetail() {
   useDocumentMeta(
     incident
       ? {
-          title: `CASE ${incident.case_id} — ${incident.title} | SystemFailed`,
+          title: `CASE ${incident.case_id} — ${incident.title} | CivicFix`,
           description: `${incident.location.city}, ${incident.location.state} • ${incident.negligence_type.replace(/_/g, ' ')} • ${incident.description.slice(0, 150)}`,
           url: getShareUrl('incident', incident.id),
           ogImage: buildOgImageUrl('incident', {
@@ -71,11 +71,19 @@ export default function IncidentDetail() {
         </div>
         <div className="lg:col-span-1 flex flex-col gap-6">
           <HierarchyCard entities={incident.responsible_entities} />
-          <LocationMap
-            location={incident.location}
-            accentColor="red"
-            deepLinkId={incident.id}
-          />
+          <Suspense
+            fallback={
+              <div className="h-64 flex items-center justify-center text-gray-500 text-sm">
+                Loading map…
+              </div>
+            }
+          >
+            <LocationMap
+              location={incident.location}
+              accentColor="red"
+              deepLinkId={incident.id}
+            />
+          </Suspense>
         </div>
       </div>
     </main>

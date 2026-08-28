@@ -10,20 +10,20 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           <Link to="/" className="flex flex-col group hover:opacity-90 transition-opacity">
-            <span className="text-3xl font-header font-bold text-blood tracking-tighter leading-none">
-              SYSTEM<span className="text-white">FAILED</span>
+            <span className="text-3xl font-header font-bold text-white tracking-tighter leading-none">
+              CIVIC<span className="text-blood">FIX</span>
             </span>
             <div className="flex items-center gap-2 mt-2">
               <span className="text-xs font-header uppercase tracking-[0.15em] text-gray-400 leading-none font-semibold">
-                Document
+                Report
               </span>
               <span className="text-gray-600 text-[10px] leading-none">•</span>
               <span className="text-xs font-header uppercase tracking-[0.15em] text-gray-400 leading-none font-semibold">
-                Demand
+                Route
               </span>
               <span className="text-gray-600 text-[10px] leading-none">•</span>
               <span className="text-xs font-header uppercase tracking-[0.15em] text-gray-400 leading-none font-semibold">
-                Fix
+                Resolve
               </span>
             </div>
           </Link>
@@ -36,11 +36,23 @@ export default function Navbar() {
               Map
             </Link>
             <Link
+              to="/track"
+              className="text-gray-400 hover:text-white transition font-header uppercase tracking-wide text-sm"
+            >
+              Track
+            </Link>
+            <Link
+              to="/how-it-works"
+              className="text-gray-400 hover:text-white transition font-header uppercase tracking-wide text-sm"
+            >
+              How it works
+            </Link>
+            <Link
               to="/deathtraps"
               className="text-yellow-500 hover:text-white transition font-header uppercase tracking-wide text-sm flex items-center gap-1"
             >
               <AlertTriangle size={14} />
-              Death Traps
+              Reported issues
             </Link>
             <Link
               to="/report"
@@ -70,12 +82,26 @@ export default function Navbar() {
             Map
           </Link>
           <Link
+            to="/track"
+            className="block text-gray-400 hover:text-white font-header uppercase tracking-wide text-sm"
+            onClick={() => setMenuOpen(false)}
+          >
+            Track
+          </Link>
+          <Link
+            to="/how-it-works"
+            className="block text-gray-400 hover:text-white font-header uppercase tracking-wide text-sm"
+            onClick={() => setMenuOpen(false)}
+          >
+            How it works
+          </Link>
+          <Link
             to="/deathtraps"
             className="block text-yellow-500 hover:text-white font-header uppercase tracking-wide text-sm flex items-center gap-1"
             onClick={() => setMenuOpen(false)}
           >
             <AlertTriangle size={14} />
-            Death Traps
+            Reported issues
           </Link>
           <Link
             to="/report"

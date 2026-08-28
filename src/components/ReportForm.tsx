@@ -1,16 +1,29 @@
-import { useState } from 'react'
+import { useState, lazy, Suspense } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ChevronRight, ChevronLeft, Send, Loader2, Plus, X, AlertTriangle, Skull } from 'lucide-react'
+import { ChevronRight, ChevronLeft, Send, Loader2, Plus, X, AlertTriangle, FileText } from 'lucide-react'
 import type { NegligenceType, OutcomeType, HazardSeverity, Victim } from '../types/incident.ts'
 import { createIncident, createHazard } from '../services/incidents.ts'
-import LocationPicker from './LocationPicker.tsx'
+// Leaflet is ~150 KB gzipped. Loading it only when the picker actually renders
+// keeps the first paint cheap on a slow connection.
+const LocationPicker = lazy(() => import('./LocationPicker.tsx'))
+import SmartIntake, { type SmartIntakeApplied } from './SmartIntake.tsx'
+import PhotoInput from './PhotoInput.tsx'
+import { guessNegligenceType, annotateCustomType } from '../utils/negligence.ts'
 
 const negligenceTypes: NegligenceType[] = [
   'Pothole',
+  'Street_Light',
+  'Road_Design',
   'Open_Drain',
+  'Waterlogging',
+  'Broken_Footpath',
   'Electrocution',
-  'Collapse',
   'Open_Pit',
+  'Collapse',
+  'Debris',
+  'Dangerous_Structure',
+  'Garbage_Waste',
+  'Water_Leak',
 ]
 
 const negligenceTypesWithOther = [...negligenceTypes, 'Other' as const]
@@ -68,9 +81,38 @@ export default function ReportForm() {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [submitted, setSubmitted] = useState(false)
+  const [reference, setReference] = useState<{ id: string; type: ReportType } | null>(null)
+
+  /** The AI intake is the default front door; the manual form is the escape hatch. */
+  const [intakeDone, setIntakeDone] = useState(false)
+  const [prefilledBy, setPrefilledBy] = useState<'openai' | 'mock' | null>(null)
 
   const isHazard = form.report_type === 'hazard'
   const totalSteps = isHazard ? 2 : 3
+
+  /** Apply a triage result onto the form so the citizen only has to confirm it. */
+  function applyIntake({ result, photo, city, state, agency }: SmartIntakeApplied) {
+    setForm((prev) => ({
+      ...prev,
+      report_type: result.recommended_report_type,
+      title: result.title,
+      description: result.complaint_body,
+      negligence_type: result.negligence_type,
+      custom_negligence_type: '',
+      severity: result.severity,
+      agency,
+      city: city || prev.city,
+      state: state || prev.state,
+      photo: photo ?? prev.photo,
+      date_of_incident:
+        result.recommended_report_type === 'incident'
+          ? new Date().toISOString().slice(0, 10)
+          : prev.date_of_incident,
+    }))
+    setPrefilledBy(result.source)
+    setIntakeDone(true)
+    setStep(1)
+  }
 
   function update(field: keyof FormData, value: any) {
     setForm((prev) => ({ ...prev, [field]: value }))
@@ -134,21 +176,32 @@ export default function ReportForm() {
     setSubmitting(true)
     setError(null)
 
+    // `negligence_type` has a CHECK constraint permitting only the five canonical
+    // values, so a custom label must be mapped onto one of them. The citizen's own
+    // wording is preserved in the description instead of being dropped.
+    const usedCustomType = !form.negligence_type && Boolean(form.custom_negligence_type)
+    const safeNegligenceType: NegligenceType = form.negligence_type
+      ? form.negligence_type
+      : guessNegligenceType(form.custom_negligence_type)
+    const safeDescription = usedCustomType
+      ? annotateCustomType(form.description, form.custom_negligence_type)
+      : form.description
+
     try {
       if (isHazard) {
         const hazard = await createHazard({
           address: form.address,
           city: form.city,
           state: form.state,
-          negligence_type: (form.negligence_type || form.custom_negligence_type) as NegligenceType,
+          negligence_type: safeNegligenceType,
           severity: form.severity,
-          description: form.description,
+          description: safeDescription,
           evidence_links: form.evidence_links.filter((l) => l.trim() !== ''),
           photo: form.photo,
           coordinates: form.coordinates,
         })
+        setReference({ id: hazard.id, type: 'hazard' })
         setSubmitted(true)
-        setTimeout(() => navigate(`/deathtraps/${hazard.id}`), 3000)
       } else {
         const incident = await createIncident({
           title: form.title,
@@ -162,17 +215,17 @@ export default function ReportForm() {
           address: form.address,
           city: form.city,
           state: form.state,
-          negligence_type: (form.negligence_type || form.custom_negligence_type) as NegligenceType,
+          negligence_type: safeNegligenceType,
           agency: form.agency,
           mla: form.mla || undefined,
           mp: form.mp || undefined,
-          description: form.description,
+          description: safeDescription,
           evidence_links: form.evidence_links.filter((l) => l.trim() !== ''),
           photo: form.photo,
           coordinates: form.coordinates,
         })
+        setReference({ id: incident.id, type: 'incident' })
         setSubmitted(true)
-        setTimeout(() => navigate(`/incident/${incident.id}`), 3000)
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Submission failed. Please try again.')
@@ -183,17 +236,52 @@ export default function ReportForm() {
 
   if (submitted) {
     return (
-      <div className="max-w-2xl mx-auto py-20 text-center">
-        <div className={`${isHazard ? 'bg-yellow-900/20 border-yellow-700' : 'bg-blood/20 border-blood'} border rounded-lg p-10`}>
-          <h2 className="text-3xl font-header font-bold text-white mb-4">
-            {isHazard ? 'Death Trap Reported' : 'Report Submitted'}
+      <div className="max-w-2xl mx-auto py-12 sm:py-20">
+        <div className={`${isHazard ? 'bg-yellow-900/20 border-yellow-700' : 'bg-blood/20 border-blood'} border rounded-lg p-6 sm:p-10 text-center`}>
+          <h2 className="text-2xl sm:text-3xl font-header font-bold text-white mb-3">
+            Complaint filed
           </h2>
-          <p className="text-gray-400">
-            {isHazard
-              ? 'Thank you for reporting this hazard. Your report could save lives.'
-              : 'Thank you for documenting this incident. Your report will be reviewed and verified by the community.'}
+          <p className="text-gray-400 text-sm">
+            It has been routed to <span className="text-white font-bold">{form.agency}</span> and
+            the clock is now running.
           </p>
-          <p className="text-gray-500 text-sm mt-4">Redirecting...</p>
+
+          {reference && (
+            <div className="mt-6 bg-black/40 border border-gray-700 rounded p-4">
+              <p className="text-[10px] text-gray-500 uppercase font-bold tracking-widest">
+                Your reference
+              </p>
+              <p className="text-white font-mono text-base sm:text-lg break-all mt-1">
+                {reference.id}
+              </p>
+              <p className="text-gray-500 text-xs mt-2">
+                Save this. You can reopen the tracker any time with it.
+              </p>
+            </div>
+          )}
+
+          <div className="flex flex-col sm:flex-row gap-3 mt-6 justify-center">
+            {reference && (
+              <button
+                onClick={() => navigate(`/track/${reference.id}`)}
+                className="bg-white text-black px-6 py-3 font-bold uppercase text-sm hover:bg-gray-200 transition rounded"
+              >
+                Track this complaint
+              </button>
+            )}
+            <button
+              onClick={() =>
+                navigate(
+                  reference?.type === 'hazard'
+                    ? `/deathtraps/${reference.id}`
+                    : `/incident/${reference?.id}`,
+                )
+              }
+              className="border border-gray-600 text-gray-300 px-6 py-3 font-bold uppercase text-sm hover:border-gray-400 transition rounded"
+            >
+              View public record
+            </button>
+          </div>
         </div>
       </div>
     )
@@ -204,8 +292,36 @@ export default function ReportForm() {
   const labelClass =
     'block text-xs text-gray-500 uppercase font-bold tracking-widest mb-2'
 
+  // The AI intake is the front door. Everything below is the confirm-and-correct
+  // step, or the manual path for anyone who skips it.
+  if (!intakeDone) {
+    return (
+      <div className="max-w-2xl mx-auto">
+        <SmartIntake onApply={applyIntake} onSkip={() => setIntakeDone(true)} />
+      </div>
+    )
+  }
+
   return (
     <div className="max-w-2xl mx-auto">
+      {prefilledBy && (
+        <div
+          className={`mb-6 rounded border px-4 py-3 text-sm ${
+            prefilledBy === 'openai'
+              ? 'border-green-700 bg-green-900/20 text-green-300'
+              : 'border-yellow-700 bg-yellow-900/20 text-yellow-300'
+          }`}
+        >
+          <span className="font-bold">
+            {prefilledBy === 'openai'
+              ? 'Filled in from your description.'
+              : 'Filled in using offline keyword matching (AI not connected).'}
+          </span>{' '}
+          Check every field below and correct anything that's wrong — nothing is
+          submitted until you press the final button.
+        </div>
+      )}
+
       {/* Report Type Toggle */}
       <div className="mb-8">
         <label className={labelClass}>What are you reporting?</label>
@@ -222,7 +338,7 @@ export default function ReportForm() {
               setStep(1)
             }}
           >
-            <Skull size={18} /> Incident
+            <FileText size={18} /> Past incident
           </button>
           <button
             type="button"
@@ -236,13 +352,13 @@ export default function ReportForm() {
               setStep(1)
             }}
           >
-            <AlertTriangle size={18} /> Death Trap
+            <AlertTriangle size={18} /> Safety Hazard
           </button>
         </div>
         <p className="text-gray-600 text-xs mt-2">
           {isHazard
-            ? 'Report a dangerous spot before someone gets killed'
-            : 'Report a death or serious injury caused by negligence'}
+            ? 'Flag a dangerous spot so it gets fixed before anyone is hurt'
+            : 'Document a death or serious injury that has already happened'}
         </p>
       </div>
 
@@ -445,13 +561,10 @@ export default function ReportForm() {
 
           <div>
             <label className={labelClass}>Photo Evidence</label>
-            <input
-              type="file"
-              accept="image/*"
-              className={inputClass}
-              onChange={(e) =>
-                update('photo', e.target.files?.[0] ?? null)
-              }
+            <PhotoInput
+              value={form.photo}
+              onChange={(file) => update('photo', file)}
+              onError={setError}
             />
           </div>
           <div>
@@ -499,18 +612,26 @@ export default function ReportForm() {
           </div>
           <div>
             <label className={labelClass}>Location *</label>
-            <LocationPicker
-              address={form.address}
-              city={form.city}
-              state={form.state}
-              coordinates={form.coordinates}
-              onLocationChange={(location) => {
-                update('address', location.address)
-                update('city', location.city)
-                update('state', location.state)
-                update('coordinates', location.coordinates)
-              }}
-            />
+            <Suspense
+              fallback={
+                <div className="border border-gray-800 rounded p-6 text-center text-gray-500 text-sm">
+                  Loading location tools…
+                </div>
+              }
+            >
+              <LocationPicker
+                address={form.address}
+                city={form.city}
+                state={form.state}
+                coordinates={form.coordinates}
+                onLocationChange={(location) => {
+                  update('address', location.address)
+                  update('city', location.city)
+                  update('state', location.state)
+                  update('coordinates', location.coordinates)
+                }}
+              />
+            </Suspense>
           </div>
           <div>
             <label className={labelClass}>Type of {isHazard ? 'Hazard' : 'Negligence'} *</label>
@@ -658,6 +779,19 @@ export default function ReportForm() {
         </div>
       )}
 
+      {/* Personal-information warning, shown on the step that actually files */}
+      {step === totalSteps && (
+        <div className="mt-8 rounded border border-yellow-800/60 bg-yellow-900/10 px-4 py-3 flex items-start gap-2.5">
+          <AlertTriangle size={15} className="text-yellow-600 shrink-0 mt-0.5" />
+          <p className="text-gray-400 text-xs leading-relaxed">
+            <span className="text-yellow-400 font-bold">Before you file:</span> this report
+            becomes part of a public record. Please don't include Aadhaar or PAN numbers, phone
+            numbers, bank or payment details, or medical information — yours or anyone else's.
+            Check the description above and remove anything personal.
+          </p>
+        </div>
+      )}
+
       {/* Navigation */}
       <div className="flex justify-between mt-10">
         {step > 1 ? (
@@ -688,11 +822,11 @@ export default function ReportForm() {
           >
             {submitting ? (
               <>
-                <Loader2 size={16} className="animate-spin" /> Submitting...
+                <Loader2 size={16} className="animate-spin" /> Filing…
               </>
             ) : (
               <>
-                <Send size={16} /> Submit Report
+                <Send size={16} /> File complaint
               </>
             )}
           </button>

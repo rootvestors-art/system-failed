@@ -39,6 +39,8 @@ export interface TileLayerConfig {
   url: string
   attribution: string
   subdomains: string[]
+  /** CSS class applied to the tile layer, used to invert light basemaps. */
+  className?: string
 }
 
 export function useTileProvider() {
@@ -113,14 +115,21 @@ export function useTileProvider() {
   const tileConfig: TileLayerConfig = useMemo(() => {
     const url = RESOLVED_URLS[currentId]
     if (url) {
-      return { url, attribution: provider.attribution, subdomains: provider.subdomains }
+      return {
+        url,
+        attribution: provider.attribution,
+        subdomains: provider.subdomains,
+        className: provider.darkFilter ? 'tile-dark' : undefined,
+      }
     }
-    // Fallback to CARTO if URL is somehow null (missing key for a key-requiring provider)
-    const carto = TILE_PROVIDERS['carto']
+    // A key-requiring provider with no key: fall back to the keyless basemap
+    // rather than to CARTO, which now needs a key of its own.
+    const osm = TILE_PROVIDERS['osm']
     return {
-      url: carto.getUrl(undefined) as string,
-      attribution: carto.attribution,
-      subdomains: carto.subdomains,
+      url: osm.getUrl(undefined) as string,
+      attribution: osm.attribution,
+      subdomains: osm.subdomains,
+      className: 'tile-dark',
     }
   }, [currentId, provider])
 

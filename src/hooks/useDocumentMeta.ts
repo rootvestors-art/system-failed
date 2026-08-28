@@ -38,7 +38,7 @@ export function useDocumentMeta(meta: DocumentMeta | null) {
     upsertMeta('property', 'og:description', meta.description)
     upsertMeta('property', 'og:url', meta.url)
     upsertMeta('property', 'og:type', 'article')
-    upsertMeta('property', 'og:site_name', 'SystemFailed')
+    upsertMeta('property', 'og:site_name', 'CivicFix')
 
     if (meta.ogImage) {
       upsertMeta('property', 'og:image', meta.ogImage)
@@ -51,7 +51,6 @@ export function useDocumentMeta(meta: DocumentMeta | null) {
     upsertMeta('name', 'twitter:card', meta.ogImage ? 'summary_large_image' : 'summary')
     upsertMeta('name', 'twitter:title', meta.title)
     upsertMeta('name', 'twitter:description', meta.description)
-    upsertMeta('name', 'twitter:site', '@SystemFailed_in')
     if (meta.ogImage) upsertMeta('name', 'twitter:image', meta.ogImage)
 
     // Standard description

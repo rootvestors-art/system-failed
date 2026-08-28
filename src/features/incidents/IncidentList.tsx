@@ -191,10 +191,10 @@ export default function IncidentList() {
 
             <div className="bg-blood p-6 rounded text-center">
               <h3 className="text-white font-header font-bold text-2xl uppercase">
-                Don't let them hide
+                Seen something dangerous?
               </h3>
               <p className="text-red-100 text-sm mb-4">
-                Upload photos of negligence in your area before someone dies.
+                Report a hazard in your area and we'll route it to the right department.
               </p>
               <a
                 href="/report"
@@ -208,7 +208,7 @@ export default function IncidentList() {
               href="/deathtraps"
               className="block mt-4 text-yellow-500 hover:text-yellow-400 font-header font-bold uppercase tracking-wide text-sm text-center transition"
             >
-              View Death Traps &rarr;
+              View Safety Hazards &rarr;
             </a>
           </div>
         </div>

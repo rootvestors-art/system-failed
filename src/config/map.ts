@@ -1,4 +1,4 @@
-type MapProviderKey = 'tomtom' | 'carto'
+type MapProviderKey = 'tomtom' | 'osm'
 
 export interface MapConfig {
   /** First provider to attempt */
@@ -12,10 +12,13 @@ function resolveConfig(): MapConfig {
   const hasKey = Boolean(import.meta.env.VITE_TOMTOM_API_KEY)
   const useTomTom = explicit ? explicit === 'tomtom' : hasKey
 
+  // `osm` is the terminal fallback because it is the only provider that still
+  // works without a key. CARTO has been removed: it answers anonymous requests
+  // with a watermarked tile and HTTP 200, so it fails invisibly.
   if (useTomTom && hasKey) {
-    return { primaryId: 'tomtom_in', fallbackChain: ['tomtom_default', 'carto'] }
+    return { primaryId: 'tomtom_in', fallbackChain: ['tomtom_default', 'osm'] }
   }
-  return { primaryId: 'carto', fallbackChain: [] }
+  return { primaryId: 'osm', fallbackChain: [] }
 }
 
 export const MAP_CONFIG = resolveConfig()

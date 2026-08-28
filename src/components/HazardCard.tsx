@@ -8,6 +8,7 @@ import {
   extractDomain,
 } from '../utils/formatters.ts'
 import { upvoteHazard, hasUpvoted } from '../services/incidents.ts'
+import { isSampleRecord } from '../utils/negligence.ts'
 import {
   getShareUrl,
   generateHazardCaption,
@@ -118,12 +119,17 @@ export default function HazardCard({ hazard, compact = false, onUpvote }: Hazard
             >
               {hazard.status}
             </span>
+            {isSampleRecord(hazard.id) && (
+              <span className="inline-block text-xs px-2 py-0.5 rounded font-bold uppercase bg-sky-950 text-sky-300 border border-sky-800">
+                Sample
+              </span>
+            )}
           </div>
         </Link>
 
         {showShare && (
           <ShareSheet
-            title={`Death Trap — ${negligenceLabel(hazard.negligence_type)} in ${hazard.location.city}`}
+            title={`Safety Hazard — ${negligenceLabel(hazard.negligence_type)} in ${hazard.location.city}`}
             caption={caption}
             shareUrl={shareUrl}
             links={shareLinks}
@@ -170,11 +176,16 @@ export default function HazardCard({ hazard, compact = false, onUpvote }: Hazard
             >
               {hazard.status}
             </span>
+            {isSampleRecord(hazard.id) && (
+              <span className="px-3 py-1 text-xs font-bold uppercase rounded bg-sky-950 text-sky-300 border border-sky-800">
+                Sample data
+              </span>
+            )}
           </div>
 
           <h3 className="text-4xl font-header font-bold text-white mb-2 flex items-center gap-3">
             <AlertTriangle size={32} className="text-yellow-500" />
-            DEATH TRAP
+            {isSampleRecord(hazard.id) ? 'Sample issue' : 'Reported issue'}
           </h3>
           <p className="text-lg text-gray-400 mb-2 flex items-center gap-1">
             <MapPin size={16} />
@@ -232,7 +243,7 @@ export default function HazardCard({ hazard, compact = false, onUpvote }: Hazard
 
       {showShare && (
         <ShareSheet
-          title={`Death Trap — ${negligenceLabel(hazard.negligence_type)} in ${hazard.location.city}`}
+          title={`Safety Hazard — ${negligenceLabel(hazard.negligence_type)} in ${hazard.location.city}`}
           caption={caption}
           shareUrl={shareUrl}
           links={shareLinks}

@@ -12,7 +12,11 @@ create table if not exists public.incidents (
   date_of_incident date not null,
   location      jsonb not null,
   negligence_type text not null check (
-    negligence_type in ('Pothole', 'Open_Drain', 'Electrocution', 'Collapse', 'Open_Pit')
+    negligence_type in (
+      'Pothole', 'Open_Drain', 'Electrocution', 'Collapse', 'Open_Pit',
+      'Street_Light', 'Road_Design', 'Broken_Footpath', 'Waterlogging', 'Debris',
+      'Dangerous_Structure', 'Garbage_Waste', 'Water_Leak'
+    )
   ),
   responsible_entities jsonb not null,
   status        text not null default 'Community_Flagged' check (
@@ -67,7 +71,11 @@ create table if not exists public.hazards (
   id              uuid primary key default gen_random_uuid(),
   location        jsonb not null,
   negligence_type text not null check (
-    negligence_type in ('Pothole', 'Open_Drain', 'Electrocution', 'Collapse', 'Open_Pit')
+    negligence_type in (
+      'Pothole', 'Open_Drain', 'Electrocution', 'Collapse', 'Open_Pit',
+      'Street_Light', 'Road_Design', 'Broken_Footpath', 'Waterlogging', 'Debris',
+      'Dangerous_Structure', 'Garbage_Waste', 'Water_Leak'
+    )
   ),
   severity        text not null default 'Medium' check (
     severity in ('Low', 'Medium', 'High', 'Critical')

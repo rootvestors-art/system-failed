@@ -64,7 +64,7 @@ export default function DeathTrapList() {
           <div className="flex justify-between items-end mb-6">
             <h2 className="text-3xl font-header font-bold text-white border-l-8 border-yellow-500 pl-4 flex items-center gap-3">
               <AlertTriangle size={28} className="text-yellow-500" />
-              ACTIVE DEATH TRAPS
+              REPORTED ISSUES
             </h2>
           </div>
 
@@ -82,7 +82,7 @@ export default function DeathTrapList() {
                 ))
               ) : (
                 <p className="text-gray-600 text-sm py-12 text-center">
-                  No death traps match your filters.
+                  No reported issues match your filters.
                 </p>
               )}
             </>
@@ -93,7 +93,7 @@ export default function DeathTrapList() {
               {hazards.length > 1 && (
                 <div className="mt-12">
                   <h2 className="text-2xl font-header font-bold text-white border-l-4 border-gray-700 pl-4 mb-6">
-                    MORE DEATH TRAPS
+                    MORE REPORTED ISSUES
                   </h2>
                   {hazards.slice(1).map((hazard) => (
                     <HazardCard key={hazard.id} hazard={hazard} compact />
@@ -105,16 +105,16 @@ export default function DeathTrapList() {
             <div className="bg-[#111] border border-gray-800 rounded-lg p-10 text-center">
               <AlertTriangle size={48} className="text-yellow-500 mx-auto mb-4" />
               <h3 className="text-2xl font-header font-bold text-white mb-2">
-                No Death Traps Reported Yet
+                Nothing Reported Yet
               </h3>
               <p className="text-gray-400 mb-6">
-                Spot a dangerous hazard in your area? Report it before someone gets killed.
+                Spot a dangerous hazard in your area? Report it so it can be fixed before anyone is hurt.
               </p>
               <Link
                 to="/report"
                 className="inline-block bg-yellow-700 hover:bg-yellow-600 text-white px-8 py-3 font-header font-bold uppercase tracking-wide transition"
               >
-                Report a Death Trap
+                Report an issue
               </Link>
             </div>
           )}
@@ -153,10 +153,10 @@ export default function DeathTrapList() {
           {/* CTA — always visible */}
           <div className="bg-yellow-700 p-6 rounded text-center">
             <h3 className="text-white font-header font-bold text-2xl uppercase">
-              Spot a Death Trap?
+              Spot something dangerous?
             </h3>
             <p className="text-yellow-100 text-sm mb-4">
-              Report dangerous hazards before someone gets killed.
+              Report dangerous spots so they get fixed in time.
             </p>
             <Link
               to="/report"

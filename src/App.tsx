@@ -7,6 +7,9 @@ import MapView from './features/incidents/MapView.tsx'
 import ReportForm from './components/ReportForm.tsx'
 import DeathTrapList from './features/hazards/DeathTrapList.tsx'
 import DeathTrapDetail from './features/hazards/DeathTrapDetail.tsx'
+import TrackComplaint from './features/tracking/TrackComplaint.tsx'
+import HowItWorks from './pages/HowItWorks.tsx'
+import Home from './pages/Home.tsx'
 import Toast from './components/Toast.tsx'
 
 export default function App() {
@@ -16,12 +19,18 @@ export default function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/cases" element={<HomePage />} />
+          {/* The memorial record moved off the homepage — it is a different product
+              from the reporting journey. /cases stays as an alias for old links. */}
+          <Route path="/accountability" element={<AccountabilityPage />} />
+          <Route path="/cases" element={<AccountabilityPage />} />
           <Route path="/incident/:id" element={<DetailPage />} />
           <Route path="/map" element={<MapView />} />
           <Route path="/report" element={<ReportPage />} />
           <Route path="/deathtraps" element={<DeathTrapListPage />} />
           <Route path="/deathtraps/:id" element={<DeathTrapDetailPage />} />
+          <Route path="/track" element={<TrackPage />} />
+          <Route path="/track/:id" element={<TrackPage />} />
+          <Route path="/how-it-works" element={<HowItWorksPage />} />
         </Routes>
       </div>
       <Toast />
@@ -30,6 +39,15 @@ export default function App() {
 }
 
 function HomePage() {
+  return (
+    <>
+      <Home />
+      <Footer />
+    </>
+  )
+}
+
+function AccountabilityPage() {
   return (
     <>
       <IncidentList />
@@ -50,12 +68,13 @@ function DetailPage() {
 function ReportPage() {
   return (
     <>
-      <main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
-        <h1 className="text-4xl font-header font-bold text-white mb-2 text-center">
-          REPORT AN INCIDENT
+      <main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 w-full">
+        <h1 className="text-2xl sm:text-3xl font-header font-bold text-white mb-2 text-center">
+          Report a civic issue
         </h1>
-        <p className="text-gray-500 text-center mb-10">
-          Document. Demand. Fix. — Document systemic negligence. Hold the system accountable.
+        <p className="text-gray-500 text-center mb-8 sm:mb-10 text-sm max-w-xl mx-auto">
+          Tell us what's wrong in your own words. We'll identify the responsible department
+          and prepare the complaint for you to check.
         </p>
         <ReportForm />
       </main>
@@ -77,6 +96,24 @@ function DeathTrapDetailPage() {
   return (
     <>
       <DeathTrapDetail />
+      <Footer />
+    </>
+  )
+}
+
+function TrackPage() {
+  return (
+    <>
+      <TrackComplaint />
+      <Footer />
+    </>
+  )
+}
+
+function HowItWorksPage() {
+  return (
+    <>
+      <HowItWorks />
       <Footer />
     </>
   )

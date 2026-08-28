@@ -57,3 +57,9 @@
 .glitch-text:hover {
   text-shadow: 2px 2px #d90429;
 }
+
+/* Invert a light basemap (OpenStreetMap) so it suits the dark UI. Used when the
+   active tile provider sets `darkFilter` — see config/tileProviders.ts. */
+.tile-dark {
+  filter: invert(1) hue-rotate(180deg) brightness(0.92) contrast(0.88) saturate(0.6);
+}

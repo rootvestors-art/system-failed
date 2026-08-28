@@ -57,30 +57,36 @@ export default function IncidentMap({
           </Popup>
         </CircleMarker>
       ))}
-      {hazards.map((hazard) => (
-        <CircleMarker
-          key={`h-${hazard.id}`}
-          center={[hazard.location.lat, hazard.location.lng]}
-          radius={8}
-          pathOptions={{
-            color: '#a16207',
-            fillColor: '#eab308',
-            fillOpacity: 0.7,
-            weight: 2,
-          }}
-          eventHandlers={{
-            click: () => onSelectHazard?.(hazard),
-          }}
-        >
-          <Popup>
-            <div className="text-sm">
-              <p className="font-bold">{negligenceLabel(hazard.negligence_type)}</p>
-              <p className="text-gray-600">{hazard.severity}</p>
-              <p className="text-gray-500">{hazard.location.city}</p>
-            </div>
-          </Popup>
-        </CircleMarker>
-      ))}
+      {hazards.map((hazard) => {
+        // Resolved issues go green so the map shows progress, not just problems.
+        const fixed = hazard.status === 'Fixed'
+        return (
+          <CircleMarker
+            key={`h-${hazard.id}`}
+            center={[hazard.location.lat, hazard.location.lng]}
+            radius={8}
+            pathOptions={{
+              color: fixed ? '#15803d' : '#a16207',
+              fillColor: fixed ? '#22c55e' : '#eab308',
+              fillOpacity: fixed ? 0.55 : 0.7,
+              weight: 2,
+            }}
+            eventHandlers={{
+              click: () => onSelectHazard?.(hazard),
+            }}
+          >
+            <Popup>
+              <div className="text-sm">
+                <p className="font-bold">{negligenceLabel(hazard.negligence_type)}</p>
+                <p className="text-gray-600">
+                  {fixed ? 'Reported fixed' : `${hazard.severity} severity`}
+                </p>
+                <p className="text-gray-500">{hazard.location.city}</p>
+              </div>
+            </Popup>
+          </CircleMarker>
+        )
+      })}
     </MapContainer>
   )
 }

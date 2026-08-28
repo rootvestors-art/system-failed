@@ -1,9 +1,25 @@
+/**
+ * Hazard categories a citizen can report.
+ *
+ * These are load-bearing: the category decides which department the complaint is
+ * routed to. Keeping the list too short forces misclassification — "no street
+ * lights" was previously filed as Electrocution and sent to the electricity
+ * utility, when street lighting is the municipal body's responsibility.
+ */
 export type NegligenceType =
   | 'Pothole'
   | 'Open_Drain'
   | 'Electrocution'
   | 'Collapse'
   | 'Open_Pit'
+  | 'Street_Light'
+  | 'Road_Design'
+  | 'Broken_Footpath'
+  | 'Waterlogging'
+  | 'Debris'
+  | 'Dangerous_Structure'
+  | 'Garbage_Waste'
+  | 'Water_Leak'
 
 export type OutcomeType = 'Death' | 'Serious_Injury'
 

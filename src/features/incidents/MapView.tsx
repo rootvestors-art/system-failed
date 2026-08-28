@@ -1,6 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, lazy, Suspense } from 'react'
+import { Link } from 'react-router-dom'
 import { getAllIncidents, getAllHazards } from '../../services/incidents.ts'
-import IncidentMap from '../../components/IncidentMap.tsx'
+
+// Split Leaflet out of the initial bundle — see ReportForm for the same reason.
+const IncidentMap = lazy(() => import('../../components/IncidentMap.tsx'))
 import IncidentCard from '../../components/IncidentCard.tsx'
 import HazardCard from '../../components/HazardCard.tsx'
 import type { Incident, Hazard } from '../../types/incident.ts'
@@ -11,7 +14,9 @@ export default function MapView() {
   const [hazards, setHazards] = useState<Hazard[]>([])
   const [selectedIncident, setSelectedIncident] = useState<Incident | null>(null)
   const [selectedHazard, setSelectedHazard] = useState<Hazard | null>(null)
-  const [showIncidents, setShowIncidents] = useState(true)
+  // Reported issues are the primary layer now; past fatalities are context you
+  // opt into, not the headline.
+  const [showIncidents, setShowIncidents] = useState(false)
   const [showDeathTraps, setShowDeathTraps] = useState(true)
 
   useEffect(() => {
@@ -32,36 +37,42 @@ export default function MapView() {
   const filteredIncidents = showIncidents ? incidents : []
   const filteredHazards = showDeathTraps ? hazards : []
 
+  const openCount = hazards.filter((h) => h.status !== 'Fixed').length
+  const resolvedCount = hazards.filter((h) => h.status === 'Fixed').length
+
   return (
     <div className="flex flex-1 overflow-hidden" style={{ height: 'calc(100vh - 5rem)' }}>
       {/* Sidebar */}
       <aside className="w-80 bg-charcoal border-r border-gray-800 flex flex-col overflow-y-auto hidden md:flex">
         <div className="p-4 border-b border-gray-800">
           <h2 className="text-gray-400 text-xs uppercase tracking-widest font-bold mb-2">
-            Latest Reports
+            Reported issues
           </h2>
+          <p className="text-gray-600 text-xs">
+            Hazards citizens have filed complaints about.
+          </p>
         </div>
         <div className="p-4 flex-1 overflow-y-auto">
-          {showIncidents && incidents.map((incident) => (
-            <IncidentCard
-              key={incident.id}
-              incident={incident}
-              compact
-            />
-          ))}
+          {showDeathTraps &&
+            hazards.map((hazard) => (
+              <HazardCard key={hazard.id} hazard={hazard} compact />
+            ))}
 
-          {showDeathTraps && hazards.length > 0 && (
+          {showDeathTraps && hazards.length === 0 && (
+            <p className="text-gray-600 text-xs">Nothing reported yet.</p>
+          )}
+
+          {showIncidents && incidents.length > 0 && (
             <>
-              {showIncidents && <div className="border-t border-gray-700 my-4" />}
-              <h2 className="text-yellow-500 text-xs uppercase tracking-widest font-bold mb-4">
-                Death Traps
+              {showDeathTraps && <div className="border-t border-gray-700 my-4" />}
+              <h2 className="text-red-500 text-xs uppercase tracking-widest font-bold mb-1">
+                Past incidents
               </h2>
-              {hazards.map((hazard) => (
-                <HazardCard
-                  key={hazard.id}
-                  hazard={hazard}
-                  compact
-                />
+              <p className="text-gray-600 text-xs mb-4">
+                Where negligence already caused death or injury.
+              </p>
+              {incidents.map((incident) => (
+                <IncidentCard key={incident.id} incident={incident} compact />
               ))}
             </>
           )}
@@ -70,36 +81,25 @@ export default function MapView() {
 
       {/* Map */}
       <main className="flex-1 relative">
-        <IncidentMap
-          incidents={filteredIncidents}
-          hazards={filteredHazards}
-          onSelectIncident={handleSelectIncident}
-          onSelectHazard={handleSelectHazard}
-        />
+        <Suspense
+          fallback={
+            <div className="h-full w-full flex items-center justify-center text-gray-500 text-sm">
+              Loading map…
+            </div>
+          }
+        >
+          <IncidentMap
+            incidents={filteredIncidents}
+            hazards={filteredHazards}
+            onSelectIncident={handleSelectIncident}
+            onSelectHazard={handleSelectHazard}
+          />
+        </Suspense>
 
         {/* Legend / filter checkboxes — top right, above Leaflet */}
         <div className="absolute top-4 right-4 bg-black/90 border border-gray-700 rounded-lg p-3 shadow-2xl backdrop-blur-sm" style={{ zIndex: 1000 }}>
           <p className="text-gray-500 text-[10px] uppercase font-bold tracking-widest mb-2">Map Layers</p>
           <label className="flex items-center gap-2 cursor-pointer mb-2 group">
-            <input
-              type="checkbox"
-              checked={showIncidents}
-              onChange={() => setShowIncidents(!showIncidents)}
-              className="sr-only peer"
-            />
-            <span className="w-4 h-4 rounded-sm border-2 border-red-500 bg-red-500/20 flex items-center justify-center peer-checked:bg-red-500 transition">
-              {showIncidents && (
-                <svg viewBox="0 0 12 12" className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M2 6l3 3 5-5" />
-                </svg>
-              )}
-            </span>
-            <span className="text-xs text-gray-300 group-hover:text-white transition">
-              Incidents
-              <span className="text-red-500 font-mono ml-1">({incidents.length})</span>
-            </span>
-          </label>
-          <label className="flex items-center gap-2 cursor-pointer group">
             <input
               type="checkbox"
               checked={showDeathTraps}
@@ -114,31 +114,62 @@ export default function MapView() {
               )}
             </span>
             <span className="text-xs text-gray-300 group-hover:text-white transition">
-              Death Traps
+              Reported issues
               <span className="text-yellow-500 font-mono ml-1">({hazards.length})</span>
             </span>
           </label>
+          <label className="flex items-center gap-2 cursor-pointer group">
+            <input
+              type="checkbox"
+              checked={showIncidents}
+              onChange={() => setShowIncidents(!showIncidents)}
+              className="sr-only peer"
+            />
+            <span className="w-4 h-4 rounded-sm border-2 border-red-500 bg-red-500/20 flex items-center justify-center peer-checked:bg-red-500 transition">
+              {showIncidents && (
+                <svg viewBox="0 0 12 12" className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M2 6l3 3 5-5" />
+                </svg>
+              )}
+            </span>
+            <span className="text-xs text-gray-300 group-hover:text-white transition">
+              Past incidents
+              <span className="text-red-500 font-mono ml-1">({incidents.length})</span>
+            </span>
+          </label>
+
+          <div className="border-t border-gray-800 mt-3 pt-2 space-y-1">
+            <p className="text-gray-500 text-[10px] uppercase font-bold tracking-widest">Key</p>
+            <p className="text-[10px] text-gray-400 flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-yellow-500 inline-block" /> Open
+            </p>
+            <p className="text-[10px] text-gray-400 flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-green-500 inline-block" /> Reported fixed
+            </p>
+          </div>
         </div>
 
         {/* Status overlay - fixed position */}
         <div className="fixed bottom-8 left-8 bg-black/90 p-4 border border-gray-700 rounded shadow-2xl backdrop-blur-sm" style={{ zIndex: 1000 }}>
-          <h3 className="text-white font-bold uppercase mb-2">System Status</h3>
+          <h3 className="text-white font-bold uppercase mb-2 text-sm">Across India</h3>
           <div className="grid grid-cols-3 gap-4 text-center">
+            <div>
+              <span className="block text-2xl font-bold text-yellow-500 font-mono">
+                {openCount}
+              </span>
+              <span className="text-xs text-gray-400 uppercase">Open</span>
+            </div>
+            <div>
+              <span className="block text-2xl font-bold text-green-500 font-mono">
+                {resolvedCount}
+              </span>
+              <span className="text-xs text-gray-400 uppercase">Fixed</span>
+            </div>
             <div>
               <span className="block text-2xl font-bold text-red-500 font-mono">
                 {incidents.length}
               </span>
-              <span className="text-xs text-gray-400 uppercase">Incidents</span>
-            </div>
-            <div>
-              <span className="block text-2xl font-bold text-yellow-500 font-mono">
-                {hazards.length}
-              </span>
-              <span className="text-xs text-gray-400 uppercase">Death Traps</span>
-            </div>
-            <div>
-              <span className="block text-2xl font-bold text-caution font-mono">0</span>
-              <span className="text-xs text-gray-400 uppercase">Resignations</span>
+              <span className="text-xs text-gray-400 uppercase">Past</span>
             </div>
           </div>
         </div>
@@ -157,19 +188,32 @@ export default function MapView() {
               className="w-full h-48 object-cover rounded mb-4 grayscale hover:grayscale-0 transition duration-500 border border-gray-700"
             />
           )}
-          <h2 className="text-3xl font-black text-white mb-1">
-            CASE #{selectedIncident.case_id}
+          <h2 className="text-2xl font-black text-white mb-1">
+            Case {selectedIncident.case_id}
           </h2>
-          <p className="text-red-500 font-mono text-sm mb-4">FATALITY CONFIRMED</p>
+          <p className="text-gray-400 text-sm mb-1">{selectedIncident.title}</p>
+          <p className="text-red-500 font-mono text-xs mb-4">
+            {selectedIncident.location.city}, {selectedIncident.location.state}
+          </p>
           <p className="text-gray-300 text-sm">{selectedIncident.description}</p>
+          <Link
+            to={`/incident/${selectedIncident.id}`}
+            className="inline-block mt-4 text-sm text-gray-300 hover:text-white border border-gray-700 hover:border-gray-500 rounded px-4 py-2 font-header uppercase tracking-wide transition"
+          >
+            Open case file
+          </Link>
         </aside>
       )}
 
       {/* Hazard detail panel */}
       {selectedHazard && (
         <aside className="w-96 bg-void border-l border-gray-800 p-6 hidden lg:block overflow-y-auto">
-          <div className="bg-yellow-700 text-white text-xs font-bold px-2 py-1 inline-block mb-4 uppercase">
-            Death Trap
+          <div
+            className={`text-white text-xs font-bold px-2 py-1 inline-block mb-4 uppercase ${
+              selectedHazard.status === 'Fixed' ? 'bg-green-700' : 'bg-yellow-700'
+            }`}
+          >
+            {selectedHazard.status === 'Fixed' ? 'Reported fixed' : 'Open issue'}
           </div>
           {selectedHazard.image_url && (
             <img
@@ -178,13 +222,22 @@ export default function MapView() {
               className="w-full h-48 object-cover rounded mb-4 grayscale hover:grayscale-0 transition duration-500 border border-gray-700"
             />
           )}
-          <h2 className="text-3xl font-black text-white mb-1">
-            {selectedHazard.severity.toUpperCase()} SEVERITY
+          <h2 className="text-2xl font-black text-white mb-1">
+            {negligenceLabel(selectedHazard.negligence_type)}
           </h2>
-          <p className="text-yellow-500 font-mono text-sm mb-4">
-            {negligenceLabel(selectedHazard.negligence_type).toUpperCase()}
+          <p className="text-yellow-500 font-mono text-xs mb-1">
+            {selectedHazard.severity} severity
+          </p>
+          <p className="text-gray-500 text-xs mb-4">
+            {selectedHazard.location.city}, {selectedHazard.location.state}
           </p>
           <p className="text-gray-300 text-sm">{selectedHazard.description}</p>
+          <Link
+            to={`/track/${selectedHazard.id}`}
+            className="inline-block mt-4 text-sm text-white bg-blood hover:bg-red-700 rounded px-4 py-2 font-header uppercase tracking-wide transition"
+          >
+            Track this complaint
+          </Link>
         </aside>
       )}
     </div>

@@ -47,6 +47,24 @@ function buildDescription(incident: IncidentRow): string {
   return `${outcome} • ${incident.negligence_type.replace(/_/g, ' ')} • ${loc} — ${incident.description.slice(0, 140)}`
 }
 
+/**
+ * Escape a value for interpolation into HTML text or a double-quoted attribute.
+ *
+ * Everything below is built from database rows and the request URL, both of
+ * which are attacker-controlled: any visitor can submit a report title, and the
+ * `id` path segment is arbitrary. Without this, `"><script>` in a title breaks
+ * out of a `content="..."` attribute and executes same-origin on a response the
+ * CDN then caches for every subsequent viewer.
+ */
+function esc(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
 function html(opts: {
   title: string
   description: string
@@ -60,47 +78,53 @@ function html(opts: {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${opts.canonicalTitle}</title>
-  <meta name="description" content="${opts.description}">
+  <title>${esc(opts.canonicalTitle)}</title>
+  <meta name="description" content="${esc(opts.description)}">
 
   <!-- Open Graph -->
   <meta property="og:type" content="article">
-  <meta property="og:site_name" content="SystemFailed">
-  <meta property="og:title" content="${opts.title}">
-  <meta property="og:description" content="${opts.description}">
-  <meta property="og:url" content="${opts.ogUrl}">
-  <meta property="og:image" content="${opts.ogImage}">
+  <meta property="og:site_name" content="CivicFix">
+  <meta property="og:title" content="${esc(opts.title)}">
+  <meta property="og:description" content="${esc(opts.description)}">
+  <meta property="og:url" content="${esc(opts.ogUrl)}">
+  <meta property="og:image" content="${esc(opts.ogImage)}">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:image:type" content="image/png">
 
   <!-- Twitter / X Cards -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:site" content="@SystemFailed_in">
-  <meta name="twitter:title" content="${opts.title}">
-  <meta name="twitter:description" content="${opts.description}">
-  <meta name="twitter:image" content="${opts.ogImage}">
+  <meta name="twitter:title" content="${esc(opts.title)}">
+  <meta name="twitter:description" content="${esc(opts.description)}">
+  <meta name="twitter:image" content="${esc(opts.ogImage)}">
 
-  <!-- Immediate redirect for browsers -->
-  <meta http-equiv="refresh" content="0;url=${opts.spaUrl}">
+  <!-- Redirect for browsers. Deliberately meta-refresh only: an inline
+       script here would place a URL-derived value inside a JS string. -->
+  <meta http-equiv="refresh" content="0;url=${esc(opts.spaUrl)}">
 </head>
 <body>
   <p style="font-family:sans-serif;color:#999;margin:40px auto;max-width:600px;text-align:center">
-    Redirecting to incident page…
+    Redirecting to the incident page… <a href="${esc(opts.spaUrl)}">Continue</a>
   </p>
-  <script>window.location.replace("${opts.spaUrl}")</script>
 </body>
 </html>`
 }
 
+/** Reports are addressed by UUID; anything else is not a real reference. */
+function isUuid(value: string): boolean {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value)
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default async function handler(req: any, res: any) {
-  const id = req.query.id as string
-  const proto = req.headers['x-forwarded-proto'] ?? 'https'
-  const host = req.headers.host ?? ''
+  const rawId = String(req.query.id ?? '')
+  // Never reflect an unvalidated path segment into the response.
+  const id = isUuid(rawId) ? rawId : ''
+  const proto = req.headers['x-forwarded-proto'] === 'http' ? 'http' : 'https'
+  const host = String(req.headers.host ?? '').replace(/[^a-zA-Z0-9.:-]/g, '')
   const base = `${proto}://${host}`
-  const spaUrl = `${base}/incident/${id}`
-  const shareUrl = `${base}/share/incident/${id}`
+  const spaUrl = id ? `${base}/incident/${id}` : `${base}/`
+  const shareUrl = id ? `${base}/share/incident/${id}` : `${base}/`
 
   const supabaseUrl = process.env.VITE_SUPABASE_URL
   const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY
@@ -108,7 +132,7 @@ export default async function handler(req: any, res: any) {
   // --------------------------------------------------------------------------
   // Try to fetch live data from Supabase
   // --------------------------------------------------------------------------
-  if (supabaseUrl && supabaseKey) {
+  if (id && supabaseUrl && supabaseKey) {
     try {
       const supabase = createClient(supabaseUrl, supabaseKey)
       const { data: incident } = await supabase
@@ -139,12 +163,12 @@ export default async function handler(req: any, res: any) {
   res.setHeader('Cache-Control', 'public, s-maxage=60')
   return res.send(
     html({
-      title: 'SystemFailed — Civic Negligence Report',
-      description: 'Document. Demand. Fix. — Documenting deaths caused by civic negligence in India.',
+      title: 'CivicFix — Civic Negligence Report',
+      description: 'Report a dangerous civic issue in India — routed to the right department, with a deadline attached.',
       ogImage: fallbackOg,
       ogUrl: shareUrl,
       spaUrl,
-      canonicalTitle: 'SystemFailed — Civic Negligence Report',
+      canonicalTitle: 'CivicFix — Civic Negligence Report',
     }),
   )
 }

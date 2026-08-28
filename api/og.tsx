@@ -111,7 +111,7 @@ export default async function handler(req: Request) {
               padding: '6px 14px',
               borderRadius: 4,
             }}>
-              ⚠ DEATH TRAP
+              ⚠ SAFETY HAZARD
             </div>
           </div>
 
@@ -160,7 +160,7 @@ export default async function handler(req: Request) {
               <span style={{ color: C.gray600, fontSize: 14, letterSpacing: '0.1em', fontWeight: 700 }}>
                 REPORTED • NOT YET FIXED
               </span>
-              <span style={{ color: C.gray400, fontSize: 13 }}>systemfailed.in</span>
+              <span style={{ color: C.gray400, fontSize: 13 }}>CivicFix</span>
             </div>
             <div style={{ display: 'flex', color: C.caution, fontSize: 14, fontWeight: 700, letterSpacing: '0.08em' }}>
               CHECK IF THIS IS FIXED →
@@ -286,7 +286,7 @@ export default async function handler(req: Request) {
           {/* Bottom tagline */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
             <span style={{ color: C.gray600, fontSize: 14, letterSpacing: '0.1em', fontWeight: 700 }}>
-              systemfailed.in
+              CivicFix
             </span>
             <span style={{ color: C.blood, fontSize: 14, fontWeight: 700, letterSpacing: '0.08em' }}>
               DOCUMENT. DEMAND. FIX.

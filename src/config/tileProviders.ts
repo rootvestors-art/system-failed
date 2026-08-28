@@ -7,6 +7,8 @@ export interface TileProvider {
   getUrl: (key: string | undefined) => string | null
   attribution: string
   subdomains: string[]
+  /** Invert the tiles in CSS so a light basemap suits the dark UI. */
+  darkFilter?: boolean
 }
 
 export const TILE_PROVIDERS: Record<string, TileProvider> = {
@@ -32,13 +34,22 @@ export const TILE_PROVIDERS: Record<string, TileProvider> = {
     attribution: '&copy; TomTom &copy; OpenStreetMap contributors',
     subdomains: ['a', 'b', 'c', 'd'],
   },
-  carto: {
-    id: 'carto',
-    label: 'CARTO dark matter',
+  /**
+   * OpenStreetMap standard tiles — the only genuinely key-free option left.
+   *
+   * CARTO's dark_all basemap now serves an "API KEY REQUIRED" watermark to
+   * anonymous callers (HTTP 200, so Leaflet never fires a tile error and the
+   * fallback chain can't detect it). OSM tiles are light, so `darkFilter` tells
+   * the map layer to invert them into something that matches the theme.
+   */
+  osm: {
+    id: 'osm',
+    label: 'OpenStreetMap (no key needed)',
     requiresKey: false,
-    getUrl: () => 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-    attribution: '&copy; <a href="https://carto.com/">CARTO</a>',
-    subdomains: ['a', 'b', 'c', 'd'],
+    getUrl: () => 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    subdomains: [],
+    darkFilter: true,
   },
 }
 
