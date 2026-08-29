@@ -13,11 +13,10 @@ import {
 import { getIncidentById, getHazardById, markHazardFixed } from '../../services/incidents.ts'
 import type { Incident, Hazard } from '../../types/incident.ts'
 import {
-  resolveJurisdiction,
-  resolveAgency,
-  buildEscalationLadder,
-  type EscalationLevel,
-} from '../../data/jurisdictions.ts'
+  hazardStatus,
+  incidentStatus,
+  formatRemaining,
+} from '../../utils/complaintStatus.ts'
 import PhotoInput from '../../components/PhotoInput.tsx'
 import { negligenceLabel } from '../../utils/formatters.ts'
 import { copyToClipboard } from '../../utils/share.ts'
@@ -25,45 +24,6 @@ import { copyToClipboard } from '../../utils/share.ts'
 type Tracked =
   | { kind: 'incident'; record: Incident }
   | { kind: 'hazard'; record: Hazard }
-
-const MS_PER_DAY = 86_400_000
-
-/** Countdown wording — falls back to hours so "1 day left" never reads as "escalating now". */
-function formatRemaining(daysLeft: number): string {
-  if (daysLeft >= 1) {
-    const days = Math.ceil(daysLeft)
-    return `${days} day${days === 1 ? '' : 's'} left before this escalates automatically.`
-  }
-  const hours = Math.ceil(daysLeft * 24)
-  if (hours >= 1) {
-    return `${hours} hour${hours === 1 ? '' : 's'} left before this escalates automatically.`
-  }
-  return 'Escalating to the next level now.'
-}
-
-interface ProgressStage {
-  label: string
-  reached: boolean
-  note: string
-}
-
-/** "12 hours" reads better than "0.5 days" on a deadline. */
-function formatDayCount(days: number): string {
-  if (days >= 1) {
-    const whole = Math.round(days)
-    return `${whole} day${whole === 1 ? '' : 's'}`
-  }
-  const hours = Math.max(1, Math.round(days * 24))
-  return `${hours} hour${hours === 1 ? '' : 's'}`
-}
-
-interface LadderState extends EscalationLevel {
-  /** Days after filing that this rung becomes active */
-  startsAtDay: number
-  /** Days after filing that this rung expires (Infinity for the last) */
-  endsAtDay: number
-  status: 'done' | 'active' | 'pending'
-}
 
 export default function TrackComplaint() {
   const { id } = useParams<{ id: string }>()
@@ -125,79 +85,20 @@ export default function TrackComplaint() {
 
   const derived = useMemo(() => {
     if (!tracked) return null
-
-    const { location, negligence_type, created_at } = tracked.record
-    const jurisdiction = resolveJurisdiction(location.city, location.state)
-    const agency =
-      tracked.kind === 'incident'
-        ? tracked.record.responsible_entities.agency ||
-          resolveAgency(location.city, location.state, negligence_type)
-        : resolveAgency(location.city, location.state, negligence_type)
-
-    const ladder = buildEscalationLadder(jurisdiction, agency)
-
-    const elapsedDays = (Date.now() - new Date(created_at).getTime()) / MS_PER_DAY
-
-    // A hazard marked Fixed stops the clock entirely.
-    const resolved = tracked.kind === 'hazard' && tracked.record.status === 'Fixed'
-
-    let cursor = 0
-    const stages: LadderState[] = ladder.map((level) => {
-      const startsAtDay = cursor
-      const endsAtDay = cursor + level.windowDays
-      cursor = endsAtDay
-
-      let status: LadderState['status'] = 'pending'
-      if (resolved) {
-        status = startsAtDay === 0 ? 'done' : 'pending'
-      } else if (elapsedDays >= endsAtDay) {
-        status = 'done'
-      } else if (elapsedDays >= startsAtDay) {
-        status = 'active'
-      }
-
-      return { ...level, startsAtDay, endsAtDay, status }
-    })
-
-    const activeIndex = stages.findIndex((s) => s.status === 'active')
-    const active = activeIndex >= 0 ? stages[activeIndex] : null
-    const daysLeft = active ? Math.max(0, active.endsAtDay - elapsedDays) : 0
-
-    // Simulated departmental progress. A real integration would read these from
-    // the civic body's own workflow; here they are derived from elapsed time so
-    // the journey is observable without a government system in the loop.
-    const ackAtDay = Math.min(1, jurisdiction.slaDays * 0.5)
-    const assignAtDay = jurisdiction.slaDays
-    const progress: ProgressStage[] = [
-      { label: 'Submitted', reached: true, note: 'Complaint recorded and routed' },
-      {
-        label: 'Acknowledged',
-        reached: resolved || elapsedDays >= ackAtDay,
-        note: `Expected within ${formatDayCount(ackAtDay)}`,
-      },
-      {
-        label: 'Assigned',
-        reached: resolved || elapsedDays >= assignAtDay,
-        note: `Expected within ${formatDayCount(assignAtDay)}`,
-      },
-      {
-        label: 'Resolved',
-        reached: resolved,
-        note: resolved ? 'Confirmed fixed' : 'Awaiting repair',
-      },
-    ]
-
+    const status =
+      tracked.kind === 'hazard' ? hazardStatus(tracked.record) : incidentStatus(tracked.record)
+    // Local aliases keep the existing JSX below unchanged.
     return {
-      jurisdiction,
-      agency,
-      stages,
-      activeIndex,
-      active,
-      daysLeft,
-      elapsedDays,
-      resolved,
-      progress,
-      escalations: Math.max(0, activeIndex),
+      jurisdiction: status.jurisdiction,
+      agency: status.agency,
+      stages: status.ladder,
+      activeIndex: status.activeIndex,
+      active: status.active,
+      daysLeft: status.daysLeft,
+      elapsedDays: status.elapsedDays,
+      resolved: status.resolved,
+      progress: status.progress,
+      escalations: status.escalations,
     }
   }, [tracked])
 
@@ -288,7 +189,9 @@ export default function TrackComplaint() {
             <Clock className="text-caution shrink-0 mt-0.5" size={22} />
             <div className="min-w-0">
               <p className="text-white font-bold">
-                Sitting with {active?.authority ?? agency}
+                {Number.isFinite(daysLeft)
+                  ? `Sitting with ${active?.authority ?? agency}`
+                  : 'Unresolved at every level'}
               </p>
               <p className="text-gray-400 text-sm mt-1">
                 {formatRemaining(daysLeft)}

@@ -6,6 +6,8 @@ import HazardCard from '../../components/HazardCard.tsx'
 import type { Hazard } from '../../types/incident.ts'
 import { useDocumentMeta } from '../../hooks/useDocumentMeta.ts'
 import { getShareUrl, buildOgImageUrl } from '../../utils/share.ts'
+import ComplaintStatusPanel from '../../components/ComplaintStatusPanel.tsx'
+import { hazardStatus } from '../../utils/complaintStatus.ts'
 const LocationMap = lazy(() => import('../../components/LocationMap.tsx'))
 
 export default function DeathTrapDetail() {
@@ -63,25 +65,9 @@ export default function DeathTrapDetail() {
           <HazardCard hazard={hazard} />
         </div>
         <div className="lg:col-span-1 flex flex-col gap-6">
-          <div className="bg-[#111] border border-gray-800 rounded-lg p-6">
-            <h3 className="text-xl font-header font-bold text-white mb-4 flex items-center gap-2">
-              <AlertTriangle size={18} className="text-yellow-500" />
-              WHAT IS A SAFETY HAZARD?
-            </h3>
-            <p className="text-gray-400 text-sm mb-4">
-              A safety hazard is a piece of public infrastructure that presents an
-              immediate danger to people using it — an uncovered manhole, an exposed
-              electrical wire, an unstable structure, an abandoned excavation.
-            </p>
-            <p className="text-gray-400 text-sm mb-4">
-              These are reported <span className="text-white">before</span> anyone is
-              harmed, so the responsible department has a chance to fix them in time.
-            </p>
-            <p className="text-gray-500 text-sm">
-              Every report here has been routed to a department with a deadline attached.
-              If nothing happens, it escalates.
-            </p>
-          </div>
+          {/* Status first. A reader's actual question is "is anyone fixing this?",
+              not "what is a safety hazard?" — so the generic explainer moved below. */}
+          <ComplaintStatusPanel status={hazardStatus(hazard)} trackId={hazard.id} />
           <Suspense
             fallback={
               <div className="h-64 flex items-center justify-center text-gray-500 text-sm">
@@ -95,6 +81,20 @@ export default function DeathTrapDetail() {
               deepLinkId={hazard.id}
             />
           </Suspense>
+
+          {/* Kept, but demoted — context rather than the headline. */}
+          <div className="bg-[#0d0d0d] border border-gray-800 rounded-lg p-5">
+            <h3 className="text-xs font-header font-bold text-gray-400 uppercase tracking-widest mb-3">
+              What counts as a safety hazard
+            </h3>
+            <p className="text-gray-500 text-sm">
+              Public infrastructure that presents an immediate danger to the people using
+              it — an uncovered manhole, an exposed wire, an unstable structure, an
+              abandoned excavation. These are reported{' '}
+              <span className="text-gray-300">before</span> anyone is harmed, so the
+              responsible department has a chance to fix them in time.
+            </p>
+          </div>
         </div>
       </div>
     </main>
