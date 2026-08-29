@@ -733,49 +733,14 @@ export default function ReportForm() {
               onError={setError}
             />
           </div>
-          <div>
-            <label className={labelClass}>{t('form.links')}</label>
-            <p className="text-ink-faint text-xs mb-2">
-              {t('form.linksHint')}
-            </p>
-            {form.evidence_links.map((link, i) => (
-              <div key={i} className="flex gap-2 mb-2">
-                <input
-                  type="url"
-                  className={inputClass}
-                  placeholder="https://..."
-                  value={link}
-                  onChange={(e) => {
-                    const updated = [...form.evidence_links]
-                    updated[i] = e.target.value
-                    setForm((prev) => ({ ...prev, evidence_links: updated }))
-                  }}
-                />
-                <button
-                  type="button"
-                  className="text-ink-faint hover:text-red-700 transition px-2"
-                  onClick={() => {
-                    const updated = form.evidence_links.filter((_, j) => j !== i)
-                    setForm((prev) => ({ ...prev, evidence_links: updated }))
-                  }}
-                >
-                  <X size={16} />
-                </button>
-              </div>
-            ))}
-            <button
-              type="button"
-              className="flex items-center gap-1 text-sm text-ink-muted hover:text-ink transition mt-1"
-              onClick={() =>
-                setForm((prev) => ({
-                  ...prev,
-                  evidence_links: [...prev.evidence_links, ''],
-                }))
-              }
-            >
-              <Plus size={14} /> {t('form.addLink')}
-            </button>
-          </div>
+          {/*
+            The "Relevant links" field has been removed. A citizen standing in
+            front of a pothole has a photo and a location, not a news article —
+            asking for URLs was asking the reporter to do research to justify the
+            problem. Reports created before this still render their links on the
+            public record, so `evidence_links` stays on the model; it is simply
+            no longer something we ask for.
+          */}
           <div>
             <label className={labelClass}>{t('form.location')} *</label>
             <Suspense

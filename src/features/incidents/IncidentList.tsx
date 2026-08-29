@@ -191,7 +191,7 @@ export default function IncidentList() {
 
             <div className="bg-blood p-6 rounded text-center">
               <h3 className="text-ink font-header font-bold text-2xl uppercase">
-                Seen something dangerous?
+                Noticed a problem nearby?
               </h3>
               <p className="text-red-100 text-sm mb-4">
                 Report a hazard in your area and we'll route it to the right department.

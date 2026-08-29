@@ -108,7 +108,7 @@ export default function DeathTrapList() {
                 Nothing Reported Yet
               </h3>
               <p className="text-ink-muted mb-6">
-                Spot a dangerous hazard in your area? Report it so it can be fixed before anyone is hurt.
+                Noticed a problem in your area? Report it so it can be fixed before it gets worse.
               </p>
               <Link
                 to="/report"
@@ -158,7 +158,7 @@ export default function DeathTrapList() {
           */}
           <div className="bg-raised border border-line rounded-lg p-5 text-center">
             <h3 className="text-ink font-header font-bold text-xl">
-              Spot something dangerous?
+              Noticed a problem nearby?
             </h3>
             <p className="text-ink-muted text-sm mt-1 mb-4">
               Report it and we'll send it to the right department with a deadline.

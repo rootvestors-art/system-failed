@@ -36,8 +36,8 @@ export const STRINGS: Record<string, Entry> = {
     hi: 'अपनी भाषा में बोलिए या लिखिए',
   },
   'home.h1': {
-    en: 'Report a dangerous civic issue near you',
-    hi: 'अपने आसपास की खतरनाक समस्या की शिकायत करें',
+    en: 'Report a civic problem in your area',
+    hi: 'अपने इलाके की समस्या की शिकायत करें',
   },
   'home.sub': {
     en: "A pothole, an open drain, an exposed live wire, an abandoned pit. Describe it in one sentence and we'll work out which department owns it, write the formal complaint for you, and keep a clock on it until it's fixed.",
@@ -182,20 +182,14 @@ export const STRINGS: Record<string, Entry> = {
   },
   'form.hazardDetails': { en: 'Hazard details', hi: 'समस्या का ब्यौरा' },
   'form.locationEvidence': { en: 'Location and evidence', hi: 'जगह और सबूत' },
-  'form.severity': { en: 'How dangerous is it?', hi: 'कितना खतरनाक है?' },
+  'form.severity': { en: 'How serious is it?', hi: 'यह कितनी गंभीर है?' },
   'form.photo': { en: 'Photo evidence', hi: 'फोटो सबूत' },
-  'form.links': { en: 'Relevant links', hi: 'संबंधित लिंक' },
-  'form.linksHint': {
-    en: 'News articles, tweets, or any relevant URLs',
-    hi: 'खबर, ट्वीट या कोई और लिंक',
-  },
-  'form.addLink': { en: 'Add link', hi: 'लिंक जोड़ें' },
   'form.location': { en: 'Where is it?', hi: 'यह कहां है?' },
   'form.hazardType': { en: 'What kind of problem is it?', hi: 'यह किस तरह की समस्या है?' },
   'form.description': { en: 'Description', hi: 'ब्यौरा' },
   'form.descriptionPlaceholder': {
-    en: "Describe the hazard and why it's dangerous…",
-    hi: 'बताइए क्या दिक्कत है और यह खतरनाक क्यों है…',
+    en: 'Describe the problem and why it needs attention…',
+    hi: 'बताइए क्या दिक्कत है और इसे ठीक करना क्यों ज़रूरी है…',
   },
   'form.piiHeading': { en: 'Before you file:', hi: 'भेजने से पहले:' },
   'form.piiBody': {
