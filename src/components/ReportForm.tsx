@@ -1,8 +1,26 @@
 import { useState, lazy, Suspense } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ChevronRight, ChevronLeft, Send, Loader2, Plus, X, AlertTriangle, FileText } from 'lucide-react'
+import {
+  ChevronRight,
+  ChevronLeft,
+  Send,
+  Loader2,
+  Plus,
+  X,
+  AlertTriangle,
+  FileText,
+  Users,
+} from 'lucide-react'
 import type { NegligenceType, OutcomeType, HazardSeverity, Victim } from '../types/incident.ts'
-import { createIncident, createHazard } from '../services/incidents.ts'
+import {
+  createIncident,
+  createHazard,
+  findNearbyHazards,
+  upvoteHazard,
+  type NearbyMatch,
+} from '../services/incidents.ts'
+import { formatDistance } from '../utils/geo.ts'
+import { formatRelativeTime, negligenceLabel } from '../utils/formatters.ts'
 // Leaflet is ~150 KB gzipped. Loading it only when the picker actually renders
 // keeps the first paint cheap on a slow connection.
 const LocationPicker = lazy(() => import('./LocationPicker.tsx'))
@@ -88,6 +106,41 @@ export default function ReportForm() {
   /** The AI intake is the default front door; the manual form is the escape hatch. */
   const [intakeDone, setIntakeDone] = useState(false)
   const [prefilledBy, setPrefilledBy] = useState<'openai' | 'mock' | null>(null)
+
+  /** Open reports that look like the same hazard, found at submit time. */
+  const [nearby, setNearby] = useState<NearbyMatch[]>([])
+  const [skipDuplicateCheck, setSkipDuplicateCheck] = useState(false)
+  const [joining, setJoining] = useState(false)
+
+  /**
+   * "This is the same issue" — add weight to the existing report instead of
+   * creating a duplicate ticket. Forty reports of one pothole should be one work
+   * order with forty followers.
+   */
+  async function joinExisting(match: NearbyMatch) {
+    setJoining(true)
+    setError(null)
+    try {
+      await upvoteHazard(match.hazard.id)
+    } catch (err) {
+      // `upvoteHazard` throws when this browser already voted. That is not a
+      // failure from the citizen's point of view — they still want the tracker.
+      if (!(err instanceof Error && /already upvoted/i.test(err.message))) {
+        setError('Could not add your voice to that report. Please try again.')
+        setJoining(false)
+        return
+      }
+    }
+    setJoining(false)
+    navigate(`/track/${match.hazard.id}`)
+  }
+
+  /** "Mine is a different problem" — file it as a new report. */
+  function fileAnyway() {
+    setNearby([])
+    setSkipDuplicateCheck(true)
+    void handleSubmit()
+  }
 
   const isHazard = form.report_type === 'hazard'
   const totalSteps = isHazard ? 2 : 3
@@ -189,6 +242,18 @@ export default function ReportForm() {
       ? annotateCustomType(form.description, form.custom_negligence_type)
       : form.description
 
+    // Before creating a second ticket for the same physical hazard, check whether
+    // a neighbour already reported it. `skipDuplicateCheck` is set once the
+    // citizen has explicitly said "no, mine is different".
+    if (isHazard && form.coordinates && !skipDuplicateCheck) {
+      const matches = await findNearbyHazards(form.coordinates, safeNegligenceType)
+      if (matches.length > 0) {
+        setNearby(matches)
+        setSubmitting(false)
+        return
+      }
+    }
+
     try {
       if (isHazard) {
         const hazard = await createHazard({
@@ -234,6 +299,106 @@ export default function ReportForm() {
     } finally {
       setSubmitting(false)
     }
+  }
+
+  // A near-duplicate was found: ask before creating a second ticket.
+  if (nearby.length > 0) {
+    return (
+      <div className="max-w-2xl mx-auto py-8">
+        <div className="rounded-lg border border-amber-300 bg-amber-50 p-5 sm:p-6">
+          <div className="flex items-start gap-3">
+            <Users className="text-amber-700 shrink-0 mt-0.5" size={20} />
+            <div className="min-w-0">
+              <h2 className="text-lg font-bold text-ink">
+                {nearby.length === 1
+                  ? 'Someone may have already reported this'
+                  : `${nearby.length} nearby reports look like this one`}
+              </h2>
+              <p className="text-ink-muted text-sm mt-1">
+                Adding your voice to an existing report counts for more than a second
+                ticket — departments see one problem with several people behind it,
+                instead of a queue of duplicates.
+              </p>
+            </div>
+          </div>
+
+          <ul className="mt-5 space-y-3">
+            {nearby.slice(0, 3).map((match) => (
+              <li
+                key={match.hazard.id}
+                className="rounded border border-line bg-raised p-4"
+              >
+                <div className="flex items-start gap-3">
+                  {match.hazard.image_url && (
+                    <img
+                      src={match.hazard.image_url}
+                      alt=""
+                      className="w-16 h-16 object-cover rounded shrink-0 border border-line"
+                    />
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <p className="text-ink font-semibold text-sm">
+                      {negligenceLabel(match.hazard.negligence_type)} ·{' '}
+                      {formatDistance(match.metres)}
+                    </p>
+                    <p className="text-ink-faint text-xs mt-0.5">
+                      Reported {formatRelativeTime(match.hazard.created_at)}
+                      {match.hazard.upvote_count > 0 &&
+                        ` · ${
+                          match.hazard.upvote_count === 1
+                            ? '1 other person has backed this'
+                            : `${match.hazard.upvote_count} others have backed this`
+                        }`}
+                    </p>
+                    <p className="text-ink-muted text-sm mt-2 line-clamp-2">
+                      {match.hazard.description}
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => joinExisting(match)}
+                  disabled={joining}
+                  className="mt-3 w-full flex items-center justify-center gap-2 bg-blood hover:bg-red-700 disabled:opacity-60 text-white px-4 py-2.5 font-bold text-sm rounded transition"
+                >
+                  {joining ? (
+                    <>
+                      <Loader2 size={15} className="animate-spin" /> Adding…
+                    </>
+                  ) : (
+                    <>
+                      <Users size={15} /> Same issue — add my voice
+                    </>
+                  )}
+                </button>
+              </li>
+            ))}
+          </ul>
+
+          {error && <p className="text-red-700 text-sm mt-3">{error}</p>}
+
+          <div className="mt-5 pt-4 border-t border-amber-300 flex flex-col sm:flex-row gap-3">
+            <button
+              type="button"
+              onClick={fileAnyway}
+              disabled={joining}
+              className="flex-1 border border-line bg-raised text-ink px-4 py-2.5 font-semibold text-sm rounded hover:border-ink-faint transition"
+            >
+              Mine is a different problem — file it separately
+            </button>
+            <button
+              type="button"
+              onClick={() => setNearby([])}
+              disabled={joining}
+              className="text-ink-muted hover:text-ink text-sm underline underline-offset-4 px-2"
+            >
+              Go back and edit
+            </button>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   if (submitted) {

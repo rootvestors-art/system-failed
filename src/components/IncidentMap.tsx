@@ -2,6 +2,7 @@ import { MapContainer, TileLayer, CircleMarker, Popup } from 'react-leaflet'
 import type { Incident, Hazard } from '../types/incident.ts'
 import { negligenceLabel } from '../utils/formatters.ts'
 import { useTileProvider } from '../hooks/useTileProvider.ts'
+import { isValidIndiaCoordinates } from '../utils/location.ts'
 import 'leaflet/dist/leaflet.css'
 
 interface IncidentMapProps {
@@ -19,6 +20,11 @@ export default function IncidentMap({
 }: IncidentMapProps) {
   const { tileConfig, eventHandlers } = useTileProvider()
 
+  // `geocodeAddress` returns {0, 0} whenever Nominatim fails, so records can carry
+  // null-island coordinates. Rendering those drew markers in the Gulf of Guinea.
+  const plottable = <T extends { location: { lat: number; lng: number } }>(items: T[]) =>
+    items.filter((i) => isValidIndiaCoordinates(i.location.lat, i.location.lng))
+
   return (
     <MapContainer
       center={[22.5, 78.9]}
@@ -32,7 +38,7 @@ export default function IncidentMap({
         subdomains={tileConfig.subdomains}
         eventHandlers={eventHandlers}
       />
-      {incidents.map((incident) => (
+      {plottable(incidents).map((incident) => (
         <CircleMarker
           key={`i-${incident.id}`}
           center={[incident.location.lat, incident.location.lng]}
@@ -57,7 +63,7 @@ export default function IncidentMap({
           </Popup>
         </CircleMarker>
       ))}
-      {hazards.map((hazard) => {
+      {plottable(hazards).map((hazard) => {
         // Resolved issues go green so the map shows progress, not just problems.
         const fixed = hazard.status === 'Fixed'
         return (

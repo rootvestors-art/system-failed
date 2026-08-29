@@ -1,6 +1,15 @@
-import type { Incident, Victim, OutcomeType, Hazard, HazardSeverity } from '../types/incident.ts'
+import type {
+  Incident,
+  Victim,
+  OutcomeType,
+  Hazard,
+  HazardSeverity,
+  NegligenceType,
+} from '../types/incident.ts'
 import { supabase } from './supabase.ts'
 import { seedIncidents, seedHazards } from '../data/seed.ts'
+import { distanceMetres } from '../utils/geo.ts'
+import { isValidIndiaCoordinates } from '../utils/location.ts'
 import {
   loadLocalIncidents,
   loadLocalHazards,
@@ -400,6 +409,44 @@ export async function markHazardFixed(
     if (error) throw error
     return data as Hazard
   }, local)
+}
+
+export interface NearbyMatch {
+  hazard: Hazard
+  metres: number
+}
+
+/**
+ * Find open reports that look like the same physical hazard.
+ *
+ * One pothole reported by forty people should be one work order with forty
+ * followers, not forty tickets — and for a product with no user accounts,
+ * independent reports of the same spot are also the only corroboration signal
+ * available. So this powers both de-duplication and a crude form of verification.
+ *
+ * Guards, both of which matter:
+ *  - `geocodeAddress` silently returns {0, 0} whenever Nominatim fails, so
+ *    without a validity check every failed-geocode report would sit at the same
+ *    point and match every other one at distance zero.
+ *  - Already-Fixed reports are excluded: a hazard reappearing after repair is a
+ *    genuinely new report, not a duplicate.
+ */
+export async function findNearbyHazards(
+  coords: { lat: number; lng: number },
+  type: NegligenceType,
+  radiusMetres = 150,
+): Promise<NearbyMatch[]> {
+  if (!isValidIndiaCoordinates(coords.lat, coords.lng)) return []
+
+  const all = await getAllHazards().catch(() => [] as Hazard[])
+
+  return all
+    .filter((h) => h.negligence_type === type)
+    .filter((h) => h.status !== 'Fixed')
+    .filter((h) => isValidIndiaCoordinates(h.location.lat, h.location.lng))
+    .map((h) => ({ hazard: h, metres: distanceMetres(coords, h.location) }))
+    .filter((m) => m.metres <= radiusMetres)
+    .sort((a, b) => a.metres - b.metres)
 }
 
 export async function getAllHazards(): Promise<Hazard[]> {
