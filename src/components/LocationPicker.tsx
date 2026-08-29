@@ -82,9 +82,9 @@ export default function LocationPicker({
   const { tileConfig, eventHandlers } = useTileProvider()
 
   const inputClass =
-    'w-full bg-raised-2 border border-line text-ink px-4 py-3 focus:border-blood focus:outline-none transition'
+    'w-full bg-raised border border-line text-ink px-4 py-3 rounded focus:border-civic focus:ring-2 focus:ring-civic/20 focus:outline-none transition'
   const labelClass =
-    'block text-xs text-ink-faint font-bold mb-2'
+    'block text-sm text-ink font-semibold mb-2'
 
   // Update map coordinates when coordinates prop changes
   useEffect(() => {
@@ -243,7 +243,7 @@ export default function LocationPicker({
           type="button"
           onClick={useCurrentLocation}
           disabled={locating || isProcessing}
-          className="flex-1 flex items-center justify-center gap-2 bg-blood hover:bg-red-700 disabled:opacity-50 text-white px-4 py-3 font-bold uppercase text-sm rounded transition"
+          className="flex-1 flex items-center justify-center gap-2 bg-blood hover:bg-red-700 disabled:opacity-50 text-white px-4 py-3 font-bold text-sm rounded transition"
         >
           {locating ? (
             <>

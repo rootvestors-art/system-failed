@@ -295,7 +295,7 @@ export default function SmartIntake({ onApply, onSkip }: Props) {
   const routedAgency = routing?.primaryAuthority ?? null
 
   const inputClass =
-    'w-full bg-raised-2 border border-line text-ink px-4 py-3 focus:border-blood focus:outline-none transition rounded'
+    'w-full bg-raised border border-line text-ink px-4 py-3 rounded focus:border-civic focus:ring-2 focus:ring-civic/20 focus:outline-none transition'
 
   return (
     <div className="border border-line rounded-lg bg-raised p-5 sm:p-6 mb-8">
@@ -322,7 +322,7 @@ export default function SmartIntake({ onApply, onSkip }: Props) {
       {/* Description + dictation */}
       <div className="mt-5">
         <div className="flex items-center justify-between mb-2 gap-2 flex-wrap">
-          <label className="block text-xs text-ink-faint font-bold">
+          <label className="block text-sm text-ink font-semibold">
             {t('intake.problemLabel')}
           </label>
           {(recordSupported || speechSupported) && (
@@ -416,7 +416,7 @@ export default function SmartIntake({ onApply, onSkip }: Props) {
       {/* Photo + location */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
         <div>
-          <label className="block text-xs text-ink-faint font-bold mb-2">
+          <label className="block text-sm text-ink font-semibold mb-2">
             {t('intake.photo')}
           </label>
           <PhotoInput value={photo} onChange={setPhoto} onError={setError} />
@@ -433,7 +433,7 @@ export default function SmartIntake({ onApply, onSkip }: Props) {
         <div className="content-start">
           <label
             htmlFor="intake-city"
-            className="block text-xs text-ink-faint font-bold mb-2"
+            className="block text-sm text-ink font-semibold mb-2"
           >
             {t('intake.cityLabel')}
           </label>
@@ -493,7 +493,7 @@ export default function SmartIntake({ onApply, onSkip }: Props) {
           type="button"
           onClick={handleRun}
           disabled={running}
-          className="flex items-center gap-2 bg-blood text-white px-5 py-3 font-bold uppercase text-sm hover:bg-red-700 transition disabled:opacity-60 rounded"
+          className="flex items-center gap-2 bg-blood text-white px-5 py-3 font-bold text-sm hover:bg-red-700 transition disabled:opacity-60 rounded"
         >
           {running ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
           {running ? t('intake.reading') : t('intake.submit')}
@@ -511,7 +511,7 @@ export default function SmartIntake({ onApply, onSkip }: Props) {
       {result && (
         <div className="mt-6 border-t border-line pt-5">
           <div className="flex items-center justify-between gap-2 flex-wrap mb-4">
-            <h3 className="text-ink font-header font-bold uppercase text-sm tracking-wide">
+            <h3 className="text-ink font-header font-bold text-base">
               {t('intake.result.title')}
             </h3>
             <span

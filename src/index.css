@@ -37,8 +37,15 @@
   --raised-2: #eef1f5;
   --line: #d9dee5;
   --ink: #131820;
-  --ink-muted: #4c5665;
-  --ink-faint: #78828f;
+  /*
+   * Muted and faint are darkened from their first-pass values (#4c5665 / #78828f)
+   * so that even the smallest captions and eyebrow labels clear WCAG AA (4.5:1)
+   * on the raised/off-white surfaces. The three-tier hierarchy is preserved —
+   * these are still visibly lighter than --ink — they just no longer fall under
+   * the contrast floor at 10–12px.
+   */
+  --ink-muted: #3f4855;
+  --ink-faint: #5c6672;
 }
 
 @layer base {
@@ -104,6 +111,25 @@
 
 /* Invert a light basemap (OpenStreetMap) so it suits the dark UI. Used when the
    active tile provider sets `darkFilter` — see config/tileProviders.ts. */
-.tile-dark {
+/*
+ * Basemap tone correction.
+ *
+ * Tiles are tagged with the tone they ship in (`tile-light` = OSM, `tile-dark` =
+ * TomTom night). The dark pages want a dark map and the light report journey
+ * wants a light one, so we invert only the tiles that arrive the wrong way round
+ * for the theme they're rendered under. The same invert filter serves both
+ * directions — it turns a light map dark and a dark map light.
+ */
+.tile-invert,
+.tile-light {
   filter: invert(1) hue-rotate(180deg) brightness(0.92) contrast(0.88) saturate(0.6);
+}
+.tile-dark {
+  filter: none;
+}
+.theme-light .tile-light {
+  filter: none;
+}
+.theme-light .tile-dark {
+  filter: invert(1) hue-rotate(180deg) brightness(0.95) contrast(0.9) saturate(0.7);
 }

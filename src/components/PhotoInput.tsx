@@ -98,7 +98,7 @@ export default function PhotoInput({
       <div className="flex items-center gap-2">
         <label
           htmlFor={inputId}
-          className="flex-1 flex items-center justify-center gap-2 border border-dashed border-line rounded px-4 py-3 cursor-pointer hover:border-ink-faint active:border-gray-300 transition text-ink-muted text-sm select-none"
+          className="flex-1 flex items-center justify-center gap-2 border border-dashed border-line bg-raised-2 rounded-lg px-4 py-4 cursor-pointer hover:border-civic hover:text-civic transition text-ink font-medium text-sm select-none"
         >
           <Camera size={16} />
           {value ? 'Change photo' : label}

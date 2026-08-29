@@ -32,7 +32,7 @@ export default function ComplaintStatusPanel({
       }`}
     >
       <div className="flex items-center justify-between gap-2 flex-wrap mb-3">
-        <h3 className="font-header font-bold text-ink uppercase text-sm tracking-widest">
+        <h3 className="font-header font-bold text-ink text-base">
           {t('track.status')}
         </h3>
         <span className="text-[10px] font-bold px-2 py-1 rounded bg-amber-50 text-amber-600 border border-amber-300">
@@ -112,7 +112,7 @@ export default function ComplaintStatusPanel({
 
       <Link
         to={`/track/${trackId}`}
-        className="inline-flex items-center gap-1 mt-4 text-sm font-header uppercase tracking-wide text-ink border border-line hover:border-ink-faint rounded px-4 py-2 transition"
+        className="inline-flex items-center gap-1 mt-4 text-sm font-header font-semibold text-ink border border-line hover:border-ink-faint rounded px-4 py-2 transition"
       >
         {t('track.fullTimeline')} <ChevronRight size={14} />
       </Link>

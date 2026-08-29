@@ -10,6 +10,7 @@ import {
   AlertTriangle,
   FileText,
   Users,
+  CheckCircle2,
 } from 'lucide-react'
 import type { NegligenceType, OutcomeType, HazardSeverity, Victim } from '../types/incident.ts'
 import {
@@ -48,6 +49,21 @@ const negligenceTypes: NegligenceType[] = [
 const negligenceTypesWithOther = [...negligenceTypes, 'Other' as const]
 
 const severityLevels: HazardSeverity[] = ['Low', 'Medium', 'High', 'Critical']
+
+/**
+ * Selected state for the severity buttons.
+ *
+ * These previously used arbitrary -700 fills (including an orange-on-dark-text
+ * combination that failed contrast) which belonged to no palette. Solid -600
+ * fills with white text keep the semantic colour ramp while matching the rest of
+ * the light theme.
+ */
+const SEVERITY_SELECTED: Record<HazardSeverity, string> = {
+  Low: 'bg-emerald-600 border-emerald-600 text-white',
+  Medium: 'bg-amber-600 border-amber-600 text-white',
+  High: 'bg-orange-600 border-orange-600 text-white',
+  Critical: 'bg-red-600 border-red-600 text-white',
+}
 
 type ReportType = 'incident' | 'hazard'
 
@@ -402,7 +418,10 @@ export default function ReportForm() {
   if (submitted) {
     return (
       <div className="max-w-2xl mx-auto py-12 sm:py-20">
-        <div className={`${isHazard ? 'bg-amber-50 border-yellow-700' : 'bg-red-50 border-blood'} border rounded-lg p-6 sm:p-10 text-center`}>
+        <div className="bg-raised border border-line rounded-lg p-6 sm:p-10 text-center shadow-sm">
+          <div className="w-14 h-14 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center mx-auto mb-4">
+            <CheckCircle2 size={28} className="text-emerald-600" />
+          </div>
           <h2 className="text-2xl sm:text-3xl font-header font-bold text-ink mb-3">
             {t('receipt.title')}
           </h2>
@@ -412,7 +431,7 @@ export default function ReportForm() {
           </p>
 
           {reference && (
-            <div className="mt-6 bg-raised-2/40 border border-line rounded p-4">
+            <div className="mt-6 bg-raised-2 border border-line rounded-lg p-4">
               <p className="text-[10px] text-ink-faint font-bold">
                 {t('receipt.yourReference')}
               </p>
@@ -429,7 +448,7 @@ export default function ReportForm() {
             {reference && (
               <button
                 onClick={() => navigate(`/track/${reference.id}`)}
-                className="bg-white text-black px-6 py-3 font-bold uppercase text-sm hover:bg-gray-200 transition rounded"
+                className="bg-blood text-white px-6 py-3 font-bold text-sm hover:bg-red-700 transition rounded"
               >
                 {t('receipt.track')}
               </button>
@@ -442,7 +461,7 @@ export default function ReportForm() {
                     : `/incident/${reference?.id}`,
                 )
               }
-              className="border border-line text-ink-muted px-6 py-3 font-bold uppercase text-sm hover:border-ink-faint transition rounded"
+              className="bg-raised border border-line text-ink px-6 py-3 font-bold text-sm hover:bg-raised-2 transition rounded"
             >
               {t('receipt.viewPublic')}
             </button>
@@ -453,9 +472,9 @@ export default function ReportForm() {
   }
 
   const inputClass =
-    'w-full bg-raised-2 border border-line text-ink px-4 py-3 focus:border-blood focus:outline-none transition'
+    'w-full bg-raised border border-line text-ink px-4 py-3 rounded focus:border-civic focus:ring-2 focus:ring-civic/20 focus:outline-none transition'
   const labelClass =
-    'block text-xs text-ink-faint font-bold mb-2'
+    'block text-sm text-ink font-semibold mb-2'
 
   // The AI intake is the front door. Everything below is the confirm-and-correct
   // step, or the manual path for anyone who skips it.
@@ -473,8 +492,8 @@ export default function ReportForm() {
         <div
           className={`mb-6 rounded border px-4 py-3 text-sm ${
             prefilledBy === 'openai'
-              ? 'border-green-300 bg-green-50 text-green-800'
-              : 'border-yellow-700 bg-amber-50 text-amber-800'
+              ? 'border-emerald-300 bg-emerald-50 text-emerald-900'
+              : 'border-amber-300 bg-amber-50 text-amber-900'
           }`}
         >
           <span className="font-bold">
@@ -524,19 +543,17 @@ export default function ReportForm() {
             <div
               className={`w-10 h-10 rounded-full flex items-center justify-center font-header font-bold text-lg border-2 ${
                 s === step
-                  ? isHazard
-                    ? 'bg-yellow-700 border-yellow-600 text-white'
-                    : 'bg-blood border-blood text-white'
+                  ? 'bg-blood border-blood text-white'
                   : s < step
-                    ? 'bg-raised-2 border-line text-white'
-                    : 'border-line text-ink-faint'
+                    ? 'bg-blood/10 border-blood/30 text-blood'
+                    : 'bg-raised border-line text-ink-faint'
               }`}
             >
               {s}
             </div>
             {s < totalSteps && (
               <div
-                className={`w-16 h-0.5 ${s < step ? (isHazard ? 'bg-yellow-700' : 'bg-blood') : 'bg-raised-2'}`}
+                className={`w-16 h-0.5 ${s < step ? 'bg-blood' : 'bg-line'}`}
               />
             )}
           </div>
@@ -551,7 +568,7 @@ export default function ReportForm() {
 
       {/* INCIDENT Step 1: Incident & Victim Information */}
       {!isHazard && step === 1 && (
-        <div className="space-y-6">
+        <div className="bg-raised border border-line rounded-lg shadow-sm p-5 sm:p-7 space-y-6">
           <h2 className="text-2xl font-header font-bold text-ink border-l-4 border-blood pl-4">
             Incident Information
           </h2>
@@ -657,12 +674,12 @@ export default function ReportForm() {
                         <button
                           key={type}
                           type="button"
-                          className={`px-4 py-2 border text-sm font-bold uppercase transition ${
+                          className={`px-4 py-2 rounded border text-sm font-bold transition ${
                             victim.outcome === type
                               ? type === 'Death'
                                 ? 'bg-blood border-blood text-white'
-                                : 'bg-yellow-700 border-yellow-600 text-white'
-                              : 'border-line text-ink-muted hover:border-ink-faint'
+                                : 'bg-orange-600 border-orange-600 text-white'
+                              : 'bg-raised border-line text-ink-muted hover:border-ink-faint'
                           }`}
                           onClick={() => updateVictim(index, 'outcome', type)}
                         >
@@ -680,8 +697,8 @@ export default function ReportForm() {
 
       {/* SHARED: Location & Evidence (Step 2 for incident, Step 1 for hazard) */}
       {((isHazard && step === 1) || (!isHazard && step === 2)) && (
-        <div className="space-y-6">
-          <h2 className={`text-2xl font-header font-bold text-ink border-l-4 ${isHazard ? 'border-yellow-600' : 'border-blood'} pl-4`}>
+        <div className="bg-raised border border-line rounded-lg shadow-sm p-5 sm:p-7 space-y-6">
+          <h2 className="text-2xl font-header font-bold text-ink border-l-4 border-blood pl-4">
             {isHazard ? t('form.hazardDetails') : t('form.locationEvidence')}
           </h2>
 
@@ -694,16 +711,10 @@ export default function ReportForm() {
                   <button
                     key={level}
                     type="button"
-                    className={`px-3 py-3 border text-xs font-bold transition ${
+                    className={`px-3 py-3 border rounded text-xs font-bold transition ${
                       form.severity === level
-                        ? level === 'Critical'
-                          ? 'bg-red-700 border-red-600 text-white'
-                          : level === 'High'
-                            ? 'bg-orange-700 border-orange-600 text-ink'
-                            : level === 'Medium'
-                              ? 'bg-yellow-700 border-yellow-600 text-white'
-                              : 'bg-green-700 border-green-600 text-white'
-                        : 'border-line text-ink-muted hover:border-ink-faint'
+                        ? SEVERITY_SELECTED[level]
+                        : 'bg-raised border-line text-ink-muted hover:border-ink-faint'
                     }`}
                     onClick={() => update('severity', level)}
                   >
@@ -799,12 +810,10 @@ export default function ReportForm() {
                   <button
                     key={type}
                     type="button"
-                    className={`px-4 py-3 border text-sm font-bold uppercase transition ${
+                    className={`px-4 py-3 rounded border text-sm font-bold transition ${
                       isSelected
-                        ? isHazard
-                          ? 'bg-yellow-700 border-yellow-600 text-white'
-                          : 'bg-blood border-blood text-white'
-                        : 'border-line text-ink-muted hover:border-ink-faint'
+                        ? 'bg-blood border-blood text-white'
+                        : 'bg-raised border-line text-ink-muted hover:border-ink-faint'
                     }`}
                     onClick={() => {
                       if (type === 'Other') {
@@ -866,7 +875,7 @@ export default function ReportForm() {
         since those are researched after the fact, but the MLA/MP inputs are gone.
       */}
       {!isHazard && step === 3 && (
-        <div className="space-y-5">
+        <div className="bg-raised border border-line rounded-lg shadow-sm p-5 sm:p-7 space-y-6">
           <h2 className="text-xl font-header font-bold text-ink border-l-4 border-blood pl-4">
             Which department was responsible?
           </h2>
@@ -894,7 +903,7 @@ export default function ReportForm() {
       {/* Personal-information warning, shown on the step that actually files */}
       {step === totalSteps && (
         <div className="mt-8 rounded border border-amber-300 bg-amber-50 px-4 py-3 flex items-start gap-2.5">
-          <AlertTriangle size={15} className="text-yellow-600 shrink-0 mt-0.5" />
+          <AlertTriangle size={15} className="text-amber-600 shrink-0 mt-0.5" />
           <p className="text-ink-muted text-xs leading-relaxed">
             <span className="text-amber-700 font-bold">{t('form.piiHeading')}</span> {t('form.piiBody')}
           </p>
@@ -907,7 +916,7 @@ export default function ReportForm() {
           <button
             type="button"
             onClick={prev}
-            className="flex items-center gap-2 text-ink-muted hover:text-ink transition font-header uppercase tracking-wide"
+            className="flex items-center gap-2 text-ink-muted hover:text-ink transition font-header font-semibold"
           >
             <ChevronLeft size={20} /> {t('form.back')}
           </button>
@@ -918,7 +927,7 @@ export default function ReportForm() {
           <button
             type="button"
             onClick={next}
-            className={`flex items-center gap-2 ${isHazard ? 'bg-yellow-700 hover:bg-yellow-600' : 'bg-blood hover:bg-red-700'} text-white px-8 py-3 font-header font-bold uppercase tracking-wide transition`}
+            className={`flex items-center gap-2 bg-blood hover:bg-red-700 text-white px-8 py-3 rounded font-header font-bold transition`}
           >
             {t('form.next')} <ChevronRight size={20} />
           </button>
@@ -927,7 +936,7 @@ export default function ReportForm() {
             type="button"
             onClick={handleSubmit}
             disabled={submitting}
-            className={`flex items-center gap-2 ${isHazard ? 'bg-yellow-700 hover:bg-yellow-600' : 'bg-blood hover:bg-red-700'} disabled:opacity-50 text-white px-8 py-3 font-header font-bold uppercase tracking-wide transition`}
+            className={`flex items-center gap-2 bg-blood hover:bg-red-700 disabled:opacity-50 text-white px-8 py-3 rounded font-header font-bold transition`}
           >
             {submitting ? (
               <>

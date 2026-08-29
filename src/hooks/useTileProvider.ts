@@ -119,7 +119,7 @@ export function useTileProvider() {
         url,
         attribution: provider.attribution,
         subdomains: provider.subdomains,
-        className: provider.darkFilter ? 'tile-dark' : undefined,
+        className: `tile-${provider.nativeTone}`,
       }
     }
     // A key-requiring provider with no key: fall back to the keyless basemap
@@ -129,7 +129,7 @@ export function useTileProvider() {
       url: osm.getUrl(undefined) as string,
       attribution: osm.attribution,
       subdomains: osm.subdomains,
-      className: 'tile-dark',
+      className: 'tile-light',
     }
   }, [currentId, provider])
 

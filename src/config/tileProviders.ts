@@ -7,8 +7,13 @@ export interface TileProvider {
   getUrl: (key: string | undefined) => string | null
   attribution: string
   subdomains: string[]
-  /** Invert the tiles in CSS so a light basemap suits the dark UI. */
-  darkFilter?: boolean
+  /**
+   * The tone the tiles ship in. TomTom's `night` style is natively dark; OSM is
+   * natively light. The map layer is tagged with this, and CSS inverts whichever
+   * one is the wrong way round for the active theme — dark journey pages want a
+   * dark map, the light report journey wants a light one.
+   */
+  nativeTone: 'dark' | 'light'
 }
 
 export const TILE_PROVIDERS: Record<string, TileProvider> = {
@@ -22,6 +27,7 @@ export const TILE_PROVIDERS: Record<string, TileProvider> = {
         : null,
     attribution: '&copy; TomTom &copy; OpenStreetMap contributors',
     subdomains: ['a', 'b', 'c', 'd'],
+    nativeTone: 'dark',
   },
   tomtom_default: {
     id: 'tomtom_default',
@@ -33,6 +39,7 @@ export const TILE_PROVIDERS: Record<string, TileProvider> = {
         : null,
     attribution: '&copy; TomTom &copy; OpenStreetMap contributors',
     subdomains: ['a', 'b', 'c', 'd'],
+    nativeTone: 'dark',
   },
   /**
    * OpenStreetMap standard tiles — the only genuinely key-free option left.
@@ -49,7 +56,7 @@ export const TILE_PROVIDERS: Record<string, TileProvider> = {
     getUrl: () => 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     subdomains: [],
-    darkFilter: true,
+    nativeTone: 'light',
   },
 }
 
