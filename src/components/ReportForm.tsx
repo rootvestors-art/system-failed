@@ -143,7 +143,7 @@ export default function ReportForm() {
   }
 
   const isHazard = form.report_type === 'hazard'
-  const totalSteps = isHazard ? 2 : 3
+  const totalSteps = isHazard ? 1 : 3
 
   /** Apply a triage result onto the form so the citizen only has to confirm it. */
   function applyIntake({ result, photo, city, state, agency }: SmartIntakeApplied) {
@@ -223,7 +223,7 @@ export default function ReportForm() {
         return
       }
       if (!form.agency) {
-        setError('Please specify the responsible agency (Step 3).')
+        setError('Please name the department responsible (last step).')
         return
       }
     }
@@ -284,8 +284,6 @@ export default function ReportForm() {
           state: form.state,
           negligence_type: safeNegligenceType,
           agency: form.agency,
-          mla: form.mla || undefined,
-          mp: form.mp || undefined,
           description: safeDescription,
           evidence_links: form.evidence_links.filter((l) => l.trim() !== ''),
           photo: form.photo,
@@ -481,56 +479,46 @@ export default function ReportForm() {
         >
           <span className="font-bold">
             {prefilledBy === 'openai'
-              ? 'Filled in from your description.'
-              : 'Filled in using offline keyword matching (AI not connected).'}
+              ? t('form.prefilled')
+              : t('form.prefilledMock')}
           </span>{' '}
           Check every field below and correct anything that's wrong — nothing is
           submitted until you press the final button.
         </div>
       )}
 
-      {/* Report Type Toggle */}
-      <div className="mb-8">
-        <label className={labelClass}>What are you reporting?</label>
-        <div className="grid grid-cols-2 gap-3">
-          <button
-            type="button"
-            className={`flex items-center justify-center gap-2 px-4 py-4 border text-sm font-bold uppercase transition ${
-              !isHazard
-                ? 'bg-blood border-blood text-white'
-                : 'border-line text-ink-muted hover:border-gray-500'
-            }`}
-            onClick={() => {
-              setForm((prev) => ({ ...prev, report_type: 'incident' }))
-              setStep(1)
-            }}
-          >
-            <FileText size={18} /> Past incident
-          </button>
-          <button
-            type="button"
-            className={`flex items-center justify-center gap-2 px-4 py-4 border text-sm font-bold uppercase transition ${
-              isHazard
-                ? 'bg-yellow-700 border-yellow-600 text-white'
-                : 'border-line text-ink-muted hover:border-gray-500'
-            }`}
-            onClick={() => {
-              setForm((prev) => ({ ...prev, report_type: 'hazard' }))
-              setStep(1)
-            }}
-          >
-            <AlertTriangle size={18} /> Safety Hazard
-          </button>
+      {/*
+        The report-type chooser used to live here. It has been removed: the AI
+        already decides from the citizen's own words whether someone was hurt,
+        and re-asking after the fact was both redundant and the kind of extra
+        decision that makes a form feel bureaucratic. Documenting a past
+        casualty is a rarer, different task, so it gets a quiet escape hatch
+        instead of equal billing.
+      */}
+      {!isHazard && (
+        <div className="mb-6 rounded border border-line bg-raised px-4 py-3 flex items-start gap-2.5">
+          <FileText size={16} className="text-ink-faint shrink-0 mt-0.5" />
+          <p className="text-ink-muted text-sm">
+            You are recording an incident that has already caused death or injury, so we
+            ask for a few extra details.{' '}
+            <button
+              type="button"
+              onClick={() => {
+                setForm((prev) => ({ ...prev, report_type: 'hazard' }))
+                setStep(1)
+              }}
+              className="text-civic underline underline-offset-2 font-semibold"
+            >
+              No one was hurt — report it as a hazard
+            </button>
+          </p>
         </div>
-        <p className="text-ink-faint text-xs mt-2">
-          {isHazard
-            ? 'Flag a dangerous spot so it gets fixed before anyone is hurt'
-            : 'Document a death or serious injury that has already happened'}
-        </p>
-      </div>
+      )}
 
-      {/* Step indicator */}
-      <div className="flex items-center justify-center gap-2 mb-10">
+      {/* Step indicator — pointless when there is only one step */}
+      <div
+        className={`flex items-center justify-center gap-2 mb-10 ${totalSteps < 2 ? 'hidden' : ''}`}
+      >
         {Array.from({ length: totalSteps }, (_, i) => i + 1).map((s) => (
           <div key={s} className="flex items-center gap-2">
             <div
@@ -591,7 +579,7 @@ export default function ReportForm() {
           </div>
 
           <div>
-            <label className={labelClass}>Description *</label>
+            <label className={labelClass}>{t('form.description')} *</label>
             <textarea
               className={`${inputClass} h-32 resize-none`}
               placeholder="What happened? Include details about the negligence..."
@@ -694,13 +682,13 @@ export default function ReportForm() {
       {((isHazard && step === 1) || (!isHazard && step === 2)) && (
         <div className="space-y-6">
           <h2 className={`text-2xl font-header font-bold text-ink border-l-4 ${isHazard ? 'border-yellow-600' : 'border-blood'} pl-4`}>
-            {isHazard ? 'Hazard Details' : 'Location & Evidence'}
+            {isHazard ? t('form.hazardDetails') : t('form.locationEvidence')}
           </h2>
 
           {/* Severity (hazard only) */}
           {isHazard && (
             <div>
-              <label className={labelClass}>Severity Level *</label>
+              <label className={labelClass}>{t('form.severity')} *</label>
               <div className="grid grid-cols-4 gap-2">
                 {severityLevels.map((level) => (
                   <button
@@ -727,7 +715,7 @@ export default function ReportForm() {
           )}
 
           <div>
-            <label className={labelClass}>Photo Evidence</label>
+            <label className={labelClass}>{t('form.photo')}</label>
             <PhotoInput
               value={form.photo}
               onChange={(file) => update('photo', file)}
@@ -735,9 +723,9 @@ export default function ReportForm() {
             />
           </div>
           <div>
-            <label className={labelClass}>Relevant Links</label>
+            <label className={labelClass}>{t('form.links')}</label>
             <p className="text-ink-faint text-xs mb-2">
-              News articles, tweets, or any relevant URLs
+              {t('form.linksHint')}
             </p>
             {form.evidence_links.map((link, i) => (
               <div key={i} className="flex gap-2 mb-2">
@@ -774,11 +762,11 @@ export default function ReportForm() {
                 }))
               }
             >
-              <Plus size={14} /> Add link
+              <Plus size={14} /> {t('form.addLink')}
             </button>
           </div>
           <div>
-            <label className={labelClass}>Location *</label>
+            <label className={labelClass}>{t('form.location')} *</label>
             <Suspense
               fallback={
                 <div className="border border-line rounded p-6 text-center text-ink-faint text-sm">
@@ -801,7 +789,7 @@ export default function ReportForm() {
             </Suspense>
           </div>
           <div>
-            <label className={labelClass}>Type of {isHazard ? 'Hazard' : 'Negligence'} *</label>
+            <label className={labelClass}>{t('form.hazardType')} *</label>
             <div className="grid grid-cols-2 gap-3">
               {negligenceTypesWithOther.map((type) => {
                 const isOtherSelected = type === 'Other' && (form.negligence_type === '' || form.custom_negligence_type !== '')
@@ -850,10 +838,10 @@ export default function ReportForm() {
           {/* Description (hazard only - incident has it in step 1) */}
           {isHazard && (
             <div>
-              <label className={labelClass}>Description *</label>
+              <label className={labelClass}>{t('form.description')} *</label>
               <textarea
                 className={`${inputClass} h-32 resize-none`}
-                placeholder="Describe the hazard and why it's dangerous..."
+                placeholder={t('form.descriptionPlaceholder')}
                 value={form.description}
                 onChange={(e) => update('description', e.target.value)}
               />
@@ -862,59 +850,32 @@ export default function ReportForm() {
         </div>
       )}
 
-      {/* INCIDENT Step 3: Responsible Authorities */}
-      {!isHazard && step === 3 && (
-        <div className="space-y-6">
-          <h2 className="text-2xl font-header font-bold text-ink border-l-4 border-blood pl-4">
-            Responsible Authorities
-          </h2>
-          <p className="text-ink-faint text-sm">
-            If unknown, leave blank for community investigation.
-          </p>
-          <div>
-            <label className={labelClass}>Responsible Agency *</label>
-            <input
-              type="text"
-              className={inputClass}
-              placeholder="e.g. Delhi Jal Board, BBMP, PWD"
-              value={form.agency}
-              onChange={(e) => update('agency', e.target.value)}
-            />
-          </div>
-          <div>
-            <label className={labelClass}>Area MLA</label>
-            <input
-              type="text"
-              className={inputClass}
-              placeholder="MLA name or 'Unknown'"
-              value={form.mla}
-              onChange={(e) => update('mla', e.target.value)}
-            />
-          </div>
-          <div>
-            <label className={labelClass}>Area MP</label>
-            <input
-              type="text"
-              className={inputClass}
-              placeholder="MP name or 'Unknown'"
-              value={form.mp}
-              onChange={(e) => update('mp', e.target.value)}
-            />
-          </div>
-        </div>
-      )}
+      {/*
+        The "Responsible Authorities" step is gone.
 
-      {/* HAZARD Step 2: Optional Authorities */}
-      {isHazard && step === 2 && (
-        <div className="space-y-6">
-          <h2 className="text-2xl font-header font-bold text-ink border-l-4 border-yellow-600 pl-4">
-            Responsible Authorities (Optional)
+        Asking a citizen to type their MLA's and MP's name contradicted the entire
+        promise of the product — that working out who is responsible is our job,
+        not theirs — and it is information almost nobody has to hand. The routing
+        table already derives the owning department, and we deliberately store
+        office titles rather than named individuals, so the fields could only ever
+        be left blank or filled with a guess.
+
+        For a hazard the department is resolved automatically and shown before
+        filing, so there is nothing left to ask: the flow is now one step.
+        For a past incident we still let the reporter correct the department,
+        since those are researched after the fact, but the MLA/MP inputs are gone.
+      */}
+      {!isHazard && step === 3 && (
+        <div className="space-y-5">
+          <h2 className="text-xl font-header font-bold text-ink border-l-4 border-blood pl-4">
+            Which department was responsible?
           </h2>
-          <p className="text-ink-faint text-sm">
-            Help us trace accountability. Leave blank if unknown.
-          </p>
-          <div>
-            <label className={labelClass}>Responsible Agency</label>
+          <div className="rounded border border-line bg-raised p-4">
+            <p className="text-ink-muted text-sm">
+              We worked this out from the location and the type of hazard. Change it only
+              if you know better.
+            </p>
+            <label className={`${labelClass} mt-4`}>Department</label>
             <input
               type="text"
               className={inputClass}
@@ -922,26 +883,10 @@ export default function ReportForm() {
               value={form.agency}
               onChange={(e) => update('agency', e.target.value)}
             />
-          </div>
-          <div>
-            <label className={labelClass}>Area MLA</label>
-            <input
-              type="text"
-              className={inputClass}
-              placeholder="MLA name or 'Unknown'"
-              value={form.mla}
-              onChange={(e) => update('mla', e.target.value)}
-            />
-          </div>
-          <div>
-            <label className={labelClass}>Area MP</label>
-            <input
-              type="text"
-              className={inputClass}
-              placeholder="MP name or 'Unknown'"
-              value={form.mp}
-              onChange={(e) => update('mp', e.target.value)}
-            />
+            <p className="text-ink-faint text-xs mt-2">
+              Elected representatives are recorded by office (your area's MLA and MP), not
+              by name — so there is nothing for you to look up.
+            </p>
           </div>
         </div>
       )}
@@ -951,10 +896,7 @@ export default function ReportForm() {
         <div className="mt-8 rounded border border-amber-300 bg-amber-50 px-4 py-3 flex items-start gap-2.5">
           <AlertTriangle size={15} className="text-yellow-600 shrink-0 mt-0.5" />
           <p className="text-ink-muted text-xs leading-relaxed">
-            <span className="text-amber-700 font-bold">Before you file:</span> this report
-            becomes part of a public record. Please don't include Aadhaar or PAN numbers, phone
-            numbers, bank or payment details, or medical information — yours or anyone else's.
-            Check the description above and remove anything personal.
+            <span className="text-amber-700 font-bold">{t('form.piiHeading')}</span> {t('form.piiBody')}
           </p>
         </div>
       )}
@@ -967,7 +909,7 @@ export default function ReportForm() {
             onClick={prev}
             className="flex items-center gap-2 text-ink-muted hover:text-ink transition font-header uppercase tracking-wide"
           >
-            <ChevronLeft size={20} /> Back
+            <ChevronLeft size={20} /> {t('form.back')}
           </button>
         ) : (
           <div />
@@ -978,7 +920,7 @@ export default function ReportForm() {
             onClick={next}
             className={`flex items-center gap-2 ${isHazard ? 'bg-yellow-700 hover:bg-yellow-600' : 'bg-blood hover:bg-red-700'} text-white px-8 py-3 font-header font-bold uppercase tracking-wide transition`}
           >
-            Next <ChevronRight size={20} />
+            {t('form.next')} <ChevronRight size={20} />
           </button>
         ) : (
           <button
@@ -989,11 +931,11 @@ export default function ReportForm() {
           >
             {submitting ? (
               <>
-                <Loader2 size={16} className="animate-spin" /> Filing…
+                <Loader2 size={16} className="animate-spin" /> {t('form.filing')}
               </>
             ) : (
               <>
-                <Send size={16} /> File complaint
+                <Send size={16} /> {t('form.file')}
               </>
             )}
           </button>

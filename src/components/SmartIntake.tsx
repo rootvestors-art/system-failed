@@ -541,21 +541,32 @@ export default function SmartIntake({ onApply, onSkip }: Props) {
             </div>
           )}
 
-          <div className="flex flex-wrap gap-3">
-            <button
-              type="button"
-              onClick={handleApply}
-              className="flex items-center gap-2 bg-white text-black px-5 py-3 font-bold uppercase text-sm hover:bg-gray-200 transition rounded"
-            >
-              <Check size={16} /> {t('intake.result.accept')}
-            </button>
-            <button
-              type="button"
-              onClick={() => setResult(null)}
-              className="flex items-center gap-2 border border-gray-600 text-ink-muted px-4 py-3 font-bold uppercase text-sm hover:border-gray-400 transition rounded"
-            >
-              <X size={16} /> {t('intake.result.redo')}
-            </button>
+          {/*
+            "Looks right — continue" / "Redo" told the citizen nothing about what
+            either button would do. Each action now names its own consequence, and
+            a line above says what happens next, so nobody has to press a button to
+            find out what it means.
+          */}
+          <div className="border-t border-line pt-4">
+            <p className="text-ink-muted text-sm mb-3">
+              {t('intake.result.nextStep')}
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button
+                type="button"
+                onClick={handleApply}
+                className="flex-1 flex items-center justify-center gap-2 bg-blood hover:bg-red-700 text-white px-5 py-3.5 font-bold text-sm transition rounded"
+              >
+                <Check size={16} /> {t('intake.result.accept')}
+              </button>
+              <button
+                type="button"
+                onClick={() => setResult(null)}
+                className="flex items-center justify-center gap-2 border border-line bg-raised text-ink px-4 py-3.5 font-semibold text-sm hover:border-ink-faint transition rounded"
+              >
+                <X size={16} /> {t('intake.result.redo')}
+              </button>
+            </div>
           </div>
         </div>
       )}

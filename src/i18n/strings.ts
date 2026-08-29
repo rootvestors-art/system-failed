@@ -129,13 +129,66 @@ export const STRINGS: Record<string, Entry> = {
   'intake.result.complaintText': { en: 'Complaint text', hi: 'शिकायत का मसौदा' },
   'intake.result.worthAdding': { en: 'Worth adding', hi: 'यह भी बताएं तो अच्छा' },
   'intake.result.doFirst': { en: 'Do this first', hi: 'पहले यह कीजिए' },
-  'intake.result.accept': { en: 'Looks right — continue', hi: 'सही है — आगे बढ़ें' },
-  'intake.result.redo': { en: 'Redo', hi: 'दोबारा' },
+  // Each action names its own consequence. "Looks right / Redo" left the citizen
+  // guessing what either button actually did.
+  'intake.result.nextStep': {
+    en: "Next you'll check the location and severity, then file it. Nothing is sent yet.",
+    hi: 'आगे आप जगह और गंभीरता जांचेंगे, फिर शिकायत दर्ज होगी। अभी कुछ नहीं भेजा गया है।',
+  },
+  'intake.result.accept': {
+    en: 'Yes, use this complaint',
+    hi: 'हां, यही शिकायत भेजें',
+  },
+  'intake.result.redo': {
+    en: 'Change what I wrote',
+    hi: 'मैंने जो लिखा वह बदलें',
+  },
   'intake.result.mocked': { en: 'Mocked — AI not connected', hi: 'नमूना — AI जुड़ा नहीं है' },
   'intake.result.instead': {
     en: 'You would otherwise have had to work this out yourself on',
     hi: 'वरना आपको यह खुद पता करना पड़ता, यहां:',
   },
+
+
+  // ── Form step ───────────────────────────────────────────────────────────
+  'form.prefilled': {
+    en: 'Filled in from your description.',
+    hi: 'आपकी बात से भर दिया गया है।',
+  },
+  'form.prefilledMock': {
+    en: 'Filled in using offline keyword matching (AI not connected).',
+    hi: 'बिना AI, शब्दों के आधार पर भरा गया है।',
+  },
+  'form.checkEverything': {
+    en: "Check every field below and correct anything that's wrong — nothing is submitted until you press the final button.",
+    hi: 'नीचे सब कुछ जांच लीजिए और गलत हो तो सुधार दीजिए। आखिरी बटन दबाने तक कुछ नहीं भेजा जाएगा।',
+  },
+  'form.hazardDetails': { en: 'Hazard details', hi: 'समस्या का ब्यौरा' },
+  'form.locationEvidence': { en: 'Location and evidence', hi: 'जगह और सबूत' },
+  'form.severity': { en: 'How dangerous is it?', hi: 'कितना खतरनाक है?' },
+  'form.photo': { en: 'Photo evidence', hi: 'फोटो सबूत' },
+  'form.links': { en: 'Relevant links', hi: 'संबंधित लिंक' },
+  'form.linksHint': {
+    en: 'News articles, tweets, or any relevant URLs',
+    hi: 'खबर, ट्वीट या कोई और लिंक',
+  },
+  'form.addLink': { en: 'Add link', hi: 'लिंक जोड़ें' },
+  'form.location': { en: 'Where is it?', hi: 'यह कहां है?' },
+  'form.hazardType': { en: 'What kind of problem is it?', hi: 'यह किस तरह की समस्या है?' },
+  'form.description': { en: 'Description', hi: 'ब्यौरा' },
+  'form.descriptionPlaceholder': {
+    en: "Describe the hazard and why it's dangerous…",
+    hi: 'बताइए क्या दिक्कत है और यह खतरनाक क्यों है…',
+  },
+  'form.piiHeading': { en: 'Before you file:', hi: 'भेजने से पहले:' },
+  'form.piiBody': {
+    en: "this report becomes part of a public record. Please don't include Aadhaar or PAN numbers, phone numbers, bank or payment details, or medical information — yours or anyone else's. Check the description above and remove anything personal.",
+    hi: 'यह शिकायत सार्वजनिक रिकॉर्ड का हिस्सा बनेगी। कृपया आधार या पैन नंबर, फोन नंबर, बैंक या भुगतान की जानकारी, या किसी की सेहत से जुड़ी बात न लिखें — न अपनी, न किसी और की। ऊपर का ब्यौरा जांच लीजिए।',
+  },
+  'form.file': { en: 'File complaint', hi: 'शिकायत दर्ज करें' },
+  'form.filing': { en: 'Filing…', hi: 'दर्ज हो रही है…' },
+  'form.back': { en: 'Back', hi: 'पीछे' },
+  'form.next': { en: 'Next', hi: 'आगे' },
 
   // ── Receipt ─────────────────────────────────────────────────────────────
   'receipt.title': { en: 'Complaint filed', hi: 'शिकायत दर्ज हो गई' },
