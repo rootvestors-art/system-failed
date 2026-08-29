@@ -1,4 +1,5 @@
 import type { Hazard, Incident, NegligenceType } from '../types/incident.ts'
+import { translate, type Lang } from '../i18n/index.tsx'
 import {
   resolveJurisdiction,
   resolveAgency,
@@ -64,19 +65,21 @@ export function formatDayCount(days: number): string {
  * "escalating now", and handles the terminal rung, whose window is Infinity —
  * without that guard this renders the literal string "Infinity days left".
  */
-export function formatRemaining(daysLeft: number): string {
-  if (!Number.isFinite(daysLeft)) {
-    return 'Every escalation level has been exhausted. This now sits on the public record.'
-  }
+export function formatRemaining(daysLeft: number, lang: Lang = 'en'): string {
+  if (!Number.isFinite(daysLeft)) return translate(lang, 'track.allExhausted')
   if (daysLeft >= 1) {
     const days = Math.ceil(daysLeft)
-    return `${days} day${days === 1 ? '' : 's'} left before this escalates automatically.`
+    return days === 1
+      ? translate(lang, 'track.dayLeft')
+      : translate(lang, 'track.daysLeft', { n: days })
   }
   const hours = Math.ceil(daysLeft * 24)
   if (hours >= 1) {
-    return `${hours} hour${hours === 1 ? '' : 's'} left before this escalates automatically.`
+    return hours === 1
+      ? translate(lang, 'track.hourLeft')
+      : translate(lang, 'track.hoursLeft', { n: hours })
   }
-  return 'Escalating to the next level now.'
+  return translate(lang, 'track.escalatingNow')
 }
 
 /** True once a complaint has climbed past every rung with a deadline. */
@@ -85,6 +88,8 @@ export function isExhausted(status: ComplaintStatus): boolean {
 }
 
 interface StatusInput {
+  /** Language for the human-readable stage labels. */
+  lang?: Lang
   location: { city: string; state: string }
   negligence_type: NegligenceType
   created_at: string
@@ -96,6 +101,7 @@ interface StatusInput {
 
 export function computeComplaintStatus(input: StatusInput): ComplaintStatus {
   const { location, negligence_type, created_at, isResolved } = input
+  const lang: Lang = input.lang ?? 'en'
 
   const jurisdiction = resolveJurisdiction(location.city, location.state)
   const agency =
@@ -133,19 +139,19 @@ export function computeComplaintStatus(input: StatusInput): ComplaintStatus {
   const ackAtDay = Math.min(1, jurisdiction.slaDays * 0.5)
   const assignAtDay = jurisdiction.slaDays
   const progress: ProgressStage[] = [
-    { label: 'Submitted', reached: true, note: 'Complaint recorded and routed' },
+    { label: translate(lang, 'track.stage.submitted'), reached: true, note: 'Complaint recorded and routed' },
     {
-      label: 'Acknowledged',
+      label: translate(lang, 'track.stage.acknowledged'),
       reached: resolved || elapsedDays >= ackAtDay,
       note: `Expected within ${formatDayCount(ackAtDay)}`,
     },
     {
-      label: 'Assigned',
+      label: translate(lang, 'track.stage.assigned'),
       reached: resolved || elapsedDays >= assignAtDay,
       note: `Expected within ${formatDayCount(assignAtDay)}`,
     },
     {
-      label: 'Resolved',
+      label: translate(lang, 'track.stage.resolved'),
       reached: resolved,
       note: resolved ? 'Confirmed fixed' : 'Awaiting repair',
     },
@@ -166,8 +172,9 @@ export function computeComplaintStatus(input: StatusInput): ComplaintStatus {
 }
 
 /** Convenience wrapper for a hazard record. */
-export function hazardStatus(hazard: Hazard): ComplaintStatus {
+export function hazardStatus(hazard: Hazard, lang: Lang = 'en'): ComplaintStatus {
   return computeComplaintStatus({
+    lang,
     location: hazard.location,
     negligence_type: hazard.negligence_type,
     created_at: hazard.created_at,
@@ -176,8 +183,9 @@ export function hazardStatus(hazard: Hazard): ComplaintStatus {
 }
 
 /** Convenience wrapper for an incident record. */
-export function incidentStatus(incident: Incident): ComplaintStatus {
+export function incidentStatus(incident: Incident, lang: Lang = 'en'): ComplaintStatus {
   return computeComplaintStatus({
+    lang,
     location: incident.location,
     negligence_type: incident.negligence_type,
     created_at: incident.created_at,

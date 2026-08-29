@@ -19,6 +19,7 @@ import {
 } from '../../utils/complaintStatus.ts'
 import PhotoInput from '../../components/PhotoInput.tsx'
 import { negligenceLabel } from '../../utils/formatters.ts'
+import { useLang } from '../../i18n/index.tsx'
 import { copyToClipboard } from '../../utils/share.ts'
 
 type Tracked =
@@ -26,6 +27,7 @@ type Tracked =
   | { kind: 'hazard'; record: Hazard }
 
 export default function TrackComplaint() {
+  const { t, lang } = useLang()
   const { id } = useParams<{ id: string }>()
   const [tracked, setTracked] = useState<Tracked | null>(null)
   const [loading, setLoading] = useState(Boolean(id))
@@ -86,7 +88,9 @@ export default function TrackComplaint() {
   const derived = useMemo(() => {
     if (!tracked) return null
     const status =
-      tracked.kind === 'hazard' ? hazardStatus(tracked.record) : incidentStatus(tracked.record)
+      tracked.kind === 'hazard'
+        ? hazardStatus(tracked.record, lang)
+        : incidentStatus(tracked.record, lang)
     // Local aliases keep the existing JSX below unchanged.
     return {
       jurisdiction: status.jurisdiction,
@@ -100,7 +104,7 @@ export default function TrackComplaint() {
       progress: status.progress,
       escalations: status.escalations,
     }
-  }, [tracked])
+  }, [tracked, lang])
 
   if (loading) {
     return (
@@ -177,7 +181,7 @@ export default function TrackComplaint() {
           <div className="flex items-start gap-3">
             <CheckCircle2 className="text-green-700 shrink-0 mt-0.5" size={22} />
             <div>
-              <p className="text-ink font-bold">Marked fixed</p>
+              <p className="text-ink font-bold">{t('track.markedFixed')}</p>
               <p className="text-ink-muted text-sm mt-1">
                 {agency} has recorded this as resolved. If it isn't actually fixed,
                 reopen it and the clock restarts from today.
@@ -190,11 +194,11 @@ export default function TrackComplaint() {
             <div className="min-w-0">
               <p className="text-ink font-bold">
                 {Number.isFinite(daysLeft)
-                  ? `Sitting with ${active?.authority ?? agency}`
-                  : 'Unresolved at every level'}
+                  ? `${t('track.sittingWith')} ${active?.authority ?? agency}`
+                  : t('track.exhausted')}
               </p>
               <p className="text-ink-muted text-sm mt-1">
-                {formatRemaining(daysLeft)}
+                {formatRemaining(daysLeft, lang)}
                 {escalations > 0 && (
                   <>
                     {' '}
@@ -215,10 +219,10 @@ export default function TrackComplaint() {
       <div className="mb-10">
         <div className="flex items-center justify-between gap-2 flex-wrap mb-4">
           <h2 className="text-lg font-header font-bold text-ink uppercase tracking-wide">
-            Progress
+            {t('track.progress')}
           </h2>
           <span className="text-[10px] font-bold px-2 py-1 rounded bg-amber-50 text-amber-600 border border-amber-300">
-            Simulated
+            {t('track.simulated')}
           </span>
         </div>
 
@@ -255,7 +259,7 @@ export default function TrackComplaint() {
 
       {/* Escalation ladder */}
       <h2 className="text-lg font-header font-bold text-ink uppercase tracking-wide mb-1">
-        Chain of accountability
+        {t('track.chain')}
       </h2>
       <p className="text-ink-faint text-sm mb-5">
         Each level gets a fixed window. When it lapses, the complaint moves up on its

@@ -11,6 +11,7 @@ import TrackComplaint from './features/tracking/TrackComplaint.tsx'
 import HowItWorks from './pages/HowItWorks.tsx'
 import Home from './pages/Home.tsx'
 import Toast from './components/Toast.tsx'
+import { LangProvider } from './i18n/index.tsx'
 
 /**
  * Wraps the citizen-facing journey in the light civic treatment.
@@ -25,6 +26,7 @@ function Journey({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return (
+    <LangProvider>
     <BrowserRouter>
       <div className="min-h-screen flex flex-col">
         <Navbar />
@@ -46,6 +48,7 @@ export default function App() {
       </div>
       <Toast />
     </BrowserRouter>
+    </LangProvider>
   )
 }
 

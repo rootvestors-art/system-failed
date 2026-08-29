@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { CheckCircle2, Clock, ArrowUpCircle, ChevronRight } from 'lucide-react'
 import { type ComplaintStatus, formatRemaining, isExhausted } from '../utils/complaintStatus.ts'
+import { useLang } from '../i18n/index.tsx'
 
 /**
  * Compact status card for a public report page.
@@ -16,6 +17,7 @@ export default function ComplaintStatusPanel({
   status: ComplaintStatus
   trackId: string
 }) {
+  const { t, lang } = useLang()
   const { resolved, agency, active, daysLeft, escalations, progress, jurisdiction } = status
   const exhausted = isExhausted(status)
 
@@ -31,10 +33,10 @@ export default function ComplaintStatusPanel({
     >
       <div className="flex items-center justify-between gap-2 flex-wrap mb-3">
         <h3 className="font-header font-bold text-ink uppercase text-sm tracking-widest">
-          Complaint status
+          {t('track.status')}
         </h3>
         <span className="text-[10px] font-bold px-2 py-1 rounded bg-amber-50 text-amber-600 border border-amber-300">
-          Simulated
+          {t('track.simulated')}
         </span>
       </div>
 
@@ -43,7 +45,7 @@ export default function ComplaintStatusPanel({
         <div className="flex items-start gap-2.5 mb-4">
           <CheckCircle2 className="text-green-700 shrink-0 mt-0.5" size={18} />
           <div>
-            <p className="text-ink font-bold text-sm">Reported fixed</p>
+            <p className="text-ink font-bold text-sm">{t('track.reportedFixed')}</p>
             <p className="text-ink-muted text-xs mt-0.5">
               A citizen confirmed this hazard has been repaired.
             </p>
@@ -54,9 +56,9 @@ export default function ComplaintStatusPanel({
           <Clock className="text-caution shrink-0 mt-0.5" size={18} />
           <div className="min-w-0">
             <p className="text-ink font-bold text-sm">
-              {exhausted ? 'Unresolved at every level' : `With ${active?.authority ?? agency}`}
+              {exhausted ? t('track.exhausted') : `${t('track.with')} ${active?.authority ?? agency}`}
             </p>
-            <p className="text-ink-muted text-xs mt-0.5">{formatRemaining(daysLeft)}</p>
+            <p className="text-ink-muted text-xs mt-0.5">{formatRemaining(daysLeft, lang)}</p>
           </div>
         </div>
       )}
@@ -64,7 +66,9 @@ export default function ComplaintStatusPanel({
       {escalations > 0 && !resolved && (
         <p className="flex items-center gap-1.5 text-xs text-blood font-bold mb-4">
           <ArrowUpCircle size={13} />
-          Escalated {escalations} time{escalations === 1 ? '' : 's'} — nobody has acted
+          {escalations === 1
+            ? t('track.escalatedOnce')
+            : t('track.escalatedTimes', { n: escalations })}
         </p>
       )}
 
@@ -94,13 +98,13 @@ export default function ComplaintStatusPanel({
       <dl className="space-y-2 text-xs border-t border-line pt-3">
         <div>
           <dt className="text-ink-faint text-[10px]">
-            Routed to
+            {t('track.routedTo')}
           </dt>
           <dd className="text-ink mt-0.5">{agency}</dd>
         </div>
         <div>
           <dt className="text-ink-faint text-[10px]">
-            Instead of
+            {t('track.instead')}
           </dt>
           <dd className="text-ink-muted mt-0.5">{jurisdiction.existingPortal}</dd>
         </div>
@@ -110,7 +114,7 @@ export default function ComplaintStatusPanel({
         to={`/track/${trackId}`}
         className="inline-flex items-center gap-1 mt-4 text-sm font-header uppercase tracking-wide text-ink border border-line hover:border-gray-500 rounded px-4 py-2 transition"
       >
-        Full timeline <ChevronRight size={14} />
+        {t('track.fullTimeline')} <ChevronRight size={14} />
       </Link>
     </div>
   )

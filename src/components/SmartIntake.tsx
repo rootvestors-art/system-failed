@@ -10,6 +10,7 @@ import {
 } from '../services/triage.ts'
 import { resolveAgency, resolveJurisdiction, resolveRouting } from '../data/jurisdictions.ts'
 import PhotoInput from './PhotoInput.tsx'
+import { useLang } from '../i18n/index.tsx'
 
 /** Hard stop on recording length — a description needs a sentence, not a monologue. */
 const MAX_RECORDING_MS = 30_000
@@ -49,6 +50,8 @@ interface Props {
 }
 
 export default function SmartIntake({ onApply, onSkip }: Props) {
+  const { t, lang } = useLang()
+  const headFont = lang === 'hi' ? 'font-sans' : 'font-header'
   const [text, setText] = useState('')
   const [photo, setPhoto] = useState<File | null>(null)
   const [city, setCity] = useState('')
@@ -265,12 +268,11 @@ export default function SmartIntake({ onApply, onSkip }: Props) {
       <div className="flex items-start gap-3 mb-1">
         <MessageSquare className="text-civic shrink-0 mt-1" size={20} />
         <div>
-          <h2 className="text-lg sm:text-xl font-header font-bold text-ink leading-tight">
-            Just tell us what's wrong
+          <h2 className={`text-lg sm:text-xl ${headFont} font-bold text-ink leading-tight`}>
+            {t('intake.title')}
           </h2>
           <p className="text-ink-muted text-sm mt-1">
-            Speak or type one sentence in your own language. We'll pick the department,
-            write the formal complaint and fill this form for you.
+            {t('intake.sub')}
           </p>
         </div>
       </div>
@@ -287,7 +289,7 @@ export default function SmartIntake({ onApply, onSkip }: Props) {
       <div className="mt-5">
         <div className="flex items-center justify-between mb-2 gap-2 flex-wrap">
           <label className="block text-xs text-ink-faint font-bold">
-            What is the problem?
+            {t('intake.problemLabel')}
           </label>
           {(recordSupported || speechSupported) && (
             <div className="flex items-center gap-2">
@@ -319,19 +321,19 @@ export default function SmartIntake({ onApply, onSkip }: Props) {
                 >
                   {transcribing ? (
                     <>
-                      <Loader2 size={13} className="animate-spin" /> Transcribing…
+                      <Loader2 size={13} className="animate-spin" /> {t('intake.transcribing')}
                     </>
                   ) : preparing ? (
                     <>
-                      <Loader2 size={13} className="animate-spin" /> Preparing…
+                      <Loader2 size={13} className="animate-spin" /> {t('intake.preparing')}
                     </>
                   ) : recording ? (
                     <>
-                      <MicOff size={13} /> Stop
+                      <MicOff size={13} /> {t('intake.stop')}
                     </>
                   ) : (
                     <>
-                      <Mic size={13} /> Speak
+                      <Mic size={13} /> {t('intake.speak')}
                     </>
                   )}
                 </button>
@@ -347,7 +349,7 @@ export default function SmartIntake({ onApply, onSkip }: Props) {
                     }`}
                   >
                     {listening ? <MicOff size={13} /> : <Mic size={13} />}
-                    {listening ? 'Stop' : 'Speak'}
+                    {listening ? t('intake.stop') : t('intake.speak')}
                   </button>
                 )
               )}
@@ -371,7 +373,7 @@ export default function SmartIntake({ onApply, onSkip }: Props) {
         <textarea
           rows={3}
           className={inputClass}
-          placeholder="e.g. Hamare gali mein bada khadda hai, raat mein dikhta nahi, koi gir jayega"
+          placeholder={t('intake.placeholder')}
           value={text}
           onChange={(e) => setText(e.target.value)}
         />
@@ -381,7 +383,7 @@ export default function SmartIntake({ onApply, onSkip }: Props) {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
         <div>
           <label className="block text-xs text-ink-faint font-bold mb-2">
-            Photo (optional)
+            {t('intake.photo')}
           </label>
           <PhotoInput value={photo} onChange={setPhoto} onError={setError} />
         </div>
@@ -389,7 +391,7 @@ export default function SmartIntake({ onApply, onSkip }: Props) {
         <div className="grid grid-cols-2 gap-2 content-start">
           <div>
             <label className="block text-xs text-ink-faint font-bold mb-2">
-              City
+              {t('intake.city')}
             </label>
             <input
               className={inputClass}
@@ -400,7 +402,7 @@ export default function SmartIntake({ onApply, onSkip }: Props) {
           </div>
           <div>
             <label className="block text-xs text-ink-faint font-bold mb-2">
-              State
+              {t('intake.state')}
             </label>
             <input
               className={inputClass}
@@ -427,14 +429,14 @@ export default function SmartIntake({ onApply, onSkip }: Props) {
           className="flex items-center gap-2 bg-blood text-white px-5 py-3 font-bold uppercase text-sm hover:bg-red-700 transition disabled:opacity-60 rounded"
         >
           {running ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
-          {running ? 'Reading your report…' : 'Write my complaint'}
+          {running ? t('intake.reading') : t('intake.submit')}
         </button>
         <button
           type="button"
           onClick={onSkip}
           className="text-ink-muted hover:text-ink text-sm underline underline-offset-4"
         >
-          I'll fill the form myself
+          {t('intake.manual')}
         </button>
       </div>
 
@@ -443,7 +445,7 @@ export default function SmartIntake({ onApply, onSkip }: Props) {
         <div className="mt-6 border-t border-line pt-5">
           <div className="flex items-center justify-between gap-2 flex-wrap mb-4">
             <h3 className="text-ink font-header font-bold uppercase text-sm tracking-wide">
-              Here's your complaint
+              {t('intake.result.title')}
             </h3>
             <span
               className={`text-[10px] font-bold px-2 py-1 rounded tracking-wider ${
@@ -454,7 +456,7 @@ export default function SmartIntake({ onApply, onSkip }: Props) {
             >
               {result.source === 'openai'
                 ? `Drafted by ${result.model ?? 'OpenAI'}`
-                : 'Mocked — AI not connected'}
+                : t('intake.result.mocked')}
             </span>
           </div>
 
@@ -465,17 +467,17 @@ export default function SmartIntake({ onApply, onSkip }: Props) {
           )}
 
           <dl className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
-            <Field label="Hazard" value={result.negligence_type.replace(/_/g, ' ')} />
-            <Field label="Severity" value={result.severity} />
-            <Field label="You wrote in" value={result.detected_language} />
-            <Field label="Confidence" value={`${Math.round(result.confidence * 100)}%`} />
+            <Field label={t('intake.result.hazard')} value={result.negligence_type.replace(/_/g, ' ')} />
+            <Field label={t('intake.result.severity')} value={result.severity} />
+            <Field label={t('intake.result.language')} value={result.detected_language} />
+            <Field label={t('intake.result.confidence')} value={`${Math.round(result.confidence * 100)}%`} />
           </dl>
 
           {/* Life-safety first: some hazards need a phone call, not a ticket. */}
           {routing?.emergency && (
             <div className="mb-4 rounded border border-red-300 bg-red-50 p-3">
               <p className="text-red-700 text-xs font-bold mb-1">
-                Do this first
+                {t('intake.result.doFirst')}
               </p>
               <p className="text-red-900 text-sm">{routing.emergency}</p>
             </div>
@@ -484,7 +486,7 @@ export default function SmartIntake({ onApply, onSkip }: Props) {
           <div className="mb-4">
             <div className="flex items-baseline justify-between gap-2 flex-wrap mb-1">
               <p className="text-xs text-ink-faint font-bold">
-                Suggested first router
+                {t('intake.result.router')}
               </p>
               {routing && (
                 <span
@@ -506,20 +508,20 @@ export default function SmartIntake({ onApply, onSkip }: Props) {
 
             {routing?.coResponsible && (
               <p className="text-ink-faint text-xs mt-1.5">
-                <span className="text-ink-muted">May also be responsible:</span>{' '}
+                <span className="text-ink-muted">{t('intake.result.alsoResponsible')}:</span>{' '}
                 {routing.coResponsible}
               </p>
             )}
 
             <p className="text-ink-faint text-xs mt-1.5">
-              You would otherwise have had to work this out yourself on{' '}
+              {t('intake.result.instead')}{' '}
               {jurisdiction.existingPortal}.
             </p>
           </div>
 
           <div className="mb-4">
             <p className="text-xs text-ink-faint font-bold mb-1">
-              Complaint text
+              {t('intake.result.complaintText')}
             </p>
             <pre className="whitespace-pre-wrap text-ink-muted text-sm bg-raised-2 border border-line rounded p-3 max-h-48 overflow-y-auto font-sans">
               {result.complaint_body}
@@ -529,7 +531,7 @@ export default function SmartIntake({ onApply, onSkip }: Props) {
           {result.missing_info.length > 0 && (
             <div className="mb-4">
               <p className="text-xs text-ink-faint font-bold mb-1">
-                Worth adding
+                {t('intake.result.worthAdding')}
               </p>
               <ul className="text-ink-muted text-sm list-disc list-inside">
                 {result.missing_info.map((m) => (
@@ -545,14 +547,14 @@ export default function SmartIntake({ onApply, onSkip }: Props) {
               onClick={handleApply}
               className="flex items-center gap-2 bg-white text-black px-5 py-3 font-bold uppercase text-sm hover:bg-gray-200 transition rounded"
             >
-              <Check size={16} /> Looks right — continue
+              <Check size={16} /> {t('intake.result.accept')}
             </button>
             <button
               type="button"
               onClick={() => setResult(null)}
               className="flex items-center gap-2 border border-gray-600 text-ink-muted px-4 py-3 font-bold uppercase text-sm hover:border-gray-400 transition rounded"
             >
-              <X size={16} /> Redo
+              <X size={16} /> {t('intake.result.redo')}
             </button>
           </div>
         </div>

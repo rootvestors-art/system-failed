@@ -8,9 +8,11 @@ import { useDocumentMeta } from '../../hooks/useDocumentMeta.ts'
 import { getShareUrl, buildOgImageUrl } from '../../utils/share.ts'
 import ComplaintStatusPanel from '../../components/ComplaintStatusPanel.tsx'
 import { hazardStatus } from '../../utils/complaintStatus.ts'
+import { useLang } from '../../i18n/index.tsx'
 const LocationMap = lazy(() => import('../../components/LocationMap.tsx'))
 
 export default function DeathTrapDetail() {
+  const { lang } = useLang()
   const { id } = useParams<{ id: string }>()
   const [hazard, setHazard] = useState<Hazard | null>(null)
 
@@ -67,7 +69,7 @@ export default function DeathTrapDetail() {
         <div className="lg:col-span-1 flex flex-col gap-6">
           {/* Status first. A reader's actual question is "is anyone fixing this?",
               not "what is a safety hazard?" — so the generic explainer moved below. */}
-          <ComplaintStatusPanel status={hazardStatus(hazard)} trackId={hazard.id} />
+          <ComplaintStatusPanel status={hazardStatus(hazard, lang)} trackId={hazard.id} />
           <Suspense
             fallback={
               <div className="h-64 flex items-center justify-center text-ink-faint text-sm">

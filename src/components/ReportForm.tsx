@@ -9,6 +9,7 @@ const LocationPicker = lazy(() => import('./LocationPicker.tsx'))
 import SmartIntake, { type SmartIntakeApplied } from './SmartIntake.tsx'
 import PhotoInput from './PhotoInput.tsx'
 import { guessNegligenceType, annotateCustomType } from '../utils/negligence.ts'
+import { useLang } from '../i18n/index.tsx'
 
 const negligenceTypes: NegligenceType[] = [
   'Pothole',
@@ -75,6 +76,7 @@ const initialForm: FormData = {
 }
 
 export default function ReportForm() {
+  const { t } = useLang()
   const navigate = useNavigate()
   const [step, setStep] = useState(1)
   const [form, setForm] = useState<FormData>(initialForm)
@@ -239,23 +241,23 @@ export default function ReportForm() {
       <div className="max-w-2xl mx-auto py-12 sm:py-20">
         <div className={`${isHazard ? 'bg-amber-50 border-yellow-700' : 'bg-red-50 border-blood'} border rounded-lg p-6 sm:p-10 text-center`}>
           <h2 className="text-2xl sm:text-3xl font-header font-bold text-ink mb-3">
-            Complaint filed
+            {t('receipt.title')}
           </h2>
           <p className="text-ink-muted text-sm">
-            It has been routed to <span className="text-ink font-bold">{form.agency}</span> and
-            the clock is now running.
+            {t('receipt.routedTo')} <span className="text-ink font-bold">{form.agency}</span>{' '}
+            {t('receipt.clockRunning')}
           </p>
 
           {reference && (
             <div className="mt-6 bg-black/40 border border-line rounded p-4">
               <p className="text-[10px] text-ink-faint font-bold">
-                Your reference
+                {t('receipt.yourReference')}
               </p>
               <p className="text-ink font-mono text-base sm:text-lg break-all mt-1">
                 {reference.id}
               </p>
               <p className="text-ink-faint text-xs mt-2">
-                Save this. You can reopen the tracker any time with it.
+                {t('receipt.saveThis')}
               </p>
             </div>
           )}
@@ -266,7 +268,7 @@ export default function ReportForm() {
                 onClick={() => navigate(`/track/${reference.id}`)}
                 className="bg-white text-black px-6 py-3 font-bold uppercase text-sm hover:bg-gray-200 transition rounded"
               >
-                Track this complaint
+                {t('receipt.track')}
               </button>
             )}
             <button
@@ -279,7 +281,7 @@ export default function ReportForm() {
               }
               className="border border-gray-600 text-ink-muted px-6 py-3 font-bold uppercase text-sm hover:border-gray-400 transition rounded"
             >
-              View public record
+              {t('receipt.viewPublic')}
             </button>
           </div>
         </div>
