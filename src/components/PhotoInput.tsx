@@ -1,5 +1,6 @@
 import { useId, useState } from 'react'
 import { Camera, X } from 'lucide-react'
+import { useT } from '../i18n/index.tsx'
 
 /**
  * Photo picker that reliably opens the file dialog.
@@ -25,6 +26,7 @@ interface PhotoInputProps {
   value: File | null
   onChange: (file: File | null) => void
   onError?: (message: string | null) => void
+  /** Overrides the default translated "Take or choose photo" label. */
   label?: string
   /** Show a thumbnail of the chosen image. */
   preview?: boolean
@@ -35,10 +37,11 @@ export default function PhotoInput({
   value,
   onChange,
   onError,
-  label = 'Take or choose photo',
+  label,
   preview = true,
   className = '',
 }: PhotoInputProps) {
+  const t = useT()
   const inputId = useId()
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
 
@@ -51,12 +54,12 @@ export default function PhotoInput({
     }
 
     if (!file.type.startsWith('image/')) {
-      onError?.('That file is not an image. Please choose a photo.')
+      onError?.(t('photo.notImage'))
       e.target.value = ''
       return
     }
     if (file.size > MAX_BYTES) {
-      onError?.('That photo is larger than 10 MB. Please choose a smaller one.')
+      onError?.(t('photo.tooLarge'))
       e.target.value = ''
       return
     }
@@ -101,7 +104,7 @@ export default function PhotoInput({
           className="flex-1 flex items-center justify-center gap-2 border border-dashed border-line bg-raised-2 rounded-lg px-4 py-4 cursor-pointer hover:border-civic hover:text-civic transition text-ink font-medium text-sm select-none"
         >
           <Camera size={16} />
-          {value ? 'Change photo' : label}
+          {value ? t('intake.changePhoto') : (label ?? t('intake.choosePhoto'))}
         </label>
 
         {value && (
@@ -109,7 +112,7 @@ export default function PhotoInput({
             type="button"
             onClick={clear}
             className="shrink-0 border border-line text-ink-muted hover:text-ink hover:border-ink-faint rounded p-2.5 transition"
-            aria-label="Remove photo"
+            aria-label={t('photo.remove')}
           >
             <X size={15} />
           </button>

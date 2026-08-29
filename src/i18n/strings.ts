@@ -88,6 +88,70 @@ export const STRINGS: Record<string, Entry> = {
   'home.viewMap': { en: 'View on map', hi: 'नक्शे पर देखें' },
   'home.seeAll': { en: 'See all reported issues', hi: 'सारी शिकायतें देखें' },
 
+  // ── Report page shell ───────────────────────────────────────────────────
+  'report.title': { en: 'Report a civic issue', hi: 'शिकायत दर्ज करें' },
+  'report.sub': {
+    en: "Tell us what's wrong in your own words. We'll identify the responsible department and prepare the complaint for you to check.",
+    hi: 'अपने शब्दों में बताइए क्या दिक्कत है। हम ज़िम्मेदार विभाग पता करेंगे और आपकी शिकायत तैयार कर देंगे — आप बस जांच लीजिए।',
+  },
+
+  // ── Hazard categories and severity ──────────────────────────────────────
+  //
+  // These are the citizen's main choice on the form, so leaving them in English
+  // defeated the point of the toggle. Keyed by the stored enum value; the Hindi
+  // side uses the words people actually say (गड्ढा, not क्षतिग्रस्त सड़क).
+  //
+  // `negligenceLabel()` is still the English-only formatter used for share
+  // captions and search URLs, which must stay in English regardless of UI
+  // language — this dictionary is for display only.
+  'type.Pothole': { en: 'Pothole', hi: 'गड्ढा' },
+  'type.Street_Light': { en: 'Street Light', hi: 'स्ट्रीट लाइट' },
+  'type.Road_Design': { en: 'Road Design', hi: 'सड़क की बनावट' },
+  'type.Open_Drain': { en: 'Open Drain', hi: 'खुला नाला' },
+  'type.Waterlogging': { en: 'Waterlogging', hi: 'जलभराव' },
+  'type.Broken_Footpath': { en: 'Broken Footpath', hi: 'टूटा फुटपाथ' },
+  'type.Electrocution': { en: 'Electrocution', hi: 'बिजली का करंट' },
+  'type.Open_Pit': { en: 'Open Pit', hi: 'खुला गड्ढा' },
+  'type.Collapse': { en: 'Collapse', hi: 'ढह जाना' },
+  'type.Debris': { en: 'Debris', hi: 'मलबा' },
+  'type.Dangerous_Structure': { en: 'Dangerous Structure', hi: 'जर्जर ढांचा' },
+  'type.Garbage_Waste': { en: 'Garbage Waste', hi: 'कूड़ा-कचरा' },
+  'type.Water_Leak': { en: 'Water Leak', hi: 'पानी का रिसाव' },
+  'type.Other': { en: 'Other', hi: 'अन्य' },
+
+  'severity.Low': { en: 'Low', hi: 'कम' },
+  'severity.Medium': { en: 'Medium', hi: 'मध्यम' },
+  'severity.High': { en: 'High', hi: 'ज़्यादा' },
+  'severity.Critical': { en: 'Critical', hi: 'बहुत गंभीर' },
+
+  // ── Location picker ─────────────────────────────────────────────────────
+  'loc.useCurrent': { en: 'Use my current location', hi: 'मेरी मौजूदा जगह लें' },
+  'loc.locating': { en: 'Finding you…', hi: 'आपकी जगह पता कर रहे हैं…' },
+  'loc.pasteLink': { en: '…or paste a Google Maps link', hi: '…या Google Maps लिंक लगाइए' },
+  'loc.go': { en: 'Go', hi: 'लगाओ' },
+  'loc.tapHint': {
+    en: 'Tap the map to drop a pin, or use one of the options above.',
+    hi: 'नक्शे पर टैप कर पिन लगाइए, या ऊपर दिए विकल्पों में से कोई चुनिए।',
+  },
+  'loc.location': { en: 'Location', hi: 'जगह' },
+  'loc.noPin': { en: 'No pin set yet', hi: 'अभी पिन नहीं लगा' },
+  'loc.coordinates': { en: 'Coordinates', hi: 'अक्षांश-देशांतर' },
+  'loc.movePin': {
+    en: 'Not quite right? Tap the map to move the pin.',
+    hi: 'ठीक नहीं है? नक्शे पर टैप कर पिन खिसकाइए।',
+  },
+  'loc.lookingUp': { en: 'Looking up the address…', hi: 'पता खोज रहे हैं…' },
+  'loc.approximate': {
+    en: 'That link named a place rather than exact coordinates, so this pin is approximate. Tap the exact spot on the map below to correct it.',
+    hi: 'उस लिंक में सिर्फ जगह का नाम था, ठीक निर्देशांक नहीं — इसलिए यह पिन अंदाज़न है। नीचे नक्शे पर सही जगह टैप कर इसे ठीक कर लीजिए।',
+  },
+
+  // ── Footer ──────────────────────────────────────────────────────────────
+  'footer.disclaimer': {
+    en: 'An independent prototype built for a hackathon. Not affiliated with or endorsed by any government authority.',
+    hi: 'यह हैकाथॉन के लिए बनाया गया एक स्वतंत्र प्रोटोटाइप है। यह किसी सरकारी विभाग से जुड़ा नहीं है और न ही उसके द्वारा मान्य है।',
+  },
+
   // ── Intake ──────────────────────────────────────────────────────────────
   'intake.title': { en: "Just tell us what's wrong", hi: 'बस बताइए क्या दिक्कत है' },
   'intake.sub': {
@@ -110,11 +174,33 @@ export const STRINGS: Record<string, Entry> = {
   'intake.photo': { en: 'Photo (optional)', hi: 'फोटो (ज़रूरी नहीं)' },
   'intake.choosePhoto': { en: 'Take or choose photo', hi: 'फोटो खींचें या चुनें' },
   'intake.changePhoto': { en: 'Change photo', hi: 'फोटो बदलें' },
+  'photo.notImage': {
+    en: 'That file is not an image. Please choose a photo.',
+    hi: 'यह फाइल फोटो नहीं है। कृपया कोई फोटो चुनिए।',
+  },
+  'photo.tooLarge': {
+    en: 'That photo is larger than 10 MB. Please choose a smaller one.',
+    hi: 'यह फोटो 10 MB से बड़ी है। कृपया छोटी फोटो चुनिए।',
+  },
+  'photo.remove': { en: 'Remove photo', hi: 'फोटो हटाएं' },
   'intake.city': { en: 'City', hi: 'शहर' },
   'intake.state': { en: 'State', hi: 'राज्य' },
   'intake.cityLabel': { en: 'Which city?', hi: 'कौन सा शहर?' },
   'intake.cityPlaceholder': { en: 'Choose your city…', hi: 'अपना शहर चुनिए…' },
   'intake.cityOther': { en: 'Somewhere else', hi: 'कोई और जगह' },
+
+  // City names in Devanagari. A citizen who picked Hindi because they cannot read
+  // English should not have to read nine city names in English to find their own.
+  // Keyed by the stored English value, which stays the routing key.
+  'city.Bengaluru': { en: 'Bengaluru', hi: 'बेंगलुरु' },
+  'city.Delhi': { en: 'Delhi', hi: 'दिल्ली' },
+  'city.Mumbai': { en: 'Mumbai', hi: 'मुंबई' },
+  'city.Chennai': { en: 'Chennai', hi: 'चेन्नई' },
+  'city.Kolkata': { en: 'Kolkata', hi: 'कोलकाता' },
+  'city.Ahmedabad': { en: 'Ahmedabad', hi: 'अहमदाबाद' },
+  'city.Gurugram': { en: 'Gurugram', hi: 'गुरुग्राम' },
+  'city.Hyderabad': { en: 'Hyderabad', hi: 'हैदराबाद' },
+  'city.Pune': { en: 'Pune', hi: 'पुणे' },
   'intake.cityRoutable': {
     en: 'departments mapped',
     hi: 'विभाग पता हैं',
@@ -180,6 +266,10 @@ export const STRINGS: Record<string, Entry> = {
     en: "Check every field below and correct anything that's wrong — nothing is submitted until you press the final button.",
     hi: 'नीचे सब कुछ जांच लीजिए और गलत हो तो सुधार दीजिए। आखिरी बटन दबाने तक कुछ नहीं भेजा जाएगा।',
   },
+  'form.specifyType': {
+    en: 'Specify the type of problem',
+    hi: 'बताइए किस तरह की समस्या है',
+  },
   'form.hazardDetails': { en: 'Hazard details', hi: 'समस्या का ब्यौरा' },
   'form.locationEvidence': { en: 'Location and evidence', hi: 'जगह और सबूत' },
   'form.severity': { en: 'How serious is it?', hi: 'यह कितनी गंभीर है?' },
@@ -200,6 +290,61 @@ export const STRINGS: Record<string, Entry> = {
   'form.filing': { en: 'Filing…', hi: 'दर्ज हो रही है…' },
   'form.back': { en: 'Back', hi: 'पीछे' },
   'form.next': { en: 'Next', hi: 'आगे' },
+
+  // ── Past-incident path ──────────────────────────────────────────────────
+  //
+  // Recording an incident that already caused death or injury is a rarer, more
+  // sombre task than reporting a hazard, but it was the last part of the journey
+  // still in English — which meant a Hindi reader hit a wall exactly where the
+  // form asks the most of them.
+  'incident.notice': {
+    en: 'You are recording an incident that has already caused death or injury, so we ask for a few extra details.',
+    hi: 'आप ऐसी घटना दर्ज कर रहे हैं जिसमें किसी की मौत या चोट हुई है, इसलिए हम कुछ और जानकारी पूछ रहे हैं।',
+  },
+  'incident.notHurt': {
+    en: 'No one was hurt — report it as a hazard',
+    hi: 'किसी को चोट नहीं आई — इसे समस्या के रूप में दर्ज करें',
+  },
+  'incident.heading': { en: 'Incident information', hi: 'घटना की जानकारी' },
+  'incident.title': { en: 'Incident title', hi: 'घटना का शीर्षक' },
+  'incident.titlePlaceholder': {
+    en: 'Brief headline describing the incident',
+    hi: 'एक पंक्ति में घटना बताइए',
+  },
+  'incident.titleExample': {
+    en: 'Example: "Bank manager falls into uncovered DJB pit"',
+    hi: 'जैसे: "बैंक मैनेजर खुले DJB गड्ढे में गिरे"',
+  },
+  'incident.date': { en: 'Date of incident', hi: 'घटना की तारीख' },
+  'incident.descriptionPlaceholder': {
+    en: 'What happened? Include details about the negligence…',
+    hi: 'क्या हुआ था? लापरवाही की बात भी लिखिए…',
+  },
+  'incident.victims': { en: 'People affected', hi: 'प्रभावित लोग' },
+  'incident.addVictim': { en: 'Add person', hi: 'व्यक्ति जोड़ें' },
+  'incident.victim': { en: 'Person', hi: 'व्यक्ति' },
+  'incident.name': { en: 'Name (optional if unknown)', hi: 'नाम (पता न हो तो छोड़ दें)' },
+  'incident.namePlaceholder': { en: 'Their name', hi: 'उनका नाम' },
+  'incident.age': { en: 'Age (optional)', hi: 'उम्र (ज़रूरी नहीं)' },
+  'incident.agePlaceholder': { en: 'Age', hi: 'उम्र' },
+  'incident.occupationPlaceholder': { en: 'Occupation', hi: 'काम-धंधा' },
+  'incident.occupation': { en: 'Occupation (optional)', hi: 'काम-धंधा (ज़रूरी नहीं)' },
+  'incident.outcome': { en: 'What happened to them', hi: 'उनके साथ क्या हुआ' },
+  'incident.outcome.Death': { en: 'Died', hi: 'मृत्यु' },
+  'incident.outcome.Serious_Injury': { en: 'Seriously injured', hi: 'गंभीर चोट' },
+  'incident.deptHeading': {
+    en: 'Which department was responsible?',
+    hi: 'कौन सा विभाग ज़िम्मेदार था?',
+  },
+  'incident.deptBody': {
+    en: 'We worked this out from the location and the type of hazard. Change it only if you know better.',
+    hi: 'हमने यह जगह और समस्या के आधार पर तय किया है। आपको ठीक से पता हो तो ही बदलिए।',
+  },
+  'incident.deptLabel': { en: 'Department', hi: 'विभाग' },
+  'incident.deptNote': {
+    en: "Elected representatives are recorded by office (your area's MLA and MP), not by name — so there is nothing for you to look up.",
+    hi: 'जनप्रतिनिधि पद के नाम से दर्ज होते हैं (आपके क्षेत्र के विधायक और सांसद), किसी व्यक्ति के नाम से नहीं — इसलिए आपको कुछ खोजना नहीं है।',
+  },
 
   // ── Receipt ─────────────────────────────────────────────────────────────
   'receipt.title': { en: 'Complaint filed', hi: 'शिकायत दर्ज हो गई' },

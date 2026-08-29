@@ -446,7 +446,7 @@ export default function SmartIntake({ onApply, onSkip }: Props) {
             <option value="">{t('intake.cityPlaceholder')}</option>
             {MAPPED_CITIES.map((c) => (
               <option key={c.city} value={c.city}>
-                {c.city}
+                {t(`city.${c.city}`)}
               </option>
             ))}
             <option value={OTHER_CITY}>{t('intake.cityOther')}</option>

@@ -4,6 +4,7 @@ import { Loader2, Crosshair } from 'lucide-react'
 import type { LatLngTuple } from 'leaflet'
 import { parseGoogleMapsUrl, reverseGeocode, isValidIndiaCoordinates } from '../utils/location.ts'
 import { useTileProvider } from '../hooks/useTileProvider.ts'
+import { useT } from '../i18n/index.tsx'
 import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
 
@@ -80,6 +81,7 @@ export default function LocationPicker({
   // Share the app-wide provider chain so the picker never diverges from the
   // other maps — it used to hardcode CARTO, which now serves a watermark.
   const { tileConfig, eventHandlers } = useTileProvider()
+  const t = useT()
 
   const inputClass =
     'w-full bg-raised border border-line text-ink px-4 py-3 rounded focus:border-civic focus:ring-2 focus:ring-civic/20 focus:outline-none transition'
@@ -247,11 +249,11 @@ export default function LocationPicker({
         >
           {locating ? (
             <>
-              <Loader2 size={15} className="animate-spin" /> Finding you…
+              <Loader2 size={15} className="animate-spin" /> {t('loc.locating')}
             </>
           ) : (
             <>
-              <Crosshair size={15} /> Use my current location
+              <Crosshair size={15} /> {t('loc.useCurrent')}
             </>
           )}
         </button>
@@ -259,7 +261,7 @@ export default function LocationPicker({
           <input
             type="url"
             className={`${inputClass} py-2.5 text-sm`}
-            placeholder="…or paste a Google Maps link"
+            placeholder={t('loc.pasteLink')}
             value={googleMapsLink}
             onChange={(e) => {
               setGoogleMapsLink(e.target.value)
@@ -272,7 +274,7 @@ export default function LocationPicker({
             disabled={isProcessing || !googleMapsLink.trim()}
             className="shrink-0 border border-line hover:border-ink-faint disabled:opacity-40 text-ink px-4 font-bold text-xs rounded transition"
           >
-            {isProcessing ? <Loader2 size={14} className="animate-spin" /> : 'Go'}
+            {isProcessing ? <Loader2 size={14} className="animate-spin" /> : t('loc.go')}
           </button>
         </div>
       </div>
@@ -285,8 +287,7 @@ export default function LocationPicker({
 
       {approximate && (
         <p className="text-xs text-amber-600 bg-amber-50 border border-amber-300 p-2 rounded">
-          That link named a place rather than exact coordinates, so this pin is approximate.
-          Tap the exact spot on the map below to correct it.
+          {t('loc.approximate')}
         </p>
       )}
 
@@ -319,14 +320,14 @@ export default function LocationPicker({
               className="absolute inset-x-0 bottom-0 bg-raised-2/80 text-ink text-xs px-3 py-2 flex items-center gap-2"
               style={{ zIndex: 1000 }}
             >
-              <Loader2 size={13} className="animate-spin" /> Looking up the address…
+              <Loader2 size={13} className="animate-spin" /> {t('loc.lookingUp')}
             </div>
           )}
         </div>
         <p className="text-xs text-ink-faint mt-1.5">
           {hasPin
-            ? 'Not quite right? Tap the map to move the pin.'
-            : 'Tap the map to drop a pin, or use one of the options above.'}
+            ? t('loc.movePin')
+            : t('loc.tapHint')}
         </p>
       </div>
 
@@ -334,19 +335,19 @@ export default function LocationPicker({
       <div className="bg-raised-2/50 border border-line rounded p-3 text-sm">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
           <div className="sm:col-span-3">
-            <span className="text-ink-faint text-xs">Location</span>
-            <p className="text-ink">{address || 'No pin set yet'}</p>
+            <span className="text-ink-faint text-xs">{t('loc.location')}</span>
+            <p className="text-ink">{address || t('loc.noPin')}</p>
           </div>
           <div>
-            <span className="text-ink-faint text-xs">City</span>
+            <span className="text-ink-faint text-xs">{t('intake.city')}</span>
             <p className="text-ink">{city || '—'}</p>
           </div>
           <div>
-            <span className="text-ink-faint text-xs">State</span>
+            <span className="text-ink-faint text-xs">{t('intake.state')}</span>
             <p className="text-ink">{state || '—'}</p>
           </div>
           <div>
-            <span className="text-ink-faint text-xs">Coordinates</span>
+            <span className="text-ink-faint text-xs">{t('loc.coordinates')}</span>
             <p className="text-ink-muted font-mono text-xs mt-1">
               {hasPin
                 ? `${coordinates!.lat.toFixed(5)}, ${coordinates!.lng.toFixed(5)}`

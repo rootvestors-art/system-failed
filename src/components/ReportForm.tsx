@@ -501,8 +501,7 @@ export default function ReportForm() {
               ? t('form.prefilled')
               : t('form.prefilledMock')}
           </span>{' '}
-          Check every field below and correct anything that's wrong — nothing is
-          submitted until you press the final button.
+          {t('form.checkEverything')}
         </div>
       )}
 
@@ -518,8 +517,7 @@ export default function ReportForm() {
         <div className="mb-6 rounded border border-line bg-raised px-4 py-3 flex items-start gap-2.5">
           <FileText size={16} className="text-ink-faint shrink-0 mt-0.5" />
           <p className="text-ink-muted text-sm">
-            You are recording an incident that has already caused death or injury, so we
-            ask for a few extra details.{' '}
+            {t('incident.notice')}{' '}
             <button
               type="button"
               onClick={() => {
@@ -528,7 +526,7 @@ export default function ReportForm() {
               }}
               className="text-civic underline underline-offset-2 font-semibold"
             >
-              No one was hurt — report it as a hazard
+              {t('incident.notHurt')}
             </button>
           </p>
         </div>
@@ -570,23 +568,23 @@ export default function ReportForm() {
       {!isHazard && step === 1 && (
         <div className="bg-raised border border-line rounded-lg shadow-sm p-5 sm:p-7 space-y-6">
           <h2 className="text-2xl font-header font-bold text-ink border-l-4 border-blood pl-4">
-            Incident Information
+            {t('incident.heading')}
           </h2>
           
           <div>
-            <label className={labelClass}>Incident Title *</label>
+            <label className={labelClass}>{t('incident.title')} *</label>
             <input
               type="text"
               className={inputClass}
-              placeholder="Brief headline describing the incident"
+              placeholder={t('incident.titlePlaceholder')}
               value={form.title}
               onChange={(e) => update('title', e.target.value)}
             />
-            <p className="text-xs text-ink-faint mt-1">Example: "Bank Manager Falls Into Uncovered DJB Pit"</p>
+            <p className="text-xs text-ink-faint mt-1">{t('incident.titleExample')}</p>
           </div>
 
           <div>
-            <label className={labelClass}>Date of Incident *</label>
+            <label className={labelClass}>{t('incident.date')} *</label>
             <input
               type="date"
               className={inputClass}
@@ -599,7 +597,7 @@ export default function ReportForm() {
             <label className={labelClass}>{t('form.description')} *</label>
             <textarea
               className={`${inputClass} h-32 resize-none`}
-              placeholder="What happened? Include details about the negligence..."
+              placeholder={t('incident.descriptionPlaceholder')}
               value={form.description}
               onChange={(e) => update('description', e.target.value)}
             />
@@ -607,20 +605,22 @@ export default function ReportForm() {
 
           <div className="border-t border-line pt-6">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-header font-bold text-ink">Victims</h3>
+              <h3 className="text-xl font-header font-bold text-ink">{t('incident.victims')}</h3>
               <button
                 type="button"
                 onClick={addVictim}
-                className="flex items-center gap-2 px-3 py-2 bg-raised-2 hover:bg-raised-2 text-white text-sm rounded transition"
+                className="flex items-center gap-2 px-3 py-2 bg-raised border border-line hover:bg-raised-2 text-ink text-sm font-semibold rounded transition"
               >
-                <Plus size={16} /> Add Victim
+                <Plus size={16} /> {t('incident.addVictim')}
               </button>
             </div>
 
             {form.victims.map((victim, index) => (
               <div key={index} className="mb-6 p-4 bg-raised-2/50 border border-line rounded">
                 <div className="flex justify-between items-center mb-3">
-                  <span className="text-sm font-bold text-ink-muted">Victim {index + 1}</span>
+                  <span className="text-sm font-bold text-ink-muted">
+                    {t('incident.victim')} {index + 1}
+                  </span>
                   {form.victims.length > 1 && (
                     <button
                       type="button"
@@ -634,11 +634,11 @@ export default function ReportForm() {
 
                 <div className="space-y-3">
                   <div>
-                    <label className={labelClass}>Name (optional if unknown)</label>
+                    <label className={labelClass}>{t('incident.name')}</label>
                     <input
                       type="text"
                       className={inputClass}
-                      placeholder="Victim's name"
+                      placeholder={t('incident.namePlaceholder')}
                       value={victim.name || ''}
                       onChange={(e) => updateVictim(index, 'name', e.target.value)}
                     />
@@ -646,21 +646,21 @@ export default function ReportForm() {
 
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className={labelClass}>Age (optional)</label>
+                      <label className={labelClass}>{t('incident.age')}</label>
                       <input
                         type="number"
                         className={inputClass}
-                        placeholder="Age"
+                        placeholder={t('incident.agePlaceholder')}
                         value={victim.age || ''}
                         onChange={(e) => updateVictim(index, 'age', e.target.value ? Number(e.target.value) : undefined)}
                       />
                     </div>
                     <div>
-                      <label className={labelClass}>Occupation (optional)</label>
+                      <label className={labelClass}>{t('incident.occupation')}</label>
                       <input
                         type="text"
                         className={inputClass}
-                        placeholder="Occupation"
+                        placeholder={t('incident.occupationPlaceholder')}
                         value={victim.occupation || ''}
                         onChange={(e) => updateVictim(index, 'occupation', e.target.value)}
                       />
@@ -668,7 +668,7 @@ export default function ReportForm() {
                   </div>
 
                   <div>
-                    <label className={labelClass}>Outcome *</label>
+                    <label className={labelClass}>{t('incident.outcome')} *</label>
                     <div className="grid grid-cols-2 gap-3">
                       {(['Death', 'Serious_Injury'] as OutcomeType[]).map((type) => (
                         <button
@@ -683,7 +683,7 @@ export default function ReportForm() {
                           }`}
                           onClick={() => updateVictim(index, 'outcome', type)}
                         >
-                          {type.replace(/_/g, ' ')}
+                          {t(`incident.outcome.${type}`)}
                         </button>
                       ))}
                     </div>
@@ -718,7 +718,7 @@ export default function ReportForm() {
                     }`}
                     onClick={() => update('severity', level)}
                   >
-                    {level}
+                    {t(`severity.${level}`)}
                   </button>
                 ))}
               </div>
@@ -789,7 +789,7 @@ export default function ReportForm() {
                       }
                     }}
                   >
-                    {type === 'Other' ? 'Other' : type.replace(/_/g, ' ')}
+                    {t(`type.${type}`)}
                   </button>
                 )
               })}
@@ -801,7 +801,7 @@ export default function ReportForm() {
                 <input
                   type="text"
                   className={inputClass}
-                  placeholder="Specify the type of negligence"
+                  placeholder={t('form.specifyType')}
                   value={form.custom_negligence_type}
                   onChange={(e) => update('custom_negligence_type', e.target.value)}
                 />
@@ -842,14 +842,13 @@ export default function ReportForm() {
       {!isHazard && step === 3 && (
         <div className="bg-raised border border-line rounded-lg shadow-sm p-5 sm:p-7 space-y-6">
           <h2 className="text-xl font-header font-bold text-ink border-l-4 border-blood pl-4">
-            Which department was responsible?
+            {t('incident.deptHeading')}
           </h2>
           <div className="rounded border border-line bg-raised p-4">
             <p className="text-ink-muted text-sm">
-              We worked this out from the location and the type of hazard. Change it only
-              if you know better.
+              {t('incident.deptBody')}
             </p>
-            <label className={`${labelClass} mt-4`}>Department</label>
+            <label className={`${labelClass} mt-4`}>{t('incident.deptLabel')}</label>
             <input
               type="text"
               className={inputClass}
@@ -858,8 +857,7 @@ export default function ReportForm() {
               onChange={(e) => update('agency', e.target.value)}
             />
             <p className="text-ink-faint text-xs mt-2">
-              Elected representatives are recorded by office (your area's MLA and MP), not
-              by name — so there is nothing for you to look up.
+              {t('incident.deptNote')}
             </p>
           </div>
         </div>

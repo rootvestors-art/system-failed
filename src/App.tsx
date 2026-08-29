@@ -11,7 +11,7 @@ import TrackComplaint from './features/tracking/TrackComplaint.tsx'
 import HowItWorks from './pages/HowItWorks.tsx'
 import Home from './pages/Home.tsx'
 import Toast from './components/Toast.tsx'
-import { LangProvider } from './i18n/index.tsx'
+import { LangProvider, useT } from './i18n/index.tsx'
 
 /**
  * Wraps the citizen-facing journey in the light civic treatment.
@@ -80,15 +80,15 @@ function DetailPage() {
 }
 
 function ReportPage() {
+  const t = useT()
   return (
     <Journey>
       <main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 w-full">
         <h1 className="text-2xl sm:text-3xl font-header font-bold text-ink mb-2 text-center">
-          Report a civic issue
+          {t('report.title')}
         </h1>
-        <p className="text-ink-faint text-center mb-8 sm:mb-10 text-sm max-w-xl mx-auto">
-          Tell us what's wrong in your own words. We'll identify the responsible department
-          and prepare the complaint for you to check.
+        <p className="text-ink-muted text-center mb-8 sm:mb-10 text-sm max-w-xl mx-auto">
+          {t('report.sub')}
         </p>
         <ReportForm />
       </main>
