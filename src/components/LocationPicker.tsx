@@ -270,7 +270,7 @@ export default function LocationPicker({
             type="button"
             onClick={handleGoogleMapsLinkSubmit}
             disabled={isProcessing || !googleMapsLink.trim()}
-            className="shrink-0 border border-gray-600 hover:border-gray-400 disabled:opacity-40 text-ink px-4 font-bold text-xs rounded transition"
+            className="shrink-0 border border-line hover:border-ink-faint disabled:opacity-40 text-ink px-4 font-bold text-xs rounded transition"
           >
             {isProcessing ? <Loader2 size={14} className="animate-spin" /> : 'Go'}
           </button>
@@ -316,7 +316,7 @@ export default function LocationPicker({
 
           {isProcessing && (
             <div
-              className="absolute inset-x-0 bottom-0 bg-black/80 text-ink text-xs px-3 py-2 flex items-center gap-2"
+              className="absolute inset-x-0 bottom-0 bg-raised-2/80 text-ink text-xs px-3 py-2 flex items-center gap-2"
               style={{ zIndex: 1000 }}
             >
               <Loader2 size={13} className="animate-spin" /> Looking up the address…
@@ -331,7 +331,7 @@ export default function LocationPicker({
       </div>
 
       {/* What we resolved — read-only, because it is derived from the pin */}
-      <div className="bg-gray-900/50 border border-line rounded p-3 text-sm">
+      <div className="bg-raised-2/50 border border-line rounded p-3 text-sm">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
           <div className="sm:col-span-3">
             <span className="text-ink-faint text-xs">Location</span>

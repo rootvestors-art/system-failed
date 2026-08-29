@@ -155,11 +155,11 @@ export default function HowItWorks() {
         </ul>
       </Section>
 
-      <div className="border border-yellow-800/50 bg-yellow-900/10 rounded-lg p-5 mt-12">
+      <div className="border border-amber-300 bg-amber-50 rounded-lg p-5 mt-12">
         <div className="flex items-start gap-3">
-          <AlertTriangle className="text-yellow-600 shrink-0 mt-0.5" size={18} />
+          <AlertTriangle className="text-amber-600 shrink-0 mt-0.5" size={18} />
           <p className="text-ink-muted text-sm">
-            <span className="text-yellow-400 font-bold">Not an official product.</span>{' '}
+            <span className="text-amber-800 font-bold">Not an official product.</span>{' '}
             This is an independent prototype with no government affiliation, endorsement or
             partnership. Do not enter real Aadhaar, PAN, payment or health information. Use
             the sample data provided.
@@ -176,7 +176,7 @@ export default function HowItWorks() {
         </Link>
         <Link
           to="/"
-          className="flex-1 text-center border border-line text-ink-muted px-6 py-3 font-bold uppercase text-sm rounded hover:border-gray-500 transition"
+          className="flex-1 text-center border border-line text-ink-muted px-6 py-3 font-bold uppercase text-sm rounded hover:border-ink-faint transition"
         >
           See the public record
         </Link>

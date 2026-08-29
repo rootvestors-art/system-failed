@@ -62,8 +62,8 @@ export default function DeathTrapList() {
         {/* ── Left column (2/3) ── */}
         <div className="lg:col-span-2">
           <div className="flex justify-between items-end mb-6">
-            <h2 className="text-3xl font-header font-bold text-ink border-l-8 border-yellow-500 pl-4 flex items-center gap-3">
-              <AlertTriangle size={28} className="text-yellow-500" />
+            <h2 className="text-3xl font-header font-bold text-ink border-l-4 border-amber-500 pl-4 flex items-center gap-3">
+              <AlertTriangle size={28} className="text-amber-600" />
               REPORTED ISSUES
             </h2>
           </div>
@@ -103,7 +103,7 @@ export default function DeathTrapList() {
             </>
           ) : (
             <div className="bg-raised border border-line rounded-lg p-10 text-center">
-              <AlertTriangle size={48} className="text-yellow-500 mx-auto mb-4" />
+              <AlertTriangle size={48} className="text-amber-600 mx-auto mb-4" />
               <h3 className="text-2xl font-header font-bold text-ink mb-2">
                 Nothing Reported Yet
               </h3>
@@ -112,7 +112,7 @@ export default function DeathTrapList() {
               </p>
               <Link
                 to="/report"
-                className="inline-block bg-yellow-700 hover:bg-yellow-600 text-white px-8 py-3 font-header font-bold uppercase tracking-wide transition"
+                className="inline-block bg-blood hover:bg-red-700 text-white px-8 py-3 font-bold rounded transition"
               >
                 Report an issue
               </Link>
@@ -126,43 +126,48 @@ export default function DeathTrapList() {
           {!isFiltered && (
             <div className="bg-raised border border-line rounded-lg p-6 mb-6">
               <h3 className="text-xl font-header font-bold text-ink mb-4 flex items-center gap-2">
-                <AlertTriangle size={18} className="text-yellow-500" />
+                <AlertTriangle size={18} className="text-amber-600" />
                 SEVERITY BREAKDOWN
               </h3>
               <div className="space-y-3">
                 <div className="flex justify-between items-center border-l-4 border-red-500 pl-3">
                   <span className="text-ink-muted text-sm uppercase font-bold">Critical</span>
-                  <span className="text-red-400 font-mono text-lg font-bold">{severityCounts.Critical}</span>
+                  <span className="text-red-700 font-mono text-lg font-bold">{severityCounts.Critical}</span>
                 </div>
                 <div className="flex justify-between items-center border-l-4 border-orange-500 pl-3">
                   <span className="text-ink-muted text-sm uppercase font-bold">High</span>
-                  <span className="text-orange-400 font-mono text-lg font-bold">{severityCounts.High}</span>
+                  <span className="text-orange-700 font-mono text-lg font-bold">{severityCounts.High}</span>
                 </div>
-                <div className="flex justify-between items-center border-l-4 border-yellow-500 pl-3">
+                <div className="flex justify-between items-center border-l-4 border-amber-500 pl-3">
                   <span className="text-ink-muted text-sm uppercase font-bold">Medium</span>
-                  <span className="text-yellow-400 font-mono text-lg font-bold">{severityCounts.Medium}</span>
+                  <span className="text-amber-700 font-mono text-lg font-bold">{severityCounts.Medium}</span>
                 </div>
                 <div className="flex justify-between items-center border-l-4 border-green-500 pl-3">
                   <span className="text-ink-muted text-sm uppercase font-bold">Low</span>
-                  <span className="text-green-400 font-mono text-lg font-bold">{severityCounts.Low}</span>
+                  <span className="text-emerald-700 font-mono text-lg font-bold">{severityCounts.Low}</span>
                 </div>
               </div>
             </div>
           )}
 
-          {/* CTA — always visible */}
-          <div className="bg-yellow-700 p-6 rounded text-center">
-            <h3 className="text-ink font-header font-bold text-2xl uppercase">
+          {/*
+            This was a dark olive slab holding a light button with white text on
+            it, so the label was invisible. On a light page the call to action
+            does not need a heavy background to stand out — the red button does
+            that on its own.
+          */}
+          <div className="bg-raised border border-line rounded-lg p-5 text-center">
+            <h3 className="text-ink font-header font-bold text-xl">
               Spot something dangerous?
             </h3>
-            <p className="text-yellow-100 text-sm mb-4">
-              Report dangerous spots so they get fixed in time.
+            <p className="text-ink-muted text-sm mt-1 mb-4">
+              Report it and we'll send it to the right department with a deadline.
             </p>
             <Link
               to="/report"
-              className="block bg-black text-white px-6 py-3 font-bold uppercase w-full hover:bg-gray-900 transition text-center"
+              className="block bg-blood hover:bg-red-700 text-white px-6 py-3 font-bold rounded w-full transition text-center"
             >
-              Report Now
+              Report an issue
             </Link>
           </div>
         </div>

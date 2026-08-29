@@ -29,13 +29,13 @@ function buildLevels(entities: ResponsibleEntities): HierarchyLevel[] {
   levels.push({
     label: 'CONSTITUENCY MLA',
     name: entities.mla ?? 'Investigation Required',
-    borderColor: 'border-gray-600',
+    borderColor: 'border-line',
   })
 
   levels.push({
     label: 'MEMBER OF PARLIAMENT',
     name: entities.mp ?? 'Investigation Required',
-    borderColor: 'border-gray-600',
+    borderColor: 'border-line',
   })
 
   levels.push({
@@ -68,7 +68,7 @@ export default function HierarchyCard({ entities }: HierarchyCardProps) {
             <div key={level.label} className="relative">
               <span
                 className={`absolute -left-[41px] top-0 rounded-full h-5 w-5 border-4 border-black ${
-                  isLast ? 'bg-blood animate-pulse' : 'bg-gray-800'
+                  isLast ? 'bg-blood animate-pulse' : 'bg-raised-2'
                 }`}
               />
               <div

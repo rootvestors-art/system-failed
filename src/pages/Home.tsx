@@ -81,7 +81,7 @@ export default function Home() {
             </Link>
             <Link
               to="/track"
-              className="inline-flex items-center justify-center gap-2 px-6 py-4 sm:py-3 font-header uppercase tracking-wide text-sm rounded border border-line text-ink hover:text-ink hover:border-gray-500 transition"
+              className="inline-flex items-center justify-center gap-2 px-6 py-4 sm:py-3 font-header uppercase tracking-wide text-sm rounded border border-line text-ink hover:text-ink hover:border-ink-faint transition"
             >
               <Search size={16} />
               {t('home.cta.track')}
@@ -217,7 +217,7 @@ export default function Home() {
             </p>
             <Link
               to="/accountability"
-              className="inline-flex items-center gap-1.5 text-sm text-ink-muted hover:text-ink transition font-header uppercase tracking-wide border border-line hover:border-gray-500 rounded px-4 py-2"
+              className="inline-flex items-center gap-1.5 text-sm text-ink-muted hover:text-ink transition font-header uppercase tracking-wide border border-line hover:border-ink-faint rounded px-4 py-2"
             >
               Accountability record <ChevronRight size={14} />
             </Link>

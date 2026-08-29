@@ -412,7 +412,7 @@ export default function ReportForm() {
           </p>
 
           {reference && (
-            <div className="mt-6 bg-black/40 border border-line rounded p-4">
+            <div className="mt-6 bg-raised-2/40 border border-line rounded p-4">
               <p className="text-[10px] text-ink-faint font-bold">
                 {t('receipt.yourReference')}
               </p>
@@ -442,7 +442,7 @@ export default function ReportForm() {
                     : `/incident/${reference?.id}`,
                 )
               }
-              className="border border-gray-600 text-ink-muted px-6 py-3 font-bold uppercase text-sm hover:border-gray-400 transition rounded"
+              className="border border-line text-ink-muted px-6 py-3 font-bold uppercase text-sm hover:border-ink-faint transition rounded"
             >
               {t('receipt.viewPublic')}
             </button>
@@ -528,7 +528,7 @@ export default function ReportForm() {
                     ? 'bg-yellow-700 border-yellow-600 text-white'
                     : 'bg-blood border-blood text-white'
                   : s < step
-                    ? 'bg-gray-700 border-gray-600 text-white'
+                    ? 'bg-raised-2 border-line text-white'
                     : 'border-line text-ink-faint'
               }`}
             >
@@ -536,7 +536,7 @@ export default function ReportForm() {
             </div>
             {s < totalSteps && (
               <div
-                className={`w-16 h-0.5 ${s < step ? (isHazard ? 'bg-yellow-700' : 'bg-blood') : 'bg-gray-700'}`}
+                className={`w-16 h-0.5 ${s < step ? (isHazard ? 'bg-yellow-700' : 'bg-blood') : 'bg-raised-2'}`}
               />
             )}
           </div>
@@ -594,14 +594,14 @@ export default function ReportForm() {
               <button
                 type="button"
                 onClick={addVictim}
-                className="flex items-center gap-2 px-3 py-2 bg-gray-800 hover:bg-gray-700 text-white text-sm rounded transition"
+                className="flex items-center gap-2 px-3 py-2 bg-raised-2 hover:bg-raised-2 text-white text-sm rounded transition"
               >
                 <Plus size={16} /> Add Victim
               </button>
             </div>
 
             {form.victims.map((victim, index) => (
-              <div key={index} className="mb-6 p-4 bg-gray-900/50 border border-line rounded">
+              <div key={index} className="mb-6 p-4 bg-raised-2/50 border border-line rounded">
                 <div className="flex justify-between items-center mb-3">
                   <span className="text-sm font-bold text-ink-muted">Victim {index + 1}</span>
                   {form.victims.length > 1 && (
@@ -662,7 +662,7 @@ export default function ReportForm() {
                               ? type === 'Death'
                                 ? 'bg-blood border-blood text-white'
                                 : 'bg-yellow-700 border-yellow-600 text-white'
-                              : 'border-line text-ink-muted hover:border-gray-500'
+                              : 'border-line text-ink-muted hover:border-ink-faint'
                           }`}
                           onClick={() => updateVictim(index, 'outcome', type)}
                         >
@@ -703,7 +703,7 @@ export default function ReportForm() {
                             : level === 'Medium'
                               ? 'bg-yellow-700 border-yellow-600 text-white'
                               : 'bg-green-700 border-green-600 text-white'
-                        : 'border-line text-ink-muted hover:border-gray-500'
+                        : 'border-line text-ink-muted hover:border-ink-faint'
                     }`}
                     onClick={() => update('severity', level)}
                   >
@@ -804,7 +804,7 @@ export default function ReportForm() {
                         ? isHazard
                           ? 'bg-yellow-700 border-yellow-600 text-white'
                           : 'bg-blood border-blood text-white'
-                        : 'border-line text-ink-muted hover:border-gray-500'
+                        : 'border-line text-ink-muted hover:border-ink-faint'
                     }`}
                     onClick={() => {
                       if (type === 'Other') {

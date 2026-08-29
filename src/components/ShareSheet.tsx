@@ -67,7 +67,7 @@ export default function ShareSheet({
   return (
     <>
       {/* Backdrop */}
-      <div className="fixed inset-0 bg-black/60 z-[9990] backdrop-blur-sm" />
+      <div className="fixed inset-0 bg-raised-2/60 z-[9990] backdrop-blur-sm" />
 
       {/* Sheet */}
       <div className="fixed inset-0 z-[9991] flex items-end sm:items-center justify-center px-4 pb-4 sm:pb-0">
@@ -151,7 +151,7 @@ export default function ShareSheet({
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={onClose}
-                className={`${platformBtnBase} bg-black border border-line text-white hover:border-gray-500`}
+                className={`${platformBtnBase} bg-raised-2 border border-line text-white hover:border-ink-faint`}
               >
                 {/* X (Twitter) logo */}
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
@@ -163,7 +163,7 @@ export default function ShareSheet({
               <a
                 href={links.email}
                 onClick={onClose}
-                className={`${platformBtnBase} bg-gray-800 border border-line text-ink hover:bg-gray-700`}
+                className={`${platformBtnBase} bg-raised-2 border border-line text-ink hover:bg-raised-2`}
               >
                 <Mail size={14} />
                 Email
@@ -174,14 +174,14 @@ export default function ShareSheet({
             <div className="grid grid-cols-2 gap-2 border-t border-line pt-4">
               <button
                 onClick={handleCopyLink}
-                className="flex items-center justify-center gap-2 py-2.5 bg-raised-2 border border-line hover:border-gray-500 text-ink-muted hover:text-ink font-bold text-xs uppercase tracking-wide transition rounded"
+                className="flex items-center justify-center gap-2 py-2.5 bg-raised-2 border border-line hover:border-ink-faint text-ink-muted hover:text-ink font-bold text-xs uppercase tracking-wide transition rounded"
               >
                 <Link size={13} />
                 Copy Link
               </button>
               <button
                 onClick={handleCopyCaption}
-                className="flex items-center justify-center gap-2 py-2.5 bg-raised-2 border border-line hover:border-gray-500 text-ink-muted hover:text-ink font-bold text-xs uppercase tracking-wide transition rounded"
+                className="flex items-center justify-center gap-2 py-2.5 bg-raised-2 border border-line hover:border-ink-faint text-ink-muted hover:text-ink font-bold text-xs uppercase tracking-wide transition rounded"
               >
                 <Copy size={13} />
                 Copy Caption

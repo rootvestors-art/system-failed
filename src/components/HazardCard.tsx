@@ -16,17 +16,31 @@ import {
 } from '../utils/share.ts'
 import ShareSheet from './ShareSheet.tsx'
 
+/**
+ * Chip palettes for a light card.
+ *
+ * These were previously dark-on-dark tints (`bg-red-900 text-red-200`) written for
+ * the near-black theme; on white they rendered as muddy maroon blocks that read as
+ * a rendering fault rather than as labels.
+ *
+ * Severity and status are deliberately NOT the same weight. Severity answers "how
+ * dangerous is this" and belongs to the hazard's identity, so it is a filled chip.
+ * Status answers "where is this in the process" and is supporting metadata, so it
+ * is quieter. Three identical pills in a row read as one undifferentiated group.
+ */
+const CHIP = 'inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold'
+
 const severityColors: Record<string, string> = {
-  Critical: 'bg-red-900 text-red-200',
-  High: 'bg-orange-900 text-orange-200',
-  Medium: 'bg-yellow-900 text-yellow-200',
-  Low: 'bg-green-900 text-green-200',
+  Critical: 'bg-red-100 text-red-800 border border-red-200',
+  High: 'bg-orange-100 text-orange-800 border border-orange-200',
+  Medium: 'bg-amber-100 text-amber-800 border border-amber-200',
+  Low: 'bg-emerald-100 text-emerald-800 border border-emerald-200',
 }
 
 const statusColors: Record<string, string> = {
-  Reported: 'bg-yellow-900 text-yellow-200',
-  Verified: 'bg-red-900 text-red-200',
-  Fixed: 'bg-green-900 text-green-200',
+  Reported: 'bg-amber-50 text-amber-800 border border-amber-200',
+  Verified: 'bg-blue-50 text-civic border border-blue-200',
+  Fixed: 'bg-emerald-50 text-emerald-800 border border-emerald-200',
 }
 
 interface HazardCardProps {
@@ -77,8 +91,8 @@ export default function HazardCard({ hazard, compact = false, onUpvote }: Hazard
           className="block mb-4 pb-4 border-b border-line hover:bg-raised-2 p-2 transition cursor-pointer group"
         >
           <div className="flex justify-between items-start">
-            <h3 className="font-bold text-ink group-hover:text-yellow-500 flex items-center gap-2">
-              <AlertTriangle size={14} className="text-yellow-500" />
+            <h3 className="font-bold text-ink group-hover:text-civic flex items-center gap-2">
+              <AlertTriangle size={14} className="text-amber-600" />
               {negligenceLabel(hazard.negligence_type)}
             </h3>
             <div className="flex items-center gap-1.5">
@@ -86,15 +100,15 @@ export default function HazardCard({ hazard, compact = false, onUpvote }: Hazard
                 onClick={handleUpvote}
                 className={`flex items-center gap-1 text-xs px-2 py-1 rounded transition ${
                   voted
-                    ? 'bg-yellow-500/20 text-yellow-500'
-                    : 'bg-gray-800 text-ink-muted hover:bg-gray-700 hover:text-ink'
+                    ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                    : 'bg-raised-2 text-ink-muted hover:text-ink border border-line'
                 }`}
               >
                 <ChevronUp size={12} /> {upvotes}
               </button>
               <button
                 onClick={openShare}
-                className="flex items-center gap-1 text-xs px-2 py-1 rounded bg-gray-800 text-ink-muted hover:bg-gray-700 hover:text-ink transition"
+                className="flex items-center gap-1 text-xs px-2 py-1 rounded bg-raised-2 text-ink-muted hover:text-ink border border-line transition"
                 title="Share"
               >
                 <Share2 size={12} />
@@ -110,17 +124,17 @@ export default function HazardCard({ hazard, compact = false, onUpvote }: Hazard
           </p>
           <div className="flex gap-2 mt-2">
             <span
-              className={`inline-block text-xs px-2 py-0.5 rounded font-bold uppercase ${severityColors[hazard.severity] ?? 'bg-gray-800 text-ink-muted'}`}
+              className={`${CHIP} ${severityColors[hazard.severity] ?? 'bg-raised-2 text-ink-muted border border-line'}`}
             >
               {hazard.severity}
             </span>
             <span
-              className={`inline-block text-xs px-2 py-0.5 rounded font-bold uppercase ${statusColors[hazard.status] ?? 'bg-gray-800 text-ink-muted'}`}
+              className={`${CHIP} ${statusColors[hazard.status] ?? 'bg-raised-2 text-ink-muted border border-line'}`}
             >
               {hazard.status}
             </span>
             {isSampleRecord(hazard.id) && (
-              <span className="inline-block text-xs px-2 py-0.5 rounded font-bold uppercase bg-sky-950 text-sky-300 border border-sky-800">
+              <span className={`${CHIP} bg-civic-soft text-civic border border-civic/30`}>
                 Sample
               </span>
             )}
@@ -145,54 +159,55 @@ export default function HazardCard({ hazard, compact = false, onUpvote }: Hazard
     <>
       <div className="bg-raised border border-line rounded-lg overflow-hidden shadow-2xl">
         {hazard.image_url && (
-          <div className="relative h-96 w-full bg-gray-800 group">
+          <div className="relative h-96 w-full bg-raised-2 group">
             <img
               src={hazard.image_url}
               alt="Hazard evidence"
-              className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition duration-500 grayscale group-hover:grayscale-0"
+              className="w-full h-full object-cover"
             />
-            <div className="absolute bottom-0 left-0 bg-black bg-opacity-90 px-4 py-2">
-              <p className="text-ink font-mono text-sm flex items-center gap-2">
-                <MapPin size={14} className="text-yellow-500" />
-                {hazard.location.city.toUpperCase()},{' '}
-                {hazard.location.state.toUpperCase()}
+            <div className="absolute bottom-0 left-0 bg-black/75 px-4 py-2">
+              <p className="text-white text-sm flex items-center gap-2">
+                <MapPin size={14} className="text-amber-300" />
+                {hazard.location.city}, {hazard.location.state}
               </p>
             </div>
           </div>
         )}
 
         <div className="p-8">
-          <div className="flex flex-wrap gap-2 mb-4">
-            <span
-              className={`px-3 py-1 text-xs font-bold uppercase rounded ${severityColors[hazard.severity]}`}
-            >
-              {hazard.severity}
+          {/*
+            Heading structure: an eyebrow naming the hazard type, then a
+            sentence-case headline that says what and where. It used to read
+            "Reported issue", which told the reader nothing they could not already
+            see, directly beneath a page-level "SAFETY HAZARD" heading saying the
+            same thing twice. The department and deadline live in the sidebar, so
+            this side owns identity and evidence only.
+          */}
+          <p className="text-xs font-semibold uppercase tracking-wider text-ink-faint mb-2">
+            Reported {formatRelativeTime(hazard.created_at)}
+            {isSampleRecord(hazard.id) && ' · sample data'}
+          </p>
+
+          <h3 className="text-3xl font-header font-bold text-ink mb-3">
+            {negligenceLabel(hazard.negligence_type)} risk in {hazard.location.city}
+          </h3>
+
+          <div className="flex flex-wrap items-center gap-2 mb-4">
+            <span className={`${CHIP} ${severityColors[hazard.severity]}`}>
+              {hazard.severity} severity
             </span>
-            <span className="px-3 py-1 bg-yellow-900 text-yellow-200 text-xs font-bold uppercase rounded">
-              {negligenceLabel(hazard.negligence_type)}
-            </span>
-            <span
-              className={`px-3 py-1 text-xs font-bold uppercase rounded ${statusColors[hazard.status]}`}
-            >
+            <span className={`${CHIP} ${statusColors[hazard.status]}`}>
               {hazard.status}
             </span>
-            {isSampleRecord(hazard.id) && (
-              <span className="px-3 py-1 text-xs font-bold uppercase rounded bg-sky-950 text-sky-300 border border-sky-800">
-                Sample data
-              </span>
-            )}
           </div>
 
-          <h3 className="text-4xl font-header font-bold text-ink mb-2 flex items-center gap-3">
-            <AlertTriangle size={32} className="text-yellow-500" />
-            {isSampleRecord(hazard.id) ? 'Sample issue' : 'Reported issue'}
-          </h3>
-          <p className="text-lg text-ink-muted mb-2 flex items-center gap-1">
-            <MapPin size={16} />
-            {hazard.location.address}, {hazard.location.city},{' '}
-            {hazard.location.state}
+          <p className="text-base text-ink-muted mb-4 flex items-start gap-1.5">
+            <MapPin size={16} className="shrink-0 mt-0.5" />
+            <span>
+              {hazard.location.address}, {hazard.location.city}, {hazard.location.state}
+            </span>
           </p>
-          <p className="text-xl text-ink-muted mb-6">{hazard.description}</p>
+          <p className="text-lg text-ink mb-6 leading-relaxed">{hazard.description}</p>
 
           {hazard.evidence_links.length > 0 && (
             <div className="mb-6">
@@ -206,7 +221,7 @@ export default function HazardCard({ hazard, compact = false, onUpvote }: Hazard
                     href={link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-yellow-500 hover:text-ink transition font-bold uppercase tracking-wider text-sm"
+                    className="inline-flex items-center gap-2 text-civic hover:underline transition font-semibold text-sm"
                   >
                     <ExternalLink size={14} /> {extractDomain(link)}
                   </a>
@@ -215,24 +230,40 @@ export default function HazardCard({ hazard, compact = false, onUpvote }: Hazard
             </div>
           )}
 
-          <div className="flex flex-wrap gap-4 items-center">
+          {/*
+            This was "0 UPVOTES" in a dark slab. Two problems: a zero count is
+            worse than no count, and "upvote" frames corroboration as popularity —
+            the point is that several people independently saw the same hazard,
+            which is the only verification signal available without accounts.
+          */}
+          <div className="flex flex-wrap gap-3 items-center">
             <button
               onClick={handleUpvote}
-              className={`flex items-center gap-2 px-4 py-2 rounded font-bold uppercase text-sm transition ${
+              disabled={voted}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded font-semibold text-sm transition ${
                 voted
-                  ? 'bg-yellow-500/20 text-yellow-500 border border-yellow-500/50'
-                  : 'bg-gray-800 text-ink-muted hover:bg-gray-700 hover:text-ink border border-line'
+                  ? 'bg-emerald-50 text-emerald-800 border border-emerald-200 cursor-default'
+                  : 'bg-raised text-ink border border-line hover:bg-raised-2'
               }`}
             >
-              <ChevronUp size={18} /> {upvotes} Upvotes
+              <ChevronUp size={16} />
+              {voted ? "You've confirmed this" : "I've seen this too"}
             </button>
 
             <button
               onClick={openShare}
-              className="flex items-center gap-2 px-4 py-2 rounded font-bold uppercase text-sm transition bg-gray-800 text-ink-muted hover:bg-gray-700 hover:text-ink border border-line"
+              className="flex items-center gap-2 px-4 py-2.5 rounded font-semibold text-sm transition bg-raised text-ink border border-line hover:bg-raised-2"
             >
-              <Share2 size={16} /> Share Trap
+              <Share2 size={16} /> Share
             </button>
+
+            {upvotes > 0 && (
+              <p className="text-sm text-ink-muted">
+                {upvotes === 1
+                  ? '1 person has confirmed seeing this'
+                  : `${upvotes} people have confirmed seeing this`}
+              </p>
+            )}
 
             {hazard.reported_by && (
               <p className="text-sm text-ink-faint">Reported by: {hazard.reported_by}</p>

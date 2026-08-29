@@ -164,7 +164,7 @@ export default function SearchAndFilters({
       {isFiltered && (
         <button
           onClick={onClear}
-          className="text-xs font-bold uppercase tracking-wide text-ink-muted hover:text-ink transition px-3 py-2 border border-line rounded hover:border-gray-500"
+          className="text-xs font-bold uppercase tracking-wide text-ink-muted hover:text-ink transition px-3 py-2 border border-line rounded hover:border-ink-faint"
         >
           Clear all
         </button>

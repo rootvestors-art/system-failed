@@ -58,12 +58,12 @@ export default function DeathTrapDetail() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
         <div className="lg:col-span-2">
-          <div className="flex justify-between items-end mb-6">
-            <h2 className="text-3xl font-header font-bold text-ink border-l-8 border-yellow-500 pl-4 flex items-center gap-3">
-              <AlertTriangle size={28} className="text-amber-600" />
-              SAFETY HAZARD
-            </h2>
-          </div>
+          {/*
+            The page-level "SAFETY HAZARD" heading is gone. The card immediately
+            below now carries a real headline naming the hazard and the place, so
+            this was the same statement made twice in a row — and the shouted
+            all-caps version was the less informative of the two.
+          */}
           <HazardCard hazard={hazard} />
         </div>
         <div className="lg:col-span-1 flex flex-col gap-6">

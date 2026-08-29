@@ -350,7 +350,7 @@ export default function SmartIntake({ onApply, onSkip }: Props) {
                   className={`flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded border transition disabled:opacity-60 ${
                     recording
                       ? 'bg-blood border-blood text-white animate-pulse'
-                      : 'border-gray-600 text-ink-muted hover:border-gray-400'
+                      : 'border-line text-ink-muted hover:border-ink-faint'
                   }`}
                 >
                   {transcribing ? (
@@ -379,7 +379,7 @@ export default function SmartIntake({ onApply, onSkip }: Props) {
                     className={`flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded border transition ${
                       listening
                         ? 'bg-blood border-blood text-white animate-pulse'
-                        : 'border-gray-600 text-ink-muted hover:border-gray-400'
+                        : 'border-line text-ink-muted hover:border-ink-faint'
                     }`}
                   >
                     {listening ? <MicOff size={13} /> : <Mic size={13} />}

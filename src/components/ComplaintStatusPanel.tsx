@@ -53,7 +53,7 @@ export default function ComplaintStatusPanel({
         </div>
       ) : (
         <div className="flex items-start gap-2.5 mb-4">
-          <Clock className="text-caution shrink-0 mt-0.5" size={18} />
+          <Clock className="text-amber-600 shrink-0 mt-0.5" size={18} />
           <div className="min-w-0">
             <p className="text-ink font-bold text-sm">
               {exhausted ? t('track.exhausted') : `${t('track.with')} ${active?.authority ?? agency}`}
@@ -80,7 +80,7 @@ export default function ComplaintStatusPanel({
             <li key={stage.label}>
               <div
                 className={`h-1.5 rounded-full mb-1.5 ${
-                  stage.reached ? 'bg-green-500' : 'bg-gray-800'
+                  stage.reached ? 'bg-green-500' : 'bg-raised-2'
                 }`}
               />
               <p
@@ -112,7 +112,7 @@ export default function ComplaintStatusPanel({
 
       <Link
         to={`/track/${trackId}`}
-        className="inline-flex items-center gap-1 mt-4 text-sm font-header uppercase tracking-wide text-ink border border-line hover:border-gray-500 rounded px-4 py-2 transition"
+        className="inline-flex items-center gap-1 mt-4 text-sm font-header uppercase tracking-wide text-ink border border-line hover:border-ink-faint rounded px-4 py-2 transition"
       >
         {t('track.fullTimeline')} <ChevronRight size={14} />
       </Link>

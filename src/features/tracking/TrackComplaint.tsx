@@ -155,7 +155,7 @@ export default function TrackComplaint() {
         </div>
 
         <div className="flex items-center gap-2 mt-4 flex-wrap">
-          <code className="text-xs text-ink-muted bg-black/50 border border-line rounded px-2 py-1 font-mono break-all">
+          <code className="text-xs text-ink-muted bg-raised-2/50 border border-line rounded px-2 py-1 font-mono break-all">
             {record.id}
           </code>
           <button
@@ -190,7 +190,7 @@ export default function TrackComplaint() {
           </div>
         ) : (
           <div className="flex items-start gap-3">
-            <Clock className="text-caution shrink-0 mt-0.5" size={22} />
+            <Clock className="text-amber-600 shrink-0 mt-0.5" size={22} />
             <div className="min-w-0">
               <p className="text-ink font-bold">
                 {Number.isFinite(daysLeft)
@@ -234,7 +234,7 @@ export default function TrackComplaint() {
               <li key={stage.label}>
                 <div
                   className={`h-1.5 rounded-full mb-2 ${
-                    stage.reached ? 'bg-green-500' : 'bg-gray-800'
+                    stage.reached ? 'bg-green-500' : 'bg-raised-2'
                   }`}
                 />
                 <p
@@ -274,7 +274,7 @@ export default function TrackComplaint() {
                 stage.status === 'done'
                   ? 'bg-blood border-blood'
                   : stage.status === 'active'
-                    ? 'bg-caution border-caution'
+                    ? 'bg-amber-500 border-amber-500'
                     : 'bg-raised border-line'
               }`}
             >
@@ -300,7 +300,7 @@ export default function TrackComplaint() {
                   stage.status === 'done'
                     ? 'bg-red-50 text-blood'
                     : stage.status === 'active'
-                      ? 'bg-caution/20 text-caution'
+                      ? 'bg-amber-100 text-amber-800'
                       : 'text-ink-faint'
                 }`}
               >
@@ -417,7 +417,7 @@ export default function TrackComplaint() {
       <div className="mt-8 flex flex-col sm:flex-row gap-3">
         <Link
           to={tracked.kind === 'hazard' ? `/deathtraps/${record.id}` : `/incident/${record.id}`}
-          className="flex-1 text-center border border-line text-ink-muted px-6 py-3 font-bold uppercase text-sm rounded hover:border-gray-500 transition"
+          className="flex-1 text-center border border-line text-ink-muted px-6 py-3 font-bold uppercase text-sm rounded hover:border-ink-faint transition"
         >
           View public record
         </Link>
@@ -461,7 +461,7 @@ function ReferenceLookup({ notFound }: { notFound: boolean }) {
           </>
         ) : (
           <>
-            <Clock className="text-caution mx-auto mb-4" size={32} />
+            <Clock className="text-amber-600 mx-auto mb-4" size={32} />
             <h1 className="text-2xl font-header font-bold text-ink mb-2">
               Track a complaint
             </h1>
