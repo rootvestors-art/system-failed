@@ -550,27 +550,25 @@ export default function SmartIntake({ onApply, onSkip }: Props) {
             </div>
           )}
 
+          {/*
+            This used to be headed "Suggested first router" with a "medium
+            confidence" chip beside it. Both were our internal vocabulary: a
+            citizen does not think in routers or confidence tiers. The heading now
+            asks the question they are actually asking, and the hedging moved into
+            the explanatory line below, where it reads as useful context rather
+            than as a rating they are expected to interpret.
+          */}
           <div className="mb-4">
-            <div className="flex items-baseline justify-between gap-2 flex-wrap mb-1">
-              <p className="text-xs text-ink-faint font-bold">
-                {t('intake.result.router')}
-              </p>
-              {routing && (
-                <span
-                  className={`text-[10px] font-bold px-2 py-0.5 rounded border ${
-                    routing.confidence === 'medium'
-                      ? 'border-gray-600 text-ink-muted'
-                      : 'border-amber-300 text-amber-600'
-                  }`}
-                >
-                  {routing.confidence} confidence
-                </span>
-              )}
-            </div>
+            <p className="text-xs text-ink-faint font-bold mb-1">
+              {t('intake.result.router')}
+            </p>
             <p className="text-ink text-sm font-bold">{routedAgency}</p>
 
             {routing?.whyThisRoute && (
-              <p className="text-ink-muted text-xs mt-1.5">{routing.whyThisRoute}</p>
+              <p className="text-ink-muted text-xs mt-1.5">
+                {routing.whyThisRoute}
+                {routing.confidence === 'low' && ` ${t('intake.result.checkDept')}`}
+              </p>
             )}
 
             {routing?.coResponsible && (

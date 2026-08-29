@@ -135,7 +135,13 @@ export const STRINGS: Record<string, Entry> = {
   'intake.result.severity': { en: 'Severity', hi: 'गंभीरता' },
   'intake.result.language': { en: 'You wrote in', hi: 'आपने लिखा' },
   'intake.result.confidence': { en: 'Confidence', hi: 'भरोसा' },
-  'intake.result.router': { en: 'Suggested first router', hi: 'संभावित ज़िम्मेदार विभाग' },
+  // Plain language, not our internal vocabulary. "Suggested first router" is
+  // precise but nobody outside this codebase thinks in those terms.
+  'intake.result.router': { en: 'Who should fix this', hi: 'यह किसे ठीक करना है' },
+  'intake.result.checkDept': {
+    en: 'Worth double-checking this one.',
+    hi: 'इसे एक बार जांच लेना ठीक रहेगा।',
+  },
   'intake.result.alsoResponsible': { en: 'May also be responsible', hi: 'ये भी ज़िम्मेदार हो सकते हैं' },
   'intake.result.complaintText': { en: 'Complaint text', hi: 'शिकायत का मसौदा' },
   'intake.result.worthAdding': { en: 'Worth adding', hi: 'यह भी बताएं तो अच्छा' },
