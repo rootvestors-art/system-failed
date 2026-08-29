@@ -237,24 +237,24 @@ export default function ReportForm() {
   if (submitted) {
     return (
       <div className="max-w-2xl mx-auto py-12 sm:py-20">
-        <div className={`${isHazard ? 'bg-yellow-900/20 border-yellow-700' : 'bg-blood/20 border-blood'} border rounded-lg p-6 sm:p-10 text-center`}>
-          <h2 className="text-2xl sm:text-3xl font-header font-bold text-white mb-3">
+        <div className={`${isHazard ? 'bg-amber-50 border-yellow-700' : 'bg-red-50 border-blood'} border rounded-lg p-6 sm:p-10 text-center`}>
+          <h2 className="text-2xl sm:text-3xl font-header font-bold text-ink mb-3">
             Complaint filed
           </h2>
-          <p className="text-gray-400 text-sm">
-            It has been routed to <span className="text-white font-bold">{form.agency}</span> and
+          <p className="text-ink-muted text-sm">
+            It has been routed to <span className="text-ink font-bold">{form.agency}</span> and
             the clock is now running.
           </p>
 
           {reference && (
-            <div className="mt-6 bg-black/40 border border-gray-700 rounded p-4">
-              <p className="text-[10px] text-gray-500 uppercase font-bold tracking-widest">
+            <div className="mt-6 bg-black/40 border border-line rounded p-4">
+              <p className="text-[10px] text-ink-faint font-bold">
                 Your reference
               </p>
-              <p className="text-white font-mono text-base sm:text-lg break-all mt-1">
+              <p className="text-ink font-mono text-base sm:text-lg break-all mt-1">
                 {reference.id}
               </p>
-              <p className="text-gray-500 text-xs mt-2">
+              <p className="text-ink-faint text-xs mt-2">
                 Save this. You can reopen the tracker any time with it.
               </p>
             </div>
@@ -277,7 +277,7 @@ export default function ReportForm() {
                     : `/incident/${reference?.id}`,
                 )
               }
-              className="border border-gray-600 text-gray-300 px-6 py-3 font-bold uppercase text-sm hover:border-gray-400 transition rounded"
+              className="border border-gray-600 text-ink-muted px-6 py-3 font-bold uppercase text-sm hover:border-gray-400 transition rounded"
             >
               View public record
             </button>
@@ -288,9 +288,9 @@ export default function ReportForm() {
   }
 
   const inputClass =
-    'w-full bg-[#1a1a1a] border border-gray-700 text-white px-4 py-3 focus:border-blood focus:outline-none transition'
+    'w-full bg-raised-2 border border-line text-ink px-4 py-3 focus:border-blood focus:outline-none transition'
   const labelClass =
-    'block text-xs text-gray-500 uppercase font-bold tracking-widest mb-2'
+    'block text-xs text-ink-faint font-bold mb-2'
 
   // The AI intake is the front door. Everything below is the confirm-and-correct
   // step, or the manual path for anyone who skips it.
@@ -308,8 +308,8 @@ export default function ReportForm() {
         <div
           className={`mb-6 rounded border px-4 py-3 text-sm ${
             prefilledBy === 'openai'
-              ? 'border-green-700 bg-green-900/20 text-green-300'
-              : 'border-yellow-700 bg-yellow-900/20 text-yellow-300'
+              ? 'border-green-300 bg-green-50 text-green-800'
+              : 'border-yellow-700 bg-amber-50 text-amber-800'
           }`}
         >
           <span className="font-bold">
@@ -331,7 +331,7 @@ export default function ReportForm() {
             className={`flex items-center justify-center gap-2 px-4 py-4 border text-sm font-bold uppercase transition ${
               !isHazard
                 ? 'bg-blood border-blood text-white'
-                : 'border-gray-700 text-gray-400 hover:border-gray-500'
+                : 'border-line text-ink-muted hover:border-gray-500'
             }`}
             onClick={() => {
               setForm((prev) => ({ ...prev, report_type: 'incident' }))
@@ -345,7 +345,7 @@ export default function ReportForm() {
             className={`flex items-center justify-center gap-2 px-4 py-4 border text-sm font-bold uppercase transition ${
               isHazard
                 ? 'bg-yellow-700 border-yellow-600 text-white'
-                : 'border-gray-700 text-gray-400 hover:border-gray-500'
+                : 'border-line text-ink-muted hover:border-gray-500'
             }`}
             onClick={() => {
               setForm((prev) => ({ ...prev, report_type: 'hazard' }))
@@ -355,7 +355,7 @@ export default function ReportForm() {
             <AlertTriangle size={18} /> Safety Hazard
           </button>
         </div>
-        <p className="text-gray-600 text-xs mt-2">
+        <p className="text-ink-faint text-xs mt-2">
           {isHazard
             ? 'Flag a dangerous spot so it gets fixed before anyone is hurt'
             : 'Document a death or serious injury that has already happened'}
@@ -374,7 +374,7 @@ export default function ReportForm() {
                     : 'bg-blood border-blood text-white'
                   : s < step
                     ? 'bg-gray-700 border-gray-600 text-white'
-                    : 'border-gray-700 text-gray-600'
+                    : 'border-line text-ink-faint'
               }`}
             >
               {s}
@@ -389,7 +389,7 @@ export default function ReportForm() {
       </div>
 
       {error && (
-        <div className="mb-6 bg-red-900/50 border border-red-700 text-red-200 px-4 py-3 text-sm">
+        <div className="mb-6 bg-red-50 border border-red-300 text-red-800 px-4 py-3 text-sm">
           {error}
         </div>
       )}
@@ -397,7 +397,7 @@ export default function ReportForm() {
       {/* INCIDENT Step 1: Incident & Victim Information */}
       {!isHazard && step === 1 && (
         <div className="space-y-6">
-          <h2 className="text-2xl font-header font-bold text-white border-l-4 border-blood pl-4">
+          <h2 className="text-2xl font-header font-bold text-ink border-l-4 border-blood pl-4">
             Incident Information
           </h2>
           
@@ -410,7 +410,7 @@ export default function ReportForm() {
               value={form.title}
               onChange={(e) => update('title', e.target.value)}
             />
-            <p className="text-xs text-gray-500 mt-1">Example: "Bank Manager Falls Into Uncovered DJB Pit"</p>
+            <p className="text-xs text-ink-faint mt-1">Example: "Bank Manager Falls Into Uncovered DJB Pit"</p>
           </div>
 
           <div>
@@ -433,9 +433,9 @@ export default function ReportForm() {
             />
           </div>
 
-          <div className="border-t border-gray-800 pt-6">
+          <div className="border-t border-line pt-6">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-header font-bold text-white">Victims</h3>
+              <h3 className="text-xl font-header font-bold text-ink">Victims</h3>
               <button
                 type="button"
                 onClick={addVictim}
@@ -446,14 +446,14 @@ export default function ReportForm() {
             </div>
 
             {form.victims.map((victim, index) => (
-              <div key={index} className="mb-6 p-4 bg-gray-900/50 border border-gray-800 rounded">
+              <div key={index} className="mb-6 p-4 bg-gray-900/50 border border-line rounded">
                 <div className="flex justify-between items-center mb-3">
-                  <span className="text-sm font-bold text-gray-400">Victim {index + 1}</span>
+                  <span className="text-sm font-bold text-ink-muted">Victim {index + 1}</span>
                   {form.victims.length > 1 && (
                     <button
                       type="button"
                       onClick={() => removeVictim(index)}
-                      className="text-red-500 hover:text-red-400"
+                      className="text-red-500 hover:text-red-700"
                     >
                       <X size={16} />
                     </button>
@@ -507,7 +507,7 @@ export default function ReportForm() {
                               ? type === 'Death'
                                 ? 'bg-blood border-blood text-white'
                                 : 'bg-yellow-700 border-yellow-600 text-white'
-                              : 'border-gray-700 text-gray-400 hover:border-gray-500'
+                              : 'border-line text-ink-muted hover:border-gray-500'
                           }`}
                           onClick={() => updateVictim(index, 'outcome', type)}
                         >
@@ -526,7 +526,7 @@ export default function ReportForm() {
       {/* SHARED: Location & Evidence (Step 2 for incident, Step 1 for hazard) */}
       {((isHazard && step === 1) || (!isHazard && step === 2)) && (
         <div className="space-y-6">
-          <h2 className={`text-2xl font-header font-bold text-white border-l-4 ${isHazard ? 'border-yellow-600' : 'border-blood'} pl-4`}>
+          <h2 className={`text-2xl font-header font-bold text-ink border-l-4 ${isHazard ? 'border-yellow-600' : 'border-blood'} pl-4`}>
             {isHazard ? 'Hazard Details' : 'Location & Evidence'}
           </h2>
 
@@ -539,16 +539,16 @@ export default function ReportForm() {
                   <button
                     key={level}
                     type="button"
-                    className={`px-3 py-3 border text-xs font-bold uppercase transition ${
+                    className={`px-3 py-3 border text-xs font-bold transition ${
                       form.severity === level
                         ? level === 'Critical'
                           ? 'bg-red-700 border-red-600 text-white'
                           : level === 'High'
-                            ? 'bg-orange-700 border-orange-600 text-white'
+                            ? 'bg-orange-700 border-orange-600 text-ink'
                             : level === 'Medium'
                               ? 'bg-yellow-700 border-yellow-600 text-white'
                               : 'bg-green-700 border-green-600 text-white'
-                        : 'border-gray-700 text-gray-400 hover:border-gray-500'
+                        : 'border-line text-ink-muted hover:border-gray-500'
                     }`}
                     onClick={() => update('severity', level)}
                   >
@@ -569,7 +569,7 @@ export default function ReportForm() {
           </div>
           <div>
             <label className={labelClass}>Relevant Links</label>
-            <p className="text-gray-600 text-xs mb-2">
+            <p className="text-ink-faint text-xs mb-2">
               News articles, tweets, or any relevant URLs
             </p>
             {form.evidence_links.map((link, i) => (
@@ -587,7 +587,7 @@ export default function ReportForm() {
                 />
                 <button
                   type="button"
-                  className="text-gray-500 hover:text-red-400 transition px-2"
+                  className="text-ink-faint hover:text-red-700 transition px-2"
                   onClick={() => {
                     const updated = form.evidence_links.filter((_, j) => j !== i)
                     setForm((prev) => ({ ...prev, evidence_links: updated }))
@@ -599,7 +599,7 @@ export default function ReportForm() {
             ))}
             <button
               type="button"
-              className="flex items-center gap-1 text-sm text-gray-400 hover:text-white transition mt-1"
+              className="flex items-center gap-1 text-sm text-ink-muted hover:text-ink transition mt-1"
               onClick={() =>
                 setForm((prev) => ({
                   ...prev,
@@ -614,7 +614,7 @@ export default function ReportForm() {
             <label className={labelClass}>Location *</label>
             <Suspense
               fallback={
-                <div className="border border-gray-800 rounded p-6 text-center text-gray-500 text-sm">
+                <div className="border border-line rounded p-6 text-center text-ink-faint text-sm">
                   Loading location tools…
                 </div>
               }
@@ -649,7 +649,7 @@ export default function ReportForm() {
                         ? isHazard
                           ? 'bg-yellow-700 border-yellow-600 text-white'
                           : 'bg-blood border-blood text-white'
-                        : 'border-gray-700 text-gray-400 hover:border-gray-500'
+                        : 'border-line text-ink-muted hover:border-gray-500'
                     }`}
                     onClick={() => {
                       if (type === 'Other') {
@@ -698,10 +698,10 @@ export default function ReportForm() {
       {/* INCIDENT Step 3: Responsible Authorities */}
       {!isHazard && step === 3 && (
         <div className="space-y-6">
-          <h2 className="text-2xl font-header font-bold text-white border-l-4 border-blood pl-4">
+          <h2 className="text-2xl font-header font-bold text-ink border-l-4 border-blood pl-4">
             Responsible Authorities
           </h2>
-          <p className="text-gray-500 text-sm">
+          <p className="text-ink-faint text-sm">
             If unknown, leave blank for community investigation.
           </p>
           <div>
@@ -740,10 +740,10 @@ export default function ReportForm() {
       {/* HAZARD Step 2: Optional Authorities */}
       {isHazard && step === 2 && (
         <div className="space-y-6">
-          <h2 className="text-2xl font-header font-bold text-white border-l-4 border-yellow-600 pl-4">
+          <h2 className="text-2xl font-header font-bold text-ink border-l-4 border-yellow-600 pl-4">
             Responsible Authorities (Optional)
           </h2>
-          <p className="text-gray-500 text-sm">
+          <p className="text-ink-faint text-sm">
             Help us trace accountability. Leave blank if unknown.
           </p>
           <div>
@@ -781,10 +781,10 @@ export default function ReportForm() {
 
       {/* Personal-information warning, shown on the step that actually files */}
       {step === totalSteps && (
-        <div className="mt-8 rounded border border-yellow-800/60 bg-yellow-900/10 px-4 py-3 flex items-start gap-2.5">
+        <div className="mt-8 rounded border border-amber-300 bg-amber-50 px-4 py-3 flex items-start gap-2.5">
           <AlertTriangle size={15} className="text-yellow-600 shrink-0 mt-0.5" />
-          <p className="text-gray-400 text-xs leading-relaxed">
-            <span className="text-yellow-400 font-bold">Before you file:</span> this report
+          <p className="text-ink-muted text-xs leading-relaxed">
+            <span className="text-amber-700 font-bold">Before you file:</span> this report
             becomes part of a public record. Please don't include Aadhaar or PAN numbers, phone
             numbers, bank or payment details, or medical information — yours or anyone else's.
             Check the description above and remove anything personal.
@@ -798,7 +798,7 @@ export default function ReportForm() {
           <button
             type="button"
             onClick={prev}
-            className="flex items-center gap-2 text-gray-400 hover:text-white transition font-header uppercase tracking-wide"
+            className="flex items-center gap-2 text-ink-muted hover:text-ink transition font-header uppercase tracking-wide"
           >
             <ChevronLeft size={20} /> Back
           </button>

@@ -43,27 +43,19 @@ export default function Home() {
   const recent = hazards.slice(0, 3)
 
   return (
-    <div className="flex-grow bg-[#050505] text-white">
-      {/* ── Hero ── */}
+    <div className="flex-grow bg-surface text-ink">
+      {/* Hero */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-black via-[#0b0b0b] to-[#111] opacity-90" />
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            backgroundImage:
-              'radial-gradient(circle at 20% 20%, rgba(56,189,248,0.10), transparent 38%), radial-gradient(circle at 80% 10%, rgba(45,212,191,0.08), transparent 32%)',
-          }}
-        />
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative py-12 sm:py-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1 text-[11px] font-bold uppercase border border-gray-800 rounded-full bg-[#111] tracking-wider">
-            <Mic size={13} className="text-sky-400" />
+          <div className="inline-flex items-center gap-2 px-3 py-1 text-[11px] font-bold border border-line rounded-full bg-raised tracking-wider">
+            <Mic size={13} className="text-civic" />
             Speak or type — any Indian language
           </div>
 
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-header font-bold mt-5 leading-tight">
             Report a dangerous civic issue near you
           </h1>
-          <p className="text-gray-400 text-base sm:text-lg mt-4 max-w-2xl leading-relaxed">
+          <p className="text-ink-muted text-base sm:text-lg mt-4 max-w-2xl leading-relaxed">
             A pothole, an open drain, an exposed live wire, an abandoned pit. Describe it in
             one sentence and we'll work out which department owns it, write the formal
             complaint for you, and keep a clock on it until it's fixed.
@@ -79,21 +71,21 @@ export default function Home() {
             </Link>
             <Link
               to="/report?demo=1"
-              className="inline-flex items-center justify-center gap-2 px-6 py-4 sm:py-3 font-header uppercase tracking-wide text-sm rounded border border-sky-700 bg-sky-950/40 text-sky-200 hover:text-white hover:border-sky-500 transition"
+              className="inline-flex items-center justify-center gap-2 px-6 py-4 sm:py-3 font-header uppercase tracking-wide text-sm rounded border border-civic/40 bg-civic-soft text-civic hover:text-white hover:border-civic transition"
             >
               <Send size={16} />
               Try a sample report
             </Link>
             <Link
               to="/track"
-              className="inline-flex items-center justify-center gap-2 px-6 py-4 sm:py-3 font-header uppercase tracking-wide text-sm rounded border border-gray-700 text-gray-200 hover:text-white hover:border-gray-500 transition"
+              className="inline-flex items-center justify-center gap-2 px-6 py-4 sm:py-3 font-header uppercase tracking-wide text-sm rounded border border-line text-ink hover:text-ink hover:border-gray-500 transition"
             >
               <Search size={16} />
               Track a complaint
             </Link>
           </div>
 
-          <p className="text-gray-600 text-xs mt-4">
+          <p className="text-ink-faint text-xs mt-4">
             No login. No personal details required.
           </p>
 
@@ -102,9 +94,9 @@ export default function Home() {
             {stats.map((s) => (
               <div
                 key={s.label}
-                className="bg-[#0d0d0d] border border-gray-800 rounded-lg px-3 sm:px-5 py-4"
+                className="bg-raised border border-line rounded-lg px-3 sm:px-5 py-4"
               >
-                <p className="text-[10px] sm:text-xs uppercase tracking-widest text-gray-500 font-bold leading-tight">
+                <p className="text-[10px] sm:text-xs text-ink-faint font-bold leading-tight">
                   {s.label}
                 </p>
                 <p className="text-2xl sm:text-3xl font-header mt-2">{s.value}</p>
@@ -114,13 +106,13 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── How it works ── */}
-      <section className="border-y border-gray-800 bg-charcoal/40">
+      {/* How it works */}
+      <section className="border-y border-line bg-raised">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <h2 className="text-xl font-header font-bold text-white uppercase tracking-wide mb-1">
+          <h2 className="text-xl font-header font-bold text-ink uppercase tracking-wide mb-1">
             How it works
           </h2>
-          <p className="text-gray-500 text-sm mb-8">
+          <p className="text-ink-faint text-sm mb-8">
             Three steps. The parts you'd normally have to figure out yourself are the parts
             we do for you.
           </p>
@@ -128,19 +120,19 @@ export default function Home() {
           <ol className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             <Step
               n={1}
-              icon={<Mic size={18} className="text-sky-400" />}
+              icon={<Mic size={18} className="text-civic" />}
               title="Describe it"
               body="Speak or type one sentence in your own language, and add a photo. No department dropdowns, no forms in English."
             />
             <Step
               n={2}
-              icon={<Route size={18} className="text-sky-400" />}
+              icon={<Route size={18} className="text-civic" />}
               title="We route it"
               body="We identify the department that actually owns the problem and draft a formal complaint you can read and correct."
             />
             <Step
               n={3}
-              icon={<ClipboardCheck size={18} className="text-sky-400" />}
+              icon={<ClipboardCheck size={18} className="text-civic" />}
               title="Track until fixed"
               body="You get a reference and a visible deadline. If nobody acts, it escalates up the chain on its own."
             />
@@ -148,20 +140,20 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Recently reported ── */}
+      {/* Recently reported */}
       <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex items-end justify-between gap-4 mb-6 flex-wrap">
           <div>
-            <h2 className="text-xl font-header font-bold text-white uppercase tracking-wide">
+            <h2 className="text-xl font-header font-bold text-ink uppercase tracking-wide">
               Recently reported
             </h2>
-            <p className="text-gray-500 text-sm mt-1">
+            <p className="text-ink-faint text-sm mt-1">
               Open safety issues flagged by citizens.
             </p>
           </div>
           <Link
             to="/map"
-            className="inline-flex items-center gap-1.5 text-sm text-sky-400 hover:text-white transition font-header uppercase tracking-wide"
+            className="inline-flex items-center gap-1.5 text-sm text-civic hover:text-ink transition font-header uppercase tracking-wide"
           >
             <MapIcon size={14} /> View on map
           </Link>
@@ -174,27 +166,27 @@ export default function Home() {
             ))}
           </div>
         ) : (
-          <div className="border border-dashed border-gray-700 rounded-lg p-6 text-gray-500 text-sm">
+          <div className="border border-dashed border-line rounded-lg p-6 text-ink-faint text-sm">
             Nothing reported yet. Be the first — it takes under a minute.
           </div>
         )}
 
         <Link
           to="/deathtraps"
-          className="inline-flex items-center gap-1.5 mt-6 text-sm text-gray-400 hover:text-white transition font-header uppercase tracking-wide"
+          className="inline-flex items-center gap-1.5 mt-6 text-sm text-ink-muted hover:text-ink transition font-header uppercase tracking-wide"
         >
           See all reported issues <ChevronRight size={14} />
         </Link>
       </section>
 
-      {/* ── Coverage + accountability ── */}
-      <section className="border-t border-gray-800">
+      {/* Coverage + accountability */}
+      <section className="border-t border-line">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
-            <h3 className="text-white font-header font-bold uppercase text-sm tracking-widest mb-3">
+            <h3 className="text-ink font-header font-bold uppercase text-sm tracking-widest mb-3">
               Departments we can route to
             </h3>
-            <p className="text-gray-500 text-sm mb-3">
+            <p className="text-ink-faint text-sm mb-3">
               Mapped for {JURISDICTIONS.length} cities so far. Anywhere else falls back to a
               generic municipal route.
             </p>
@@ -202,7 +194,7 @@ export default function Home() {
               {JURISDICTIONS.map((j) => (
                 <span
                   key={j.city}
-                  className="text-xs text-gray-300 border border-gray-700 rounded-full px-3 py-1"
+                  className="text-xs text-ink-muted border border-line rounded-full px-3 py-1"
                 >
                   {j.city}
                 </span>
@@ -211,16 +203,16 @@ export default function Home() {
           </div>
 
           <div>
-            <h3 className="text-white font-header font-bold uppercase text-sm tracking-widest mb-3">
+            <h3 className="text-ink font-header font-bold uppercase text-sm tracking-widest mb-3">
               When prevention fails
             </h3>
-            <p className="text-gray-500 text-sm mb-4">
+            <p className="text-ink-faint text-sm mb-4">
               Some of these hazards have already killed people. Those cases are documented
               separately, with the chain of responsibility traced as far as it can be.
             </p>
             <Link
               to="/accountability"
-              className="inline-flex items-center gap-1.5 text-sm text-gray-300 hover:text-white transition font-header uppercase tracking-wide border border-gray-700 hover:border-gray-500 rounded px-4 py-2"
+              className="inline-flex items-center gap-1.5 text-sm text-ink-muted hover:text-ink transition font-header uppercase tracking-wide border border-line hover:border-gray-500 rounded px-4 py-2"
             >
               Accountability record <ChevronRight size={14} />
             </Link>
@@ -243,15 +235,15 @@ function Step({
   body: string
 }) {
   return (
-    <li className="bg-[#0d0d0d] border border-gray-800 rounded-lg p-5">
+    <li className="bg-raised border border-line rounded-lg p-5">
       <div className="flex items-center gap-2 mb-2">
         {icon}
-        <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500">
+        <span className="text-[10px] font-bold text-ink-faint">
           Step {n}
         </span>
       </div>
-      <p className="text-white font-bold text-base mb-1.5">{title}</p>
-      <p className="text-gray-400 text-sm leading-relaxed">{body}</p>
+      <p className="text-ink font-bold text-base mb-1.5">{title}</p>
+      <p className="text-ink-muted text-sm leading-relaxed">{body}</p>
     </li>
   )
 }

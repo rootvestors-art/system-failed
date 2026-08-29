@@ -23,17 +23,17 @@ export default function ComplaintStatusPanel({
     <div
       className={`rounded-lg border p-5 ${
         resolved
-          ? 'border-green-700 bg-green-950/20'
+          ? 'border-green-300 bg-green-50'
           : escalations > 0
-            ? 'border-blood bg-blood/10'
-            : 'border-gray-800 bg-[#111]'
+            ? 'border-blood bg-red-50'
+            : 'border-line bg-raised'
       }`}
     >
       <div className="flex items-center justify-between gap-2 flex-wrap mb-3">
-        <h3 className="font-header font-bold text-white uppercase text-sm tracking-widest">
+        <h3 className="font-header font-bold text-ink uppercase text-sm tracking-widest">
           Complaint status
         </h3>
-        <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded bg-yellow-900/30 text-yellow-500 border border-yellow-800">
+        <span className="text-[10px] font-bold px-2 py-1 rounded bg-amber-50 text-amber-600 border border-amber-300">
           Simulated
         </span>
       </div>
@@ -41,10 +41,10 @@ export default function ComplaintStatusPanel({
       {/* Headline state */}
       {resolved ? (
         <div className="flex items-start gap-2.5 mb-4">
-          <CheckCircle2 className="text-green-400 shrink-0 mt-0.5" size={18} />
+          <CheckCircle2 className="text-green-700 shrink-0 mt-0.5" size={18} />
           <div>
-            <p className="text-white font-bold text-sm">Reported fixed</p>
-            <p className="text-gray-400 text-xs mt-0.5">
+            <p className="text-ink font-bold text-sm">Reported fixed</p>
+            <p className="text-ink-muted text-xs mt-0.5">
               A citizen confirmed this hazard has been repaired.
             </p>
           </div>
@@ -53,10 +53,10 @@ export default function ComplaintStatusPanel({
         <div className="flex items-start gap-2.5 mb-4">
           <Clock className="text-caution shrink-0 mt-0.5" size={18} />
           <div className="min-w-0">
-            <p className="text-white font-bold text-sm">
+            <p className="text-ink font-bold text-sm">
               {exhausted ? 'Unresolved at every level' : `With ${active?.authority ?? agency}`}
             </p>
-            <p className="text-gray-400 text-xs mt-0.5">{formatRemaining(daysLeft)}</p>
+            <p className="text-ink-muted text-xs mt-0.5">{formatRemaining(daysLeft)}</p>
           </div>
         </div>
       )}
@@ -81,7 +81,7 @@ export default function ComplaintStatusPanel({
               />
               <p
                 className={`text-[10px] font-bold leading-tight ${
-                  isCurrent ? 'text-white' : stage.reached ? 'text-green-400' : 'text-gray-600'
+                  isCurrent ? 'text-ink' : stage.reached ? 'text-green-700' : 'text-ink-faint'
                 }`}
               >
                 {stage.label}
@@ -91,24 +91,24 @@ export default function ComplaintStatusPanel({
         })}
       </ol>
 
-      <dl className="space-y-2 text-xs border-t border-gray-800 pt-3">
+      <dl className="space-y-2 text-xs border-t border-line pt-3">
         <div>
-          <dt className="text-gray-500 uppercase tracking-widest text-[10px]">
+          <dt className="text-ink-faint text-[10px]">
             Routed to
           </dt>
-          <dd className="text-gray-200 mt-0.5">{agency}</dd>
+          <dd className="text-ink mt-0.5">{agency}</dd>
         </div>
         <div>
-          <dt className="text-gray-500 uppercase tracking-widest text-[10px]">
+          <dt className="text-ink-faint text-[10px]">
             Instead of
           </dt>
-          <dd className="text-gray-400 mt-0.5">{jurisdiction.existingPortal}</dd>
+          <dd className="text-ink-muted mt-0.5">{jurisdiction.existingPortal}</dd>
         </div>
       </dl>
 
       <Link
         to={`/track/${trackId}`}
-        className="inline-flex items-center gap-1 mt-4 text-sm font-header uppercase tracking-wide text-white border border-gray-700 hover:border-gray-500 rounded px-4 py-2 transition"
+        className="inline-flex items-center gap-1 mt-4 text-sm font-header uppercase tracking-wide text-ink border border-line hover:border-gray-500 rounded px-4 py-2 transition"
       >
         Full timeline <ChevronRight size={14} />
       </Link>

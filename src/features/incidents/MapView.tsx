@@ -43,12 +43,12 @@ export default function MapView() {
   return (
     <div className="flex flex-1 overflow-hidden" style={{ height: 'calc(100vh - 5rem)' }}>
       {/* Sidebar */}
-      <aside className="w-80 bg-charcoal border-r border-gray-800 flex flex-col overflow-y-auto hidden md:flex">
-        <div className="p-4 border-b border-gray-800">
-          <h2 className="text-gray-400 text-xs uppercase tracking-widest font-bold mb-2">
+      <aside className="w-80 bg-raised border-r border-line flex flex-col overflow-y-auto hidden md:flex">
+        <div className="p-4 border-b border-line">
+          <h2 className="text-ink-muted text-xs uppercase tracking-widest font-bold mb-2">
             Reported issues
           </h2>
-          <p className="text-gray-600 text-xs">
+          <p className="text-ink-faint text-xs">
             Hazards citizens have filed complaints about.
           </p>
         </div>
@@ -59,16 +59,16 @@ export default function MapView() {
             ))}
 
           {showDeathTraps && hazards.length === 0 && (
-            <p className="text-gray-600 text-xs">Nothing reported yet.</p>
+            <p className="text-ink-faint text-xs">Nothing reported yet.</p>
           )}
 
           {showIncidents && incidents.length > 0 && (
             <>
-              {showDeathTraps && <div className="border-t border-gray-700 my-4" />}
+              {showDeathTraps && <div className="border-t border-line my-4" />}
               <h2 className="text-red-500 text-xs uppercase tracking-widest font-bold mb-1">
                 Past incidents
               </h2>
-              <p className="text-gray-600 text-xs mb-4">
+              <p className="text-ink-faint text-xs mb-4">
                 Where negligence already caused death or injury.
               </p>
               {incidents.map((incident) => (
@@ -83,7 +83,7 @@ export default function MapView() {
       <main className="flex-1 relative">
         <Suspense
           fallback={
-            <div className="h-full w-full flex items-center justify-center text-gray-500 text-sm">
+            <div className="h-full w-full flex items-center justify-center text-ink-faint text-sm">
               Loading map…
             </div>
           }
@@ -97,8 +97,8 @@ export default function MapView() {
         </Suspense>
 
         {/* Legend / filter checkboxes — top right, above Leaflet */}
-        <div className="absolute top-4 right-4 bg-black/90 border border-gray-700 rounded-lg p-3 shadow-2xl backdrop-blur-sm" style={{ zIndex: 1000 }}>
-          <p className="text-gray-500 text-[10px] uppercase font-bold tracking-widest mb-2">Map Layers</p>
+        <div className="absolute top-4 right-4 bg-black/90 border border-line rounded-lg p-3 shadow-2xl backdrop-blur-sm" style={{ zIndex: 1000 }}>
+          <p className="text-ink-faint text-[10px] uppercase font-bold tracking-widest mb-2">Map Layers</p>
           <label className="flex items-center gap-2 cursor-pointer mb-2 group">
             <input
               type="checkbox"
@@ -113,7 +113,7 @@ export default function MapView() {
                 </svg>
               )}
             </span>
-            <span className="text-xs text-gray-300 group-hover:text-white transition">
+            <span className="text-xs text-ink-muted group-hover:text-ink transition">
               Reported issues
               <span className="text-yellow-500 font-mono ml-1">({hazards.length})</span>
             </span>
@@ -127,49 +127,49 @@ export default function MapView() {
             />
             <span className="w-4 h-4 rounded-sm border-2 border-red-500 bg-red-500/20 flex items-center justify-center peer-checked:bg-red-500 transition">
               {showIncidents && (
-                <svg viewBox="0 0 12 12" className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg viewBox="0 0 12 12" className="w-2.5 h-2.5 text-ink" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M2 6l3 3 5-5" />
                 </svg>
               )}
             </span>
-            <span className="text-xs text-gray-300 group-hover:text-white transition">
+            <span className="text-xs text-ink-muted group-hover:text-ink transition">
               Past incidents
               <span className="text-red-500 font-mono ml-1">({incidents.length})</span>
             </span>
           </label>
 
-          <div className="border-t border-gray-800 mt-3 pt-2 space-y-1">
-            <p className="text-gray-500 text-[10px] uppercase font-bold tracking-widest">Key</p>
-            <p className="text-[10px] text-gray-400 flex items-center gap-1.5">
+          <div className="border-t border-line mt-3 pt-2 space-y-1">
+            <p className="text-ink-faint text-[10px] uppercase font-bold tracking-widest">Key</p>
+            <p className="text-[10px] text-ink-muted flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-full bg-yellow-500 inline-block" /> Open
             </p>
-            <p className="text-[10px] text-gray-400 flex items-center gap-1.5">
+            <p className="text-[10px] text-ink-muted flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-full bg-green-500 inline-block" /> Reported fixed
             </p>
           </div>
         </div>
 
         {/* Status overlay - fixed position */}
-        <div className="fixed bottom-8 left-8 bg-black/90 p-4 border border-gray-700 rounded shadow-2xl backdrop-blur-sm" style={{ zIndex: 1000 }}>
-          <h3 className="text-white font-bold uppercase mb-2 text-sm">Across India</h3>
+        <div className="fixed bottom-8 left-8 bg-black/90 p-4 border border-line rounded shadow-2xl backdrop-blur-sm" style={{ zIndex: 1000 }}>
+          <h3 className="text-ink font-bold uppercase mb-2 text-sm">Across India</h3>
           <div className="grid grid-cols-3 gap-4 text-center">
             <div>
               <span className="block text-2xl font-bold text-yellow-500 font-mono">
                 {openCount}
               </span>
-              <span className="text-xs text-gray-400 uppercase">Open</span>
+              <span className="text-xs text-ink-muted uppercase">Open</span>
             </div>
             <div>
               <span className="block text-2xl font-bold text-green-500 font-mono">
                 {resolvedCount}
               </span>
-              <span className="text-xs text-gray-400 uppercase">Fixed</span>
+              <span className="text-xs text-ink-muted uppercase">Fixed</span>
             </div>
             <div>
               <span className="block text-2xl font-bold text-red-500 font-mono">
                 {incidents.length}
               </span>
-              <span className="text-xs text-gray-400 uppercase">Past</span>
+              <span className="text-xs text-ink-muted uppercase">Past</span>
             </div>
           </div>
         </div>
@@ -177,7 +177,7 @@ export default function MapView() {
 
       {/* Incident detail panel */}
       {selectedIncident && (
-        <aside className="w-96 bg-void border-l border-gray-800 p-6 hidden lg:block overflow-y-auto">
+        <aside className="w-96 bg-surface border-l border-line p-6 hidden lg:block overflow-y-auto">
           <div className="bg-blood text-white text-xs font-bold px-2 py-1 inline-block mb-4 uppercase">
             Selected Incident
           </div>
@@ -185,20 +185,20 @@ export default function MapView() {
             <img
               src={selectedIncident.image_url}
               alt="Evidence"
-              className="w-full h-48 object-cover rounded mb-4 grayscale hover:grayscale-0 transition duration-500 border border-gray-700"
+              className="w-full h-48 object-cover rounded mb-4 grayscale hover:grayscale-0 transition duration-500 border border-line"
             />
           )}
-          <h2 className="text-2xl font-black text-white mb-1">
+          <h2 className="text-2xl font-black text-ink mb-1">
             Case {selectedIncident.case_id}
           </h2>
-          <p className="text-gray-400 text-sm mb-1">{selectedIncident.title}</p>
+          <p className="text-ink-muted text-sm mb-1">{selectedIncident.title}</p>
           <p className="text-red-500 font-mono text-xs mb-4">
             {selectedIncident.location.city}, {selectedIncident.location.state}
           </p>
-          <p className="text-gray-300 text-sm">{selectedIncident.description}</p>
+          <p className="text-ink-muted text-sm">{selectedIncident.description}</p>
           <Link
             to={`/incident/${selectedIncident.id}`}
-            className="inline-block mt-4 text-sm text-gray-300 hover:text-white border border-gray-700 hover:border-gray-500 rounded px-4 py-2 font-header uppercase tracking-wide transition"
+            className="inline-block mt-4 text-sm text-ink-muted hover:text-ink border border-line hover:border-gray-500 rounded px-4 py-2 font-header uppercase tracking-wide transition"
           >
             Open case file
           </Link>
@@ -207,9 +207,9 @@ export default function MapView() {
 
       {/* Hazard detail panel */}
       {selectedHazard && (
-        <aside className="w-96 bg-void border-l border-gray-800 p-6 hidden lg:block overflow-y-auto">
+        <aside className="w-96 bg-surface border-l border-line p-6 hidden lg:block overflow-y-auto">
           <div
-            className={`text-white text-xs font-bold px-2 py-1 inline-block mb-4 uppercase ${
+            className={`text-ink text-xs font-bold px-2 py-1 inline-block mb-4 uppercase ${
               selectedHazard.status === 'Fixed' ? 'bg-green-700' : 'bg-yellow-700'
             }`}
           >
@@ -219,19 +219,19 @@ export default function MapView() {
             <img
               src={selectedHazard.image_url}
               alt="Evidence"
-              className="w-full h-48 object-cover rounded mb-4 grayscale hover:grayscale-0 transition duration-500 border border-gray-700"
+              className="w-full h-48 object-cover rounded mb-4 grayscale hover:grayscale-0 transition duration-500 border border-line"
             />
           )}
-          <h2 className="text-2xl font-black text-white mb-1">
+          <h2 className="text-2xl font-black text-ink mb-1">
             {negligenceLabel(selectedHazard.negligence_type)}
           </h2>
           <p className="text-yellow-500 font-mono text-xs mb-1">
             {selectedHazard.severity} severity
           </p>
-          <p className="text-gray-500 text-xs mb-4">
+          <p className="text-ink-faint text-xs mb-4">
             {selectedHazard.location.city}, {selectedHazard.location.state}
           </p>
-          <p className="text-gray-300 text-sm">{selectedHazard.description}</p>
+          <p className="text-ink-muted text-sm">{selectedHazard.description}</p>
           <Link
             to={`/track/${selectedHazard.id}`}
             className="inline-block mt-4 text-sm text-white bg-blood hover:bg-red-700 rounded px-4 py-2 font-header uppercase tracking-wide transition"

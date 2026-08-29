@@ -57,11 +57,11 @@ export default function HierarchyCard({ entities }: HierarchyCardProps) {
 
   return (
     <div>
-      <h2 className="text-2xl font-header font-bold text-white mb-6 uppercase">
+      <h2 className="text-2xl font-header font-bold text-ink mb-6 uppercase">
         Hierarchy of Failure
       </h2>
 
-      <div className="relative pl-8 border-l-2 border-gray-800 space-y-8">
+      <div className="relative pl-8 border-l-2 border-line space-y-8">
         {levels.map((level, i) => {
           const isLast = i === levels.length - 1
           return (
@@ -72,14 +72,14 @@ export default function HierarchyCard({ entities }: HierarchyCardProps) {
                 }`}
               />
               <div
-                className={`bg-[#1a1a1a] p-4 rounded border-l-4 ${level.borderColor}`}
+                className={`bg-raised-2 p-4 rounded border-l-4 ${level.borderColor}`}
               >
-                <p className="text-xs text-gray-500 uppercase font-bold tracking-widest mb-1">
+                <p className="text-xs text-ink-faint uppercase font-bold tracking-widest mb-1">
                   {level.label}
                 </p>
-                <h4 className="text-xl font-bold text-white">{level.name}</h4>
+                <h4 className="text-xl font-bold text-ink">{level.name}</h4>
                 {level.note && (
-                  <p className="text-sm text-gray-400 mt-2">{level.note}</p>
+                  <p className="text-sm text-ink-muted mt-2">{level.note}</p>
                 )}
               </div>
             </div>

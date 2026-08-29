@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { Mic, MicOff, Sparkles, Loader2, Check, X, AlertCircle } from 'lucide-react'
+import { Mic, MicOff, MessageSquare, Send, Loader2, Check, X, AlertCircle } from 'lucide-react'
 import {
   runTriage,
   transcribeAudio,
@@ -258,17 +258,17 @@ export default function SmartIntake({ onApply, onSkip }: Props) {
   const routedAgency = routing?.primaryAuthority ?? null
 
   const inputClass =
-    'w-full bg-[#1a1a1a] border border-gray-700 text-white px-4 py-3 focus:border-blood focus:outline-none transition rounded'
+    'w-full bg-raised-2 border border-line text-ink px-4 py-3 focus:border-blood focus:outline-none transition rounded'
 
   return (
-    <div className="border border-gray-700 rounded-lg bg-charcoal/60 p-5 sm:p-6 mb-8">
+    <div className="border border-line rounded-lg bg-raised p-5 sm:p-6 mb-8">
       <div className="flex items-start gap-3 mb-1">
-        <Sparkles className="text-caution shrink-0 mt-1" size={20} />
+        <MessageSquare className="text-civic shrink-0 mt-1" size={20} />
         <div>
-          <h2 className="text-lg sm:text-xl font-header font-bold text-white leading-tight">
+          <h2 className="text-lg sm:text-xl font-header font-bold text-ink leading-tight">
             Just tell us what's wrong
           </h2>
-          <p className="text-gray-400 text-sm mt-1">
+          <p className="text-ink-muted text-sm mt-1">
             Speak or type one sentence in your own language. We'll pick the department,
             write the formal complaint and fill this form for you.
           </p>
@@ -276,7 +276,7 @@ export default function SmartIntake({ onApply, onSkip }: Props) {
       </div>
 
       {isDemo && (
-        <div className="mt-4 rounded border border-sky-800 bg-sky-950/40 px-3 py-2 text-xs text-sky-200">
+        <div className="mt-4 rounded border border-civic/30 bg-civic-soft px-3 py-2 text-xs text-civic">
           <span className="font-bold">Sample report loaded.</span> This is example text so you
           can see the whole journey quickly — edit anything, or clear it and describe your own
           issue.
@@ -286,7 +286,7 @@ export default function SmartIntake({ onApply, onSkip }: Props) {
       {/* Description + dictation */}
       <div className="mt-5">
         <div className="flex items-center justify-between mb-2 gap-2 flex-wrap">
-          <label className="block text-xs text-gray-500 uppercase font-bold tracking-widest">
+          <label className="block text-xs text-ink-faint font-bold">
             What is the problem?
           </label>
           {(recordSupported || speechSupported) && (
@@ -295,7 +295,7 @@ export default function SmartIntake({ onApply, onSkip }: Props) {
                 value={speechLang}
                 onChange={(e) => setSpeechLang(e.target.value)}
                 disabled={listening || recording || transcribing}
-                className="bg-[#1a1a1a] border border-gray-700 text-gray-300 text-xs rounded px-2 py-1 disabled:opacity-50"
+                className="bg-raised-2 border border-line text-ink-muted text-xs rounded px-2 py-1 disabled:opacity-50"
               >
                 {SPEECH_LANGS.map((l) => (
                   <option key={l.code} value={l.code}>
@@ -311,10 +311,10 @@ export default function SmartIntake({ onApply, onSkip }: Props) {
                   type="button"
                   onClick={toggleRecording}
                   disabled={transcribing || preparing}
-                  className={`flex items-center gap-1.5 text-xs font-bold uppercase px-3 py-1.5 rounded border transition disabled:opacity-60 ${
+                  className={`flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded border transition disabled:opacity-60 ${
                     recording
                       ? 'bg-blood border-blood text-white animate-pulse'
-                      : 'border-gray-600 text-gray-300 hover:border-gray-400'
+                      : 'border-gray-600 text-ink-muted hover:border-gray-400'
                   }`}
                 >
                   {transcribing ? (
@@ -340,10 +340,10 @@ export default function SmartIntake({ onApply, onSkip }: Props) {
                   <button
                     type="button"
                     onClick={toggleDictation}
-                    className={`flex items-center gap-1.5 text-xs font-bold uppercase px-3 py-1.5 rounded border transition ${
+                    className={`flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded border transition ${
                       listening
                         ? 'bg-blood border-blood text-white animate-pulse'
-                        : 'border-gray-600 text-gray-300 hover:border-gray-400'
+                        : 'border-gray-600 text-ink-muted hover:border-gray-400'
                     }`}
                   >
                     {listening ? <MicOff size={13} /> : <Mic size={13} />}
@@ -356,7 +356,7 @@ export default function SmartIntake({ onApply, onSkip }: Props) {
         </div>
 
         {preparing && (
-          <p className="text-gray-400 text-xs mb-2">
+          <p className="text-ink-muted text-xs mb-2">
             Getting the microphone ready — allow access if your browser asks, then wait for the
             red dot before you speak.
           </p>
@@ -380,7 +380,7 @@ export default function SmartIntake({ onApply, onSkip }: Props) {
       {/* Photo + location */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
         <div>
-          <label className="block text-xs text-gray-500 uppercase font-bold tracking-widest mb-2">
+          <label className="block text-xs text-ink-faint font-bold mb-2">
             Photo (optional)
           </label>
           <PhotoInput value={photo} onChange={setPhoto} onError={setError} />
@@ -388,7 +388,7 @@ export default function SmartIntake({ onApply, onSkip }: Props) {
 
         <div className="grid grid-cols-2 gap-2 content-start">
           <div>
-            <label className="block text-xs text-gray-500 uppercase font-bold tracking-widest mb-2">
+            <label className="block text-xs text-ink-faint font-bold mb-2">
               City
             </label>
             <input
@@ -399,7 +399,7 @@ export default function SmartIntake({ onApply, onSkip }: Props) {
             />
           </div>
           <div>
-            <label className="block text-xs text-gray-500 uppercase font-bold tracking-widest mb-2">
+            <label className="block text-xs text-ink-faint font-bold mb-2">
               State
             </label>
             <input
@@ -413,7 +413,7 @@ export default function SmartIntake({ onApply, onSkip }: Props) {
       </div>
 
       {error && (
-        <p className="text-red-400 text-sm mt-4 flex items-center gap-2">
+        <p className="text-red-700 text-sm mt-4 flex items-center gap-2">
           <AlertCircle size={14} /> {error}
         </p>
       )}
@@ -426,13 +426,13 @@ export default function SmartIntake({ onApply, onSkip }: Props) {
           disabled={running}
           className="flex items-center gap-2 bg-blood text-white px-5 py-3 font-bold uppercase text-sm hover:bg-red-700 transition disabled:opacity-60 rounded"
         >
-          {running ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
+          {running ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
           {running ? 'Reading your report…' : 'Write my complaint'}
         </button>
         <button
           type="button"
           onClick={onSkip}
-          className="text-gray-400 hover:text-white text-sm underline underline-offset-4"
+          className="text-ink-muted hover:text-ink text-sm underline underline-offset-4"
         >
           I'll fill the form myself
         </button>
@@ -440,16 +440,16 @@ export default function SmartIntake({ onApply, onSkip }: Props) {
 
       {/* Result */}
       {result && (
-        <div className="mt-6 border-t border-gray-700 pt-5">
+        <div className="mt-6 border-t border-line pt-5">
           <div className="flex items-center justify-between gap-2 flex-wrap mb-4">
-            <h3 className="text-white font-header font-bold uppercase text-sm tracking-wide">
+            <h3 className="text-ink font-header font-bold uppercase text-sm tracking-wide">
               Here's your complaint
             </h3>
             <span
-              className={`text-[10px] font-bold uppercase px-2 py-1 rounded tracking-wider ${
+              className={`text-[10px] font-bold px-2 py-1 rounded tracking-wider ${
                 result.source === 'openai'
-                  ? 'bg-green-900/40 text-green-400 border border-green-700'
-                  : 'bg-yellow-900/30 text-yellow-500 border border-yellow-700'
+                  ? 'bg-green-50 text-green-700 border border-green-300'
+                  : 'bg-amber-50 text-amber-600 border border-yellow-700'
               }`}
             >
               {result.source === 'openai'
@@ -459,7 +459,7 @@ export default function SmartIntake({ onApply, onSkip }: Props) {
           </div>
 
           {result.degraded_reason && (
-            <p className="text-yellow-500/80 text-xs mb-4 flex items-center gap-1.5">
+            <p className="text-amber-600/80 text-xs mb-4 flex items-center gap-1.5">
               <AlertCircle size={12} /> {result.degraded_reason}
             </p>
           )}
@@ -473,65 +473,65 @@ export default function SmartIntake({ onApply, onSkip }: Props) {
 
           {/* Life-safety first: some hazards need a phone call, not a ticket. */}
           {routing?.emergency && (
-            <div className="mb-4 rounded border border-red-700 bg-red-950/40 p-3">
-              <p className="text-red-300 text-xs font-bold uppercase tracking-widest mb-1">
+            <div className="mb-4 rounded border border-red-300 bg-red-50 p-3">
+              <p className="text-red-700 text-xs font-bold mb-1">
                 Do this first
               </p>
-              <p className="text-red-100 text-sm">{routing.emergency}</p>
+              <p className="text-red-900 text-sm">{routing.emergency}</p>
             </div>
           )}
 
           <div className="mb-4">
             <div className="flex items-baseline justify-between gap-2 flex-wrap mb-1">
-              <p className="text-xs text-gray-500 uppercase font-bold tracking-widest">
+              <p className="text-xs text-ink-faint font-bold">
                 Suggested first router
               </p>
               {routing && (
                 <span
-                  className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded border ${
+                  className={`text-[10px] font-bold px-2 py-0.5 rounded border ${
                     routing.confidence === 'medium'
-                      ? 'border-gray-600 text-gray-400'
-                      : 'border-yellow-800 text-yellow-500'
+                      ? 'border-gray-600 text-ink-muted'
+                      : 'border-amber-300 text-amber-600'
                   }`}
                 >
                   {routing.confidence} confidence
                 </span>
               )}
             </div>
-            <p className="text-white text-sm font-bold">{routedAgency}</p>
+            <p className="text-ink text-sm font-bold">{routedAgency}</p>
 
             {routing?.whyThisRoute && (
-              <p className="text-gray-400 text-xs mt-1.5">{routing.whyThisRoute}</p>
+              <p className="text-ink-muted text-xs mt-1.5">{routing.whyThisRoute}</p>
             )}
 
             {routing?.coResponsible && (
-              <p className="text-gray-500 text-xs mt-1.5">
-                <span className="text-gray-400">May also be responsible:</span>{' '}
+              <p className="text-ink-faint text-xs mt-1.5">
+                <span className="text-ink-muted">May also be responsible:</span>{' '}
                 {routing.coResponsible}
               </p>
             )}
 
-            <p className="text-gray-600 text-xs mt-1.5">
+            <p className="text-ink-faint text-xs mt-1.5">
               You would otherwise have had to work this out yourself on{' '}
               {jurisdiction.existingPortal}.
             </p>
           </div>
 
           <div className="mb-4">
-            <p className="text-xs text-gray-500 uppercase font-bold tracking-widest mb-1">
+            <p className="text-xs text-ink-faint font-bold mb-1">
               Complaint text
             </p>
-            <pre className="whitespace-pre-wrap text-gray-300 text-sm bg-[#141414] border border-gray-800 rounded p-3 max-h-48 overflow-y-auto font-sans">
+            <pre className="whitespace-pre-wrap text-ink-muted text-sm bg-raised-2 border border-line rounded p-3 max-h-48 overflow-y-auto font-sans">
               {result.complaint_body}
             </pre>
           </div>
 
           {result.missing_info.length > 0 && (
             <div className="mb-4">
-              <p className="text-xs text-gray-500 uppercase font-bold tracking-widest mb-1">
+              <p className="text-xs text-ink-faint font-bold mb-1">
                 Worth adding
               </p>
-              <ul className="text-gray-400 text-sm list-disc list-inside">
+              <ul className="text-ink-muted text-sm list-disc list-inside">
                 {result.missing_info.map((m) => (
                   <li key={m}>{m}</li>
                 ))}
@@ -550,7 +550,7 @@ export default function SmartIntake({ onApply, onSkip }: Props) {
             <button
               type="button"
               onClick={() => setResult(null)}
-              className="flex items-center gap-2 border border-gray-600 text-gray-300 px-4 py-3 font-bold uppercase text-sm hover:border-gray-400 transition rounded"
+              className="flex items-center gap-2 border border-gray-600 text-ink-muted px-4 py-3 font-bold uppercase text-sm hover:border-gray-400 transition rounded"
             >
               <X size={16} /> Redo
             </button>
@@ -564,8 +564,8 @@ export default function SmartIntake({ onApply, onSkip }: Props) {
 function Field({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <dt className="text-[10px] text-gray-500 uppercase font-bold tracking-widest">{label}</dt>
-      <dd className="text-white text-sm font-bold mt-0.5 capitalize">{value}</dd>
+      <dt className="text-[10px] text-ink-faint font-bold">{label}</dt>
+      <dd className="text-ink text-sm font-bold mt-0.5 capitalize">{value}</dd>
     </div>
   )
 }

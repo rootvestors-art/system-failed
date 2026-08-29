@@ -82,9 +82,9 @@ export default function LocationPicker({
   const { tileConfig, eventHandlers } = useTileProvider()
 
   const inputClass =
-    'w-full bg-[#1a1a1a] border border-gray-700 text-white px-4 py-3 focus:border-blood focus:outline-none transition'
+    'w-full bg-raised-2 border border-line text-ink px-4 py-3 focus:border-blood focus:outline-none transition'
   const labelClass =
-    'block text-xs text-gray-500 uppercase font-bold tracking-widest mb-2'
+    'block text-xs text-ink-faint font-bold mb-2'
 
   // Update map coordinates when coordinates prop changes
   useEffect(() => {
@@ -270,7 +270,7 @@ export default function LocationPicker({
             type="button"
             onClick={handleGoogleMapsLinkSubmit}
             disabled={isProcessing || !googleMapsLink.trim()}
-            className="shrink-0 border border-gray-600 hover:border-gray-400 disabled:opacity-40 text-gray-200 px-4 font-bold uppercase text-xs rounded transition"
+            className="shrink-0 border border-gray-600 hover:border-gray-400 disabled:opacity-40 text-ink px-4 font-bold text-xs rounded transition"
           >
             {isProcessing ? <Loader2 size={14} className="animate-spin" /> : 'Go'}
           </button>
@@ -278,13 +278,13 @@ export default function LocationPicker({
       </div>
 
       {error && (
-        <div className="bg-red-900/50 border border-red-700 text-red-200 px-4 py-2.5 text-sm rounded">
+        <div className="bg-red-50 border border-red-300 text-red-800 px-4 py-2.5 text-sm rounded">
           {error}
         </div>
       )}
 
       {approximate && (
-        <p className="text-xs text-yellow-500 bg-yellow-900/20 border border-yellow-800/50 p-2 rounded">
+        <p className="text-xs text-amber-600 bg-amber-50 border border-amber-300 p-2 rounded">
           That link named a place rather than exact coordinates, so this pin is approximate.
           Tap the exact spot on the map below to correct it.
         </p>
@@ -293,7 +293,7 @@ export default function LocationPicker({
       {/* The map — always on screen, not behind a tab */}
       <div>
         <div
-          className="border border-gray-700 rounded overflow-hidden relative"
+          className="border border-line rounded overflow-hidden relative"
           style={{ height: '320px' }}
         >
           <MapContainer
@@ -316,14 +316,14 @@ export default function LocationPicker({
 
           {isProcessing && (
             <div
-              className="absolute inset-x-0 bottom-0 bg-black/80 text-gray-200 text-xs px-3 py-2 flex items-center gap-2"
+              className="absolute inset-x-0 bottom-0 bg-black/80 text-ink text-xs px-3 py-2 flex items-center gap-2"
               style={{ zIndex: 1000 }}
             >
               <Loader2 size={13} className="animate-spin" /> Looking up the address…
             </div>
           )}
         </div>
-        <p className="text-xs text-gray-500 mt-1.5">
+        <p className="text-xs text-ink-faint mt-1.5">
           {hasPin
             ? 'Not quite right? Tap the map to move the pin.'
             : 'Tap the map to drop a pin, or use one of the options above.'}
@@ -331,23 +331,23 @@ export default function LocationPicker({
       </div>
 
       {/* What we resolved — read-only, because it is derived from the pin */}
-      <div className="bg-gray-900/50 border border-gray-800 rounded p-3 text-sm">
+      <div className="bg-gray-900/50 border border-line rounded p-3 text-sm">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
           <div className="sm:col-span-3">
-            <span className="text-gray-500 text-xs uppercase tracking-widest">Location</span>
-            <p className="text-white">{address || 'No pin set yet'}</p>
+            <span className="text-ink-faint text-xs">Location</span>
+            <p className="text-ink">{address || 'No pin set yet'}</p>
           </div>
           <div>
-            <span className="text-gray-500 text-xs uppercase tracking-widest">City</span>
-            <p className="text-white">{city || '—'}</p>
+            <span className="text-ink-faint text-xs">City</span>
+            <p className="text-ink">{city || '—'}</p>
           </div>
           <div>
-            <span className="text-gray-500 text-xs uppercase tracking-widest">State</span>
-            <p className="text-white">{state || '—'}</p>
+            <span className="text-ink-faint text-xs">State</span>
+            <p className="text-ink">{state || '—'}</p>
           </div>
           <div>
-            <span className="text-gray-500 text-xs uppercase tracking-widest">Coordinates</span>
-            <p className="text-gray-400 font-mono text-xs mt-1">
+            <span className="text-ink-faint text-xs">Coordinates</span>
+            <p className="text-ink-muted font-mono text-xs mt-1">
               {hasPin
                 ? `${coordinates!.lat.toFixed(5)}, ${coordinates!.lng.toFixed(5)}`
                 : '—'}

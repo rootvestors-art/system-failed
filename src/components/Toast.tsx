@@ -11,7 +11,7 @@ export default function Toast() {
           key={toast.id}
           className={`flex items-center gap-3 px-5 py-3 rounded font-bold text-sm shadow-2xl pointer-events-auto border ${
             toast.type === 'success'
-              ? 'bg-gray-900 border-gray-700 text-white'
+              ? 'bg-gray-900 border-line text-ink'
               : 'bg-red-900 border-red-700 text-red-100'
           }`}
           style={{ animation: 'slideUp 0.2s ease-out' }}

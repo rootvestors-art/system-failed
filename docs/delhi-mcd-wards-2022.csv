@@ -1,0 +1,251 @@
+ward_no,ward_name,reservation_2022
+1,Narela,W
+2,Bankner,
+3,Holambi Kalan,W
+4,Alipur,
+5,Bakhtawarpur,W
+6,Burari,
+7,Kadipur,W
+8,Mukundpur,
+9,Sant Nagar,W
+10,Jharoda,
+11,Timarpur,W
+12,Malka Ganj,SC-W
+13,Mukherjee Nagar,
+14,Dhirpur,W
+15,Adarsh Nagar,
+16,Azadpur,W
+17,Bhalswa,
+18,Jahangir Puri,W
+19,Sarup Nagar,
+20,Samaypur Badli,W
+21,Rohini-A,
+22,Rohini-B,W
+23,Rithala,
+24,Vijay Vihar,W
+25,Budh Vihar,
+26,Pooth Kalan,W
+27,Begumpur,
+28,Shahbaad Dairy,SC
+29,Pooth Khurd,W
+30,Bawana,
+31,Nangal Thakran,W
+32,Kanjhawala,
+33,Rani Khera,W
+34,Nangloi,SC-W
+35,Mundka,
+36,Nilothi,W
+37,Kirari,
+38,Prem Nagar,W
+39,Mubarikpur,
+40,Nithari,W
+41,Aman Vihar,
+42,Mangol Puri,SC
+43,Sultanpuri-A,SC-W
+44,Sultanpuri-B,SC
+45,Jawalapuri,SC-W
+46,Nangloi Jat,W
+47,Nihal Vihar,
+48,Guru Harkishan Nagar,W
+49,Mangolpuri-A,SC
+50,Mangolpuri-B,SC-W
+51,Rohini-C,
+52,Rohini-F,W
+53,Rohini-E,
+54,Rohini-D,W
+55,Shalimar Bagh-A,
+56,Shalimar Bagh-B,W
+57,Pitam Pura,
+58,Saraswati Vihar,W
+59,Paschim Vihar,
+60,Rani Bagh,W
+61,Kohat Enclave,
+62,Shakur Pur,SC
+63,Tri Nagar,W
+64,Keshav Puram,
+65,Ashok Vihar,W
+66,Wazir Pur,SC-W
+67,Sangam Park,SC
+68,Model Town,
+69,Kamla Nagar,W
+70,Shastri Nagar,
+71,Kishan Ganj,SC-W
+72,Sadar Bazar,W
+73,Civil Lines,SC
+74,Chandni Chowk,
+75,Jama Masjid,W
+76,Chandani Mahal,
+77,Delhi Gate,SC-W
+78,Bazar Sita Ram,W
+79,Ballimaran,
+80,Ram Nagar,SC
+81,Quraish Nagar,W
+82,Pahar Ganj,
+83,Karol Bagh,SC-W
+84,Dev Nagar,SC
+85,West Patel Nagar,SC-W
+86,East Patel Nagar,W
+87,Ranjeet Nagar,
+88,Baljeet Nagar,W
+89,Karam Pura,
+90,Moti Nagar,W
+91,Ramesh Nagar,
+92,Punjabi Bagh,W
+93,Madipur,SC
+94,Raghubir Nagar,SC-W
+95,Vishnu Garden,
+96,Rajouri Garden,W
+97,Chaukhandi Nagar,
+98,Subhash Nagar,W
+99,Hari Nagar,
+100,Fateh Nagar,W
+101,Tilak Nagar,
+102,Khyala,W
+103,Keshopur,
+104,Janak Puri South,W
+105,Mahaveer Enclave,
+106,Janak Puri West,W
+107,Vikas Puri,
+108,Hastsal,W
+109,Shiv Vihar,
+110,Bhakkar Wala,W
+111,Baprola,
+112,Vikas Nagar,W
+113,Mohan Garden-West,
+114,Mohan Garden-East,W
+115,Uttam Nagar,
+116,Binda Pur,W
+117,Dabri,
+118,Sagarpur,W
+119,Manglapuri,
+120,Dwarka-B,W
+121,Dwarka-A,
+122,Matiala,W
+123,Kakrola,
+124,Nangli Sakrawati,W
+125,Chhawala,
+126,Isapur,W
+127,Najafgarh,
+128,Dichaon Kalan,W
+129,Roshan Pura,
+130,Dwarka-C,W
+131,Bijwasan,
+132,Kapashera,W
+133,Mahipalpur,
+134,Raj Nagar,W
+135,Palam,
+136,Madhu Vihar,W
+137,Mahavir Enclave,
+138,Sadh Nagar,W
+139,Naraina,
+140,Inder Puri,SC
+141,Rajinder Nagar,W
+142,Daryaganj,
+143,Sidhartha Nagar,W
+144,Lajpat Nagar,
+145,Andrews Ganj,W
+146,Amar Colony,
+147,Kotla Mubarakpur,W
+148,Hauz Khas,
+149,Malviya Nagar,W
+150,Green Park,
+151,Munirka,W
+152,R.K Puram,
+153,Vasant Vihar,W
+154,Lado Sarai,
+155,Mehrauli,W
+156,Vasant Kunj,
+157,Aya Nagar,W
+158,Bhati,
+159,Chhatarpur,W
+160,Said-Ul-Ajaib,
+161,Deoli,W
+162,Tigri,SC-W
+163,Sangam Vihar-A,
+164,Dakshin Puri,SC
+165,Madangir,SC-W
+166,Pushp Vihar,SC
+167,Khanpur,W
+168,Sangam Vihar-C,
+169,Sangam Vihar-B,W
+170,Tughlakabad Extension,
+171,Chitaranjan Park,W
+172,Chirag Delhi,
+173,Greater Kailash,W
+174,Sri Niwas Puri,
+175,Kalkaji,W
+176,Govind Puri,
+177,Harkesh Nagar,SC-W
+178,Tughlakabad,W
+179,Pul Pehladpur,SC
+180,Badarpur,SC-W
+181,Molarband,
+182,Meethapur,W
+183,Hari Nagar Extension,
+184,Jaitpur,W
+185,Madanpur Khadar East,SC
+186,Madanpur Khadar West,
+187,Sarita Vihar,W
+188,Abul Fazal Enclave,
+189,Zakir Nagar,W
+190,New Ashok Nagar,
+191,Mayur Vihar Phase-I,
+192,Trilokpuri,SC
+193,Kondli,W
+194,Gharoli,SC-W
+195,Kalyanpuri,SC
+196,Mayur Vihar Phase-II,
+197,Patpar Ganj,SC
+198,Vinod Nagar,
+199,Mandawali,SC
+200,Pandav Nagar,
+201,Lalita Park,W
+202,Shakarpur,
+203,Laxmi Nagar,SC
+204,Preet Vihar,
+205,I.P Extension,SC
+206,Anand Vihar,
+207,Vishwas Nagar,SC-W
+208,Anarkali,W
+209,Jagat Puri,
+210,Geeta Colony,W
+211,Krishna Nagar,
+212,Gandhi Nagar,W
+213,Shastri Park,
+214,Azad Nagar,W
+215,Shahdara,SC
+216,Jhilmil,
+217,Dilshad Colony,W
+218,Sundar Nagri,SC-W
+219,Dilshad Garden,
+220,Nand Nagri,SC
+221,Ashok Nagar,W
+222,Ram Nagar East,
+223,Rohtash Nagar,W
+224,Welcome Colony,
+225,Seelampur,W
+226,Gautam Puri,
+227,Chauhan Banger,W
+228,Maujpur,
+229,Braham Puri,W
+230,Bhajanpura,
+231,Ghonda,W
+232,Yamuna Vihar,
+233,Subash Mohalla,W
+234,Kabir Nagar,
+235,Gorakh Park,W
+236,Kardam Puri,
+237,Harsh Vihar,SC-W
+238,Saboli,SC
+239,Gokal Puri,SC-W
+240,Joharipur,SC
+241,Karawal Nagar-East,W
+242,Dayalpur,
+243,Mustafabad,W
+244,Nehru Vihar,
+245,Brij Puri,W
+246,Sri Ram Colony,
+247,Sadatpur,W
+248,Karawal Nagar-West,
+249,Sonia Vihar,W
+250,Sabapur,

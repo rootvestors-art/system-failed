@@ -73,19 +73,19 @@ export default function ShareSheet({
       <div className="fixed inset-0 z-[9991] flex items-end sm:items-center justify-center px-4 pb-4 sm:pb-0">
         <div
           ref={ref}
-          className="w-full max-w-md bg-[#111] border border-gray-700 rounded-lg shadow-2xl overflow-hidden"
+          className="w-full max-w-md bg-raised border border-line rounded-lg shadow-2xl overflow-hidden"
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-5 py-4 border-b border-gray-800">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-line">
             <div className="flex items-center gap-2">
               <Share2 size={16} className="text-blood" />
-              <h3 className="font-header font-bold uppercase tracking-wide text-white text-sm">
+              <h3 className="font-header font-bold uppercase tracking-wide text-ink text-sm">
                 Share This Case
               </h3>
             </div>
             <button
               onClick={onClose}
-              className="text-gray-500 hover:text-white transition"
+              className="text-ink-faint hover:text-ink transition"
               aria-label="Close"
             >
               <X size={18} />
@@ -95,10 +95,10 @@ export default function ShareSheet({
           <div className="p-5 space-y-4">
             {/* Caption preview */}
             <div>
-              <p className="text-xs text-gray-500 uppercase font-bold tracking-widest mb-2">
+              <p className="text-xs text-ink-faint uppercase font-bold tracking-widest mb-2">
                 What will be shared
               </p>
-              <pre className="bg-[#0a0a0a] border border-gray-800 rounded p-3 text-xs text-gray-300 whitespace-pre-wrap font-mono leading-relaxed max-h-32 overflow-y-auto">
+              <pre className="bg-surface border border-line rounded p-3 text-xs text-ink-muted whitespace-pre-wrap font-mono leading-relaxed max-h-32 overflow-y-auto">
                 {caption}
               </pre>
             </div>
@@ -121,7 +121,7 @@ export default function ShareSheet({
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={onClose}
-                className={`${platformBtnBase} text-white`}
+                className={`${platformBtnBase} text-ink`}
                 style={{ backgroundColor: WHATSAPP_GREEN }}
               >
                 {/* WhatsApp logo inline SVG */}
@@ -136,7 +136,7 @@ export default function ShareSheet({
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={onClose}
-                className={`${platformBtnBase} text-white`}
+                className={`${platformBtnBase} text-ink`}
                 style={{ backgroundColor: TELEGRAM_BLUE }}
               >
                 {/* Telegram logo inline SVG */}
@@ -151,7 +151,7 @@ export default function ShareSheet({
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={onClose}
-                className={`${platformBtnBase} bg-black border border-gray-700 text-white hover:border-gray-500`}
+                className={`${platformBtnBase} bg-black border border-line text-white hover:border-gray-500`}
               >
                 {/* X (Twitter) logo */}
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
@@ -163,7 +163,7 @@ export default function ShareSheet({
               <a
                 href={links.email}
                 onClick={onClose}
-                className={`${platformBtnBase} bg-gray-800 border border-gray-700 text-gray-200 hover:bg-gray-700`}
+                className={`${platformBtnBase} bg-gray-800 border border-line text-ink hover:bg-gray-700`}
               >
                 <Mail size={14} />
                 Email
@@ -171,17 +171,17 @@ export default function ShareSheet({
             </div>
 
             {/* Copy buttons */}
-            <div className="grid grid-cols-2 gap-2 border-t border-gray-800 pt-4">
+            <div className="grid grid-cols-2 gap-2 border-t border-line pt-4">
               <button
                 onClick={handleCopyLink}
-                className="flex items-center justify-center gap-2 py-2.5 bg-[#1a1a1a] border border-gray-700 hover:border-gray-500 text-gray-300 hover:text-white font-bold text-xs uppercase tracking-wide transition rounded"
+                className="flex items-center justify-center gap-2 py-2.5 bg-raised-2 border border-line hover:border-gray-500 text-ink-muted hover:text-ink font-bold text-xs uppercase tracking-wide transition rounded"
               >
                 <Link size={13} />
                 Copy Link
               </button>
               <button
                 onClick={handleCopyCaption}
-                className="flex items-center justify-center gap-2 py-2.5 bg-[#1a1a1a] border border-gray-700 hover:border-gray-500 text-gray-300 hover:text-white font-bold text-xs uppercase tracking-wide transition rounded"
+                className="flex items-center justify-center gap-2 py-2.5 bg-raised-2 border border-line hover:border-gray-500 text-ink-muted hover:text-ink font-bold text-xs uppercase tracking-wide transition rounded"
               >
                 <Copy size={13} />
                 Copy Caption

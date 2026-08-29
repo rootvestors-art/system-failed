@@ -19,7 +19,7 @@ function Digit({ value }: { value: string }) {
 
   return (
     <span
-      className={`inline-block bg-charcoal border border-gray-700 text-white font-header text-6xl md:text-9xl w-[1.2em] text-center leading-none py-2 ${
+      className={`inline-block bg-raised border border-line text-ink font-header text-6xl md:text-9xl w-[1.2em] text-center leading-none py-2 ${
         animating ? 'animate-flip' : ''
       }`}
       style={{ perspective: '200px' }}
@@ -53,9 +53,9 @@ export default function DeathCounter() {
   const digits = String(displayCount).padStart(2, '0').split('')
 
   return (
-    <div className="bg-charcoal border-b border-gray-800">
+    <div className="bg-raised border-b border-line">
       <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8 text-center">
-        <p className="text-gray-400 font-header tracking-widest uppercase text-sm mb-4">
+        <p className="text-ink-muted font-header tracking-widest uppercase text-sm mb-4">
           Since January 1, 2026
         </p>
         <div className="flex justify-center gap-2 mb-4">
@@ -66,7 +66,7 @@ export default function DeathCounter() {
         <p className="text-xl md:text-2xl text-blood font-header uppercase tracking-wide">
           Lives stolen by Systemic Negligence
         </p>
-        <p className="mt-4 max-w-2xl mx-auto text-gray-500">
+        <p className="mt-4 max-w-2xl mx-auto text-ink-faint">
           Not accidents. These are unpunished crimes caused by potholes, open
           wires, and negligent officials.
         </p>

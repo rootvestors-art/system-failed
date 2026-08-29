@@ -1,12 +1,56 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Oswald:wght@500;700&display=swap');
+/* Noto Sans Devanagari is required for the Hindi UI: neither Inter nor Oswald
+   carries Devanagari, so without it headings silently fall back to a system face
+   and the visual identity breaks. */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Oswald:wght@500;700&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * Surface tokens.
+ *
+ * The codebase had grown seven near-identical near-black values
+ * (#050505, #0a0a0a, #0b0b0b, #0d0d0d, #111, #121212, #1a1a1a), two of which
+ * duplicated named Tailwind config tokens. These four variables replace all of
+ * them, and because they are variables a whole route can switch theme by adding
+ * one class rather than rewriting every utility.
+ *
+ * Dark is the default so pages we have not touched keep their existing look.
+ * `.theme-light` opts a subtree into the civic light treatment — used for the
+ * citizen journey, where a dark interface reads as unofficial. The memorial at
+ * /accountability deliberately stays dark.
+ */
+:root {
+  --surface: #0a0a0a;
+  --raised: #141414;
+  --raised-2: #1d1d1d;
+  --line: #292929;
+  --ink: #f5f5f5;
+  --ink-muted: #a3a3a3;
+  --ink-faint: #737373;
+}
+
+.theme-light {
+  --surface: #f6f7f9;
+  --raised: #ffffff;
+  --raised-2: #eef1f5;
+  --line: #d9dee5;
+  --ink: #131820;
+  --ink-muted: #4c5665;
+  --ink-faint: #78828f;
+}
+
 @layer base {
   body {
-    @apply bg-[#050505] text-gray-200 antialiased;
+    @apply bg-surface text-ink antialiased;
+  }
+
+  /* Devanagari needs a different face and a little more line height to breathe. */
+  html[lang='hi'] body,
+  html[lang='hi'] .font-header {
+    font-family: 'Noto Sans Devanagari', 'Inter', sans-serif;
+    line-height: 1.65;
   }
 }
 

@@ -9,13 +9,13 @@ import { JURISDICTIONS } from '../data/jurisdictions.ts'
 export default function HowItWorks() {
   return (
     <main className="flex-grow max-w-3xl mx-auto px-4 sm:px-6 py-10 sm:py-16 w-full">
-      <p className="text-gray-500 text-xs uppercase font-bold tracking-widest mb-3">
+      <p className="text-ink-faint text-xs font-bold mb-3">
         Full disclosure
       </p>
-      <h1 className="text-3xl sm:text-4xl font-header font-bold text-white leading-tight mb-4">
+      <h1 className="text-3xl sm:text-4xl font-header font-bold text-ink leading-tight mb-4">
         How this works, and what's still pretend
       </h1>
-      <p className="text-gray-400 mb-12">
+      <p className="text-ink-muted mb-12">
         This is a prototype, not a government service. Everything below is stated
         plainly so you can judge it on what it actually does.
       </p>
@@ -40,17 +40,17 @@ export default function HowItWorks() {
         </p>
         <ul className="list-disc list-inside mt-3 space-y-1.5">
           <li>
-            <strong className="text-white">Which department owns the asset.</strong> A
+            <strong className="text-ink">Which department owns the asset.</strong> A
             pothole may belong to the municipal roads wing, the state PWD, or the water
             utility that dug it up. Choose wrong and the complaint is closed as
             misrouted, not forwarded.
           </li>
           <li>
-            <strong className="text-white">How to describe it formally.</strong> Free-text
+            <strong className="text-ink">How to describe it formally.</strong> Free-text
             fields expect English and a register most citizens don't write in.
           </li>
           <li>
-            <strong className="text-white">What happens next.</strong> Complaints are
+            <strong className="text-ink">What happens next.</strong> Complaints are
             frequently closed without a fix, and there is rarely a visible clock or an
             automatic path upward when nothing happens.
           </li>
@@ -62,7 +62,7 @@ export default function HowItWorks() {
           <li className="flex gap-3">
             <ArrowRight size={16} className="text-blood shrink-0 mt-1" />
             <span>
-              <strong className="text-white">One sentence replaces the form.</strong> You
+              <strong className="text-ink">One sentence replaces the form.</strong> You
               speak or type what's wrong in your own language. An OpenAI model reads that
               plus your photo and produces the classification, severity and a formally
               worded complaint. You review and correct it — nothing is filed silently.
@@ -71,7 +71,7 @@ export default function HowItWorks() {
           <li className="flex gap-3">
             <ArrowRight size={16} className="text-blood shrink-0 mt-1" />
             <span>
-              <strong className="text-white">Routing is our job, not yours.</strong> The
+              <strong className="text-ink">Routing is our job, not yours.</strong> The
               department is derived from your city and the hazard type, so there is no
               dropdown to get wrong.
             </span>
@@ -79,7 +79,7 @@ export default function HowItWorks() {
           <li className="flex gap-3">
             <ArrowRight size={16} className="text-blood shrink-0 mt-1" />
             <span>
-              <strong className="text-white">The clock is visible and it moves.</strong>{' '}
+              <strong className="text-ink">The clock is visible and it moves.</strong>{' '}
               Every complaint gets a window. When it lapses the complaint escalates on its
               own — owning department, then ward engineer, then commissioner, then elected
               representative, then the public record.
@@ -88,7 +88,7 @@ export default function HowItWorks() {
           <li className="flex gap-3">
             <ArrowRight size={16} className="text-blood shrink-0 mt-1" />
             <span>
-              <strong className="text-white">Failure is public by default.</strong> An
+              <strong className="text-ink">Failure is public by default.</strong> An
               ignored complaint doesn't disappear into a queue; it becomes a citable entry
               on a public map.
             </span>
@@ -158,7 +158,7 @@ export default function HowItWorks() {
       <div className="border border-yellow-800/50 bg-yellow-900/10 rounded-lg p-5 mt-12">
         <div className="flex items-start gap-3">
           <AlertTriangle className="text-yellow-600 shrink-0 mt-0.5" size={18} />
-          <p className="text-gray-400 text-sm">
+          <p className="text-ink-muted text-sm">
             <span className="text-yellow-400 font-bold">Not an official product.</span>{' '}
             This is an independent prototype with no government affiliation, endorsement or
             partnership. Do not enter real Aadhaar, PAN, payment or health information. Use
@@ -176,7 +176,7 @@ export default function HowItWorks() {
         </Link>
         <Link
           to="/"
-          className="flex-1 text-center border border-gray-700 text-gray-300 px-6 py-3 font-bold uppercase text-sm rounded hover:border-gray-500 transition"
+          className="flex-1 text-center border border-line text-ink-muted px-6 py-3 font-bold uppercase text-sm rounded hover:border-gray-500 transition"
         >
           See the public record
         </Link>
@@ -188,10 +188,10 @@ export default function HowItWorks() {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="mb-10">
-      <h2 className="text-xl font-header font-bold text-white border-l-4 border-blood pl-4 mb-4">
+      <h2 className="text-xl font-header font-bold text-ink border-l-4 border-blood pl-4 mb-4">
         {title}
       </h2>
-      <div className="text-gray-400 text-sm leading-relaxed space-y-2">{children}</div>
+      <div className="text-ink-muted text-sm leading-relaxed space-y-2">{children}</div>
     </section>
   )
 }

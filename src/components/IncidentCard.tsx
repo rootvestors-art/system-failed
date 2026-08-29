@@ -21,7 +21,7 @@ import ShareSheet from './ShareSheet.tsx'
 const statusColors: Record<string, string> = {
   Verified: 'bg-red-900 text-red-200',
   Community_Flagged: 'bg-yellow-900 text-yellow-200',
-  Official_Denial: 'bg-gray-700 text-gray-300',
+  Official_Denial: 'bg-gray-700 text-ink-muted',
 }
 
 interface IncidentCardProps {
@@ -76,10 +76,10 @@ export default function IncidentCard({
       <>
         <Link
           to={`/incident/${incident.id}`}
-          className="block mb-4 pb-4 border-b border-gray-800 hover:bg-[#1a1a1a] p-2 transition cursor-pointer group"
+          className="block mb-4 pb-4 border-b border-line hover:bg-raised-2 p-2 transition cursor-pointer group"
         >
           <div className="flex justify-between items-start">
-            <h3 className="font-bold text-white group-hover:text-blood">
+            <h3 className="font-bold text-ink group-hover:text-blood">
               {incident.title}
             </h3>
             <div className="flex items-center gap-1.5">
@@ -88,31 +88,31 @@ export default function IncidentCard({
                 className={`flex items-center gap-1 text-xs px-2 py-1 rounded transition ${
                   voted
                     ? 'bg-blood/20 text-blood'
-                    : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white'
+                    : 'bg-gray-800 text-ink-muted hover:bg-gray-700 hover:text-ink'
                 }`}
               >
                 <ChevronUp size={12} /> {upvotes}
               </button>
               <button
                 onClick={openShare}
-                className="flex items-center gap-1 text-xs px-2 py-1 rounded bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white transition"
+                className="flex items-center gap-1 text-xs px-2 py-1 rounded bg-gray-800 text-ink-muted hover:bg-gray-700 hover:text-ink transition"
                 title="Share"
               >
                 <Share2 size={12} />
               </button>
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-ink-faint">
                 {formatRelativeTime(incident.created_at)}
               </span>
             </div>
           </div>
-          <p className="text-xs text-gray-500 mt-1">{getVictimSummary(incident)}</p>
-          <p className="text-sm text-gray-400 mt-1 flex items-center gap-1">
+          <p className="text-xs text-ink-faint mt-1">{getVictimSummary(incident)}</p>
+          <p className="text-sm text-ink-muted mt-1 flex items-center gap-1">
             <MapPin size={12} />
             {incident.location.city}, {incident.location.state}
           </p>
           <div className="flex gap-2 mt-2">
             <span
-              className={`inline-block text-xs px-2 py-0.5 rounded font-bold uppercase ${statusColors[incident.status] ?? 'bg-gray-800 text-gray-300'}`}
+              className={`inline-block text-xs px-2 py-0.5 rounded font-bold uppercase ${statusColors[incident.status] ?? 'bg-gray-800 text-ink-muted'}`}
             >
               {negligenceLabel(incident.negligence_type)}
             </span>
@@ -145,7 +145,7 @@ export default function IncidentCard({
   // ── Full (detail) view ─────────────────────────────────────────────────────
   return (
     <>
-      <div className="bg-[#111] border border-gray-800 rounded-lg overflow-hidden shadow-2xl">
+      <div className="bg-raised border border-line rounded-lg overflow-hidden shadow-2xl">
         {incident.image_url && (
           <div className="relative h-96 w-full bg-gray-800 group">
             <img
@@ -154,7 +154,7 @@ export default function IncidentCard({
               className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition duration-500 grayscale group-hover:grayscale-0"
             />
             <div className="absolute bottom-0 left-0 bg-black bg-opacity-90 px-4 py-2">
-              <p className="text-white font-mono text-sm flex items-center gap-2">
+              <p className="text-ink font-mono text-sm flex items-center gap-2">
                 <MapPin size={14} className="text-blood" />
                 {incident.location.city.toUpperCase()},{' '}
                 {incident.location.state.toUpperCase()}
@@ -187,25 +187,25 @@ export default function IncidentCard({
           </div>
 
           <Link to={`/incident/${incident.id}`} className="group">
-            <h3 className="text-4xl font-header font-bold text-white mb-4 group-hover:text-blood transition">
+            <h3 className="text-4xl font-header font-bold text-ink mb-4 group-hover:text-blood transition">
               {incident.title}
             </h3>
           </Link>
 
           {/* Victims */}
-          <div className="mb-6 pb-6 border-b border-gray-800">
-            <h4 className="text-xs text-gray-500 uppercase font-bold tracking-widest mb-3">
+          <div className="mb-6 pb-6 border-b border-line">
+            <h4 className="text-xs text-ink-faint uppercase font-bold tracking-widest mb-3">
               Victims
             </h4>
             <div className="space-y-2">
               {incident.victims.map((victim, i) => (
-                <div key={i} className="text-gray-300">
+                <div key={i} className="text-ink-muted">
                   <span className="font-semibold">
                     {victim.name || 'Unknown victim'}
                     {victim.age && `, ${victim.age}`}
                   </span>
                   {victim.occupation && (
-                    <span className="text-gray-500 text-sm ml-2">
+                    <span className="text-ink-faint text-sm ml-2">
                       — {victim.occupation}
                     </span>
                   )}
@@ -223,11 +223,11 @@ export default function IncidentCard({
             </div>
           </div>
 
-          <p className="text-xl text-gray-400 mb-6">{incident.description}</p>
+          <p className="text-xl text-ink-muted mb-6">{incident.description}</p>
 
           {incident.evidence_links.length > 0 && (
             <div className="mb-6">
-              <h4 className="text-xs text-gray-500 uppercase font-bold tracking-widest mb-3">
+              <h4 className="text-xs text-ink-faint uppercase font-bold tracking-widest mb-3">
                 Evidence / Sources
               </h4>
               <div className="flex flex-wrap gap-3">
@@ -237,7 +237,7 @@ export default function IncidentCard({
                     href={link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-blood hover:text-white transition font-bold uppercase tracking-wider text-sm"
+                    className="inline-flex items-center gap-2 text-blood hover:text-ink transition font-bold uppercase tracking-wider text-sm"
                   >
                     <ExternalLink size={14} /> {extractDomain(link)}
                   </a>
@@ -252,7 +252,7 @@ export default function IncidentCard({
               className={`flex items-center gap-2 px-4 py-2 rounded font-bold uppercase text-sm transition ${
                 voted
                   ? 'bg-blood/20 text-blood border border-blood/50'
-                  : 'bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white border border-gray-700'
+                  : 'bg-gray-800 text-ink-muted hover:bg-gray-700 hover:text-ink border border-line'
               }`}
             >
               <ChevronUp size={18} /> {upvotes} Upvotes
@@ -260,7 +260,7 @@ export default function IncidentCard({
 
             <button
               onClick={openShare}
-              className="flex items-center gap-2 px-4 py-2 rounded font-bold uppercase text-sm transition bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white border border-gray-700"
+              className="flex items-center gap-2 px-4 py-2 rounded font-bold uppercase text-sm transition bg-gray-800 text-ink-muted hover:bg-gray-700 hover:text-ink border border-line"
             >
               <Share2 size={16} /> Share Case
             </button>
@@ -273,7 +273,7 @@ export default function IncidentCard({
               )}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-blood hover:text-white transition font-bold uppercase tracking-wider text-sm"
+              className="inline-flex items-center gap-2 text-blood hover:text-ink transition font-bold uppercase tracking-wider text-sm"
             >
               <Search size={14} /> Search News
             </a>
@@ -285,7 +285,7 @@ export default function IncidentCard({
               )}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition font-bold uppercase tracking-wider text-sm"
+              className="inline-flex items-center gap-2 text-ink-muted hover:text-ink transition font-bold uppercase tracking-wider text-sm"
             >
               Search on X / Twitter &rarr;
             </a>

@@ -51,8 +51,8 @@ export default function IncidentMap({
           <Popup>
             <div className="text-sm">
               <p className="font-bold">{incident.title}</p>
-              <p className="text-gray-600">{negligenceLabel(incident.negligence_type)}</p>
-              <p className="text-gray-500">{incident.location.city}</p>
+              <p className="text-ink-faint">{negligenceLabel(incident.negligence_type)}</p>
+              <p className="text-ink-faint">{incident.location.city}</p>
             </div>
           </Popup>
         </CircleMarker>
@@ -78,10 +78,10 @@ export default function IncidentMap({
             <Popup>
               <div className="text-sm">
                 <p className="font-bold">{negligenceLabel(hazard.negligence_type)}</p>
-                <p className="text-gray-600">
+                <p className="text-ink-faint">
                   {fixed ? 'Reported fixed' : `${hazard.severity} severity`}
                 </p>
-                <p className="text-gray-500">{hazard.location.city}</p>
+                <p className="text-ink-faint">{hazard.location.city}</p>
               </div>
             </Popup>
           </CircleMarker>

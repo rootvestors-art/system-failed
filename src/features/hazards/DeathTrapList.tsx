@@ -62,7 +62,7 @@ export default function DeathTrapList() {
         {/* ── Left column (2/3) ── */}
         <div className="lg:col-span-2">
           <div className="flex justify-between items-end mb-6">
-            <h2 className="text-3xl font-header font-bold text-white border-l-8 border-yellow-500 pl-4 flex items-center gap-3">
+            <h2 className="text-3xl font-header font-bold text-ink border-l-8 border-yellow-500 pl-4 flex items-center gap-3">
               <AlertTriangle size={28} className="text-yellow-500" />
               REPORTED ISSUES
             </h2>
@@ -71,9 +71,9 @@ export default function DeathTrapList() {
           {isFiltered ? (
             /* ── Filtered results view ── */
             <>
-              <p className="text-gray-500 text-sm mb-6 font-mono">
+              <p className="text-ink-faint text-sm mb-6 font-mono">
                 Showing{' '}
-                <span className="text-white font-bold">{filteredResults.length}</span>{' '}
+                <span className="text-ink font-bold">{filteredResults.length}</span>{' '}
                 {filteredResults.length === 1 ? 'result' : 'results'}
               </p>
               {filteredResults.length > 0 ? (
@@ -81,7 +81,7 @@ export default function DeathTrapList() {
                   <HazardCard key={hazard.id} hazard={hazard} compact />
                 ))
               ) : (
-                <p className="text-gray-600 text-sm py-12 text-center">
+                <p className="text-ink-faint text-sm py-12 text-center">
                   No reported issues match your filters.
                 </p>
               )}
@@ -92,7 +92,7 @@ export default function DeathTrapList() {
               <HazardCard hazard={latest} />
               {hazards.length > 1 && (
                 <div className="mt-12">
-                  <h2 className="text-2xl font-header font-bold text-white border-l-4 border-gray-700 pl-4 mb-6">
+                  <h2 className="text-2xl font-header font-bold text-ink border-l-4 border-line pl-4 mb-6">
                     MORE REPORTED ISSUES
                   </h2>
                   {hazards.slice(1).map((hazard) => (
@@ -102,12 +102,12 @@ export default function DeathTrapList() {
               )}
             </>
           ) : (
-            <div className="bg-[#111] border border-gray-800 rounded-lg p-10 text-center">
+            <div className="bg-raised border border-line rounded-lg p-10 text-center">
               <AlertTriangle size={48} className="text-yellow-500 mx-auto mb-4" />
-              <h3 className="text-2xl font-header font-bold text-white mb-2">
+              <h3 className="text-2xl font-header font-bold text-ink mb-2">
                 Nothing Reported Yet
               </h3>
-              <p className="text-gray-400 mb-6">
+              <p className="text-ink-muted mb-6">
                 Spot a dangerous hazard in your area? Report it so it can be fixed before anyone is hurt.
               </p>
               <Link
@@ -124,26 +124,26 @@ export default function DeathTrapList() {
         <div className="lg:col-span-1">
           {/* Severity breakdown — hidden in filtered mode */}
           {!isFiltered && (
-            <div className="bg-[#111] border border-gray-800 rounded-lg p-6 mb-6">
-              <h3 className="text-xl font-header font-bold text-white mb-4 flex items-center gap-2">
+            <div className="bg-raised border border-line rounded-lg p-6 mb-6">
+              <h3 className="text-xl font-header font-bold text-ink mb-4 flex items-center gap-2">
                 <AlertTriangle size={18} className="text-yellow-500" />
                 SEVERITY BREAKDOWN
               </h3>
               <div className="space-y-3">
                 <div className="flex justify-between items-center border-l-4 border-red-500 pl-3">
-                  <span className="text-gray-300 text-sm uppercase font-bold">Critical</span>
+                  <span className="text-ink-muted text-sm uppercase font-bold">Critical</span>
                   <span className="text-red-400 font-mono text-lg font-bold">{severityCounts.Critical}</span>
                 </div>
                 <div className="flex justify-between items-center border-l-4 border-orange-500 pl-3">
-                  <span className="text-gray-300 text-sm uppercase font-bold">High</span>
+                  <span className="text-ink-muted text-sm uppercase font-bold">High</span>
                   <span className="text-orange-400 font-mono text-lg font-bold">{severityCounts.High}</span>
                 </div>
                 <div className="flex justify-between items-center border-l-4 border-yellow-500 pl-3">
-                  <span className="text-gray-300 text-sm uppercase font-bold">Medium</span>
+                  <span className="text-ink-muted text-sm uppercase font-bold">Medium</span>
                   <span className="text-yellow-400 font-mono text-lg font-bold">{severityCounts.Medium}</span>
                 </div>
                 <div className="flex justify-between items-center border-l-4 border-green-500 pl-3">
-                  <span className="text-gray-300 text-sm uppercase font-bold">Low</span>
+                  <span className="text-ink-muted text-sm uppercase font-bold">Low</span>
                   <span className="text-green-400 font-mono text-lg font-bold">{severityCounts.Low}</span>
                 </div>
               </div>
@@ -152,7 +152,7 @@ export default function DeathTrapList() {
 
           {/* CTA — always visible */}
           <div className="bg-yellow-700 p-6 rounded text-center">
-            <h3 className="text-white font-header font-bold text-2xl uppercase">
+            <h3 className="text-ink font-header font-bold text-2xl uppercase">
               Spot something dangerous?
             </h3>
             <p className="text-yellow-100 text-sm mb-4">

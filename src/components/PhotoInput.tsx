@@ -98,7 +98,7 @@ export default function PhotoInput({
       <div className="flex items-center gap-2">
         <label
           htmlFor={inputId}
-          className="flex-1 flex items-center justify-center gap-2 border border-dashed border-gray-600 rounded px-4 py-3 cursor-pointer hover:border-gray-400 active:border-gray-300 transition text-gray-300 text-sm select-none"
+          className="flex-1 flex items-center justify-center gap-2 border border-dashed border-gray-600 rounded px-4 py-3 cursor-pointer hover:border-gray-400 active:border-gray-300 transition text-ink-muted text-sm select-none"
         >
           <Camera size={16} />
           {value ? 'Change photo' : label}
@@ -108,7 +108,7 @@ export default function PhotoInput({
           <button
             type="button"
             onClick={clear}
-            className="shrink-0 border border-gray-700 text-gray-400 hover:text-white hover:border-gray-500 rounded p-2.5 transition"
+            className="shrink-0 border border-line text-ink-muted hover:text-ink hover:border-gray-500 rounded p-2.5 transition"
             aria-label="Remove photo"
           >
             <X size={15} />
@@ -117,7 +117,7 @@ export default function PhotoInput({
       </div>
 
       {value && (
-        <p className="text-gray-500 text-xs mt-1.5 truncate">
+        <p className="text-ink-faint text-xs mt-1.5 truncate">
           {value.name} · {(value.size / 1024 / 1024).toFixed(1)} MB
         </p>
       )}
@@ -126,7 +126,7 @@ export default function PhotoInput({
         <img
           src={previewUrl}
           alt="Selected evidence"
-          className="mt-2 w-full h-28 object-cover rounded border border-gray-700"
+          className="mt-2 w-full h-28 object-cover rounded border border-line"
         />
       )}
     </div>

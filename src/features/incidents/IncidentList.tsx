@@ -80,9 +80,9 @@ export default function IncidentList() {
             {isFiltered ? (
               /* ── Filtered results view ── */
               <>
-                <p className="text-gray-500 text-sm mb-6 font-mono">
+                <p className="text-ink-faint text-sm mb-6 font-mono">
                   Showing{' '}
-                  <span className="text-white font-bold">{filteredResults.length}</span>{' '}
+                  <span className="text-ink font-bold">{filteredResults.length}</span>{' '}
                   {filteredResults.length === 1 ? 'result' : 'results'}
                 </p>
                 {filteredResults.length > 0 ? (
@@ -95,7 +95,7 @@ export default function IncidentList() {
                     />
                   ))
                 ) : (
-                  <p className="text-gray-600 text-sm py-12 text-center">
+                  <p className="text-ink-faint text-sm py-12 text-center">
                     No incidents match your filters.
                   </p>
                 )}
@@ -106,7 +106,7 @@ export default function IncidentList() {
                 {latest && (
                   <>
                     <div className="flex justify-between items-end mb-6">
-                      <h2 className="text-3xl font-header font-bold text-white border-l-8 border-blood pl-4">
+                      <h2 className="text-3xl font-header font-bold text-ink border-l-8 border-blood pl-4">
                         LATEST CASE FILE
                       </h2>
                       <span className="text-red-500 font-mono text-sm">
@@ -120,10 +120,10 @@ export default function IncidentList() {
                 {recentIncidents.length > 0 && (
                   <div className="mt-12">
                     <div className="flex justify-between items-center mb-6">
-                      <h2 className="text-2xl font-header font-bold text-white border-l-4 border-gray-700 pl-4">
+                      <h2 className="text-2xl font-header font-bold text-ink border-l-4 border-line pl-4">
                         RECENT CASES
                       </h2>
-                      <span className="text-gray-500 text-sm">Page {page}</span>
+                      <span className="text-ink-faint text-sm">Page {page}</span>
                     </div>
 
                     {recentIncidents.map((incident) => (
@@ -142,13 +142,13 @@ export default function IncidentList() {
                           disabled={page === 1}
                           className={`flex items-center gap-2 px-4 py-2 rounded font-bold uppercase text-sm transition ${
                             page === 1
-                              ? 'bg-gray-800 text-gray-600 cursor-not-allowed'
+                              ? 'bg-gray-800 text-ink-faint cursor-not-allowed'
                               : 'bg-gray-800 text-white hover:bg-gray-700'
                           }`}
                         >
                           <ChevronLeft size={16} /> Previous
                         </button>
-                        <span className="text-gray-400 text-sm">
+                        <span className="text-ink-muted text-sm">
                           Showing {recentIncidents.length} cases
                         </span>
                         <button
@@ -156,7 +156,7 @@ export default function IncidentList() {
                           disabled={!hasMore}
                           className={`flex items-center gap-2 px-4 py-2 rounded font-bold uppercase text-sm transition ${
                             !hasMore
-                              ? 'bg-gray-800 text-gray-600 cursor-not-allowed'
+                              ? 'bg-gray-800 text-ink-faint cursor-not-allowed'
                               : 'bg-gray-800 text-white hover:bg-gray-700'
                           }`}
                         >
@@ -175,7 +175,7 @@ export default function IncidentList() {
             {/* Most Upvoted — hidden in filtered mode to avoid confusion */}
             {!isFiltered && topUpvoted.length > 0 && (
               <div className="mb-10">
-                <h3 className="text-xl font-header font-bold text-white border-l-4 border-blood pl-4 mb-4">
+                <h3 className="text-xl font-header font-bold text-ink border-l-4 border-blood pl-4 mb-4">
                   MOST UPVOTED
                 </h3>
                 {topUpvoted.slice(0, 3).map((incident) => (
@@ -190,7 +190,7 @@ export default function IncidentList() {
             )}
 
             <div className="bg-blood p-6 rounded text-center">
-              <h3 className="text-white font-header font-bold text-2xl uppercase">
+              <h3 className="text-ink font-header font-bold text-2xl uppercase">
                 Seen something dangerous?
               </h3>
               <p className="text-red-100 text-sm mb-4">

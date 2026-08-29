@@ -12,6 +12,17 @@ import HowItWorks from './pages/HowItWorks.tsx'
 import Home from './pages/Home.tsx'
 import Toast from './components/Toast.tsx'
 
+/**
+ * Wraps the citizen-facing journey in the light civic treatment.
+ *
+ * A dark interface reads as unofficial or alarming to many Indian users, and the
+ * services this replaces (MCD311, Sahaaya, MyBMC) are all light. The memorial at
+ * /accountability keeps the dark treatment, where a grave tone is correct.
+ */
+function Journey({ children }: { children: React.ReactNode }) {
+  return <div className="theme-light bg-surface flex-1 flex flex-col">{children}</div>
+}
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -40,10 +51,10 @@ export default function App() {
 
 function HomePage() {
   return (
-    <>
+    <Journey>
       <Home />
       <Footer />
-    </>
+    </Journey>
   )
 }
 
@@ -67,54 +78,54 @@ function DetailPage() {
 
 function ReportPage() {
   return (
-    <>
+    <Journey>
       <main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 w-full">
-        <h1 className="text-2xl sm:text-3xl font-header font-bold text-white mb-2 text-center">
+        <h1 className="text-2xl sm:text-3xl font-header font-bold text-ink mb-2 text-center">
           Report a civic issue
         </h1>
-        <p className="text-gray-500 text-center mb-8 sm:mb-10 text-sm max-w-xl mx-auto">
+        <p className="text-ink-faint text-center mb-8 sm:mb-10 text-sm max-w-xl mx-auto">
           Tell us what's wrong in your own words. We'll identify the responsible department
           and prepare the complaint for you to check.
         </p>
         <ReportForm />
       </main>
       <Footer />
-    </>
+    </Journey>
   )
 }
 
 function DeathTrapListPage() {
   return (
-    <>
+    <Journey>
       <DeathTrapList />
       <Footer />
-    </>
+    </Journey>
   )
 }
 
 function DeathTrapDetailPage() {
   return (
-    <>
+    <Journey>
       <DeathTrapDetail />
       <Footer />
-    </>
+    </Journey>
   )
 }
 
 function TrackPage() {
   return (
-    <>
+    <Journey>
       <TrackComplaint />
       <Footer />
-    </>
+    </Journey>
   )
 }
 
 function HowItWorksPage() {
   return (
-    <>
+    <Journey>
       <HowItWorks />
       <Footer />
-    </>
+    </Journey>
   )
 }

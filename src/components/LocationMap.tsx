@@ -39,11 +39,11 @@ export default function LocationMap({
   const { tileConfig, eventHandlers } = useTileProvider()
 
   return (
-    <div className="bg-[#111] border border-gray-800 rounded-lg overflow-hidden">
+    <div className="bg-raised border border-line rounded-lg overflow-hidden">
       {/* Header */}
-      <div className="px-5 py-3 border-b border-gray-800 flex items-center gap-2">
+      <div className="px-5 py-3 border-b border-line flex items-center gap-2">
         <MapPin size={14} className={textClass} />
-        <h3 className="text-xs font-header font-bold text-white uppercase tracking-widest">
+        <h3 className="text-xs font-header font-bold text-ink uppercase tracking-widest">
           Location
         </h3>
       </div>
@@ -51,9 +51,9 @@ export default function LocationMap({
       {/* Address */}
       <div className="px-5 py-3">
         {location.address && (
-          <p className="text-gray-200 text-sm leading-snug">{location.address}</p>
+          <p className="text-ink text-sm leading-snug">{location.address}</p>
         )}
-        <p className="text-gray-500 text-xs mt-0.5">
+        <p className="text-ink-faint text-xs mt-0.5">
           {location.city}, {location.state}
         </p>
       </div>
@@ -88,14 +88,14 @@ export default function LocationMap({
           </MapContainer>
         </div>
       ) : (
-        <div className="mx-5 mb-4 flex flex-col items-center justify-center gap-2 h-28 bg-gray-900/60 border border-gray-800 rounded text-gray-600 text-xs">
+        <div className="mx-5 mb-4 flex flex-col items-center justify-center gap-2 h-28 bg-gray-900/60 border border-line rounded text-ink-faint text-xs">
           <MapPin size={18} className="opacity-30" />
           Location coordinates unavailable
         </div>
       )}
 
       {/* Action buttons */}
-      <div className="px-5 py-3 border-t border-gray-800 flex flex-wrap gap-2">
+      <div className="px-5 py-3 border-t border-line flex flex-wrap gap-2">
         <Link
           to={mapViewUrl}
           className={`inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide px-3 py-1.5 rounded transition ${bgClass} ${textClass} border ${borderClass} hover:brightness-125`}
@@ -107,7 +107,7 @@ export default function LocationMap({
             href={googleMapsUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide px-3 py-1.5 rounded transition bg-gray-800 text-gray-400 border border-gray-700 hover:text-white hover:bg-gray-700"
+            className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide px-3 py-1.5 rounded transition bg-gray-800 text-ink-muted border border-line hover:text-ink hover:bg-gray-700"
           >
             <ExternalLink size={12} /> Google Maps
           </a>

@@ -29,7 +29,7 @@ interface SearchAndFiltersProps {
 }
 
 const selectCls =
-  'bg-[#1a1a1a] border border-gray-700 text-gray-300 text-xs rounded px-3 py-2 focus:outline-none focus:border-gray-500 cursor-pointer'
+  'bg-raised-2 border border-line text-ink-muted text-xs rounded px-3 py-2 focus:outline-none focus:border-gray-500 cursor-pointer'
 
 export default function SearchAndFilters({
   values,
@@ -67,19 +67,19 @@ export default function SearchAndFilters({
       <div className="relative flex-1 min-w-[200px]">
         <Search
           size={13}
-          className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
+          className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-faint pointer-events-none"
         />
         <input
           type="text"
           placeholder={placeholder}
           value={localQ}
           onChange={handleQChange}
-          className="w-full bg-[#1a1a1a] border border-gray-700 text-gray-300 text-xs rounded pl-8 pr-7 py-2 focus:outline-none focus:border-gray-500"
+          className="w-full bg-raised-2 border border-line text-ink-muted text-xs rounded pl-8 pr-7 py-2 focus:outline-none focus:border-gray-500"
         />
         {localQ && (
           <button
             onClick={clearQ}
-            className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition"
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-ink-faint hover:text-ink transition"
             aria-label="Clear search"
           >
             <X size={12} />
@@ -164,7 +164,7 @@ export default function SearchAndFilters({
       {isFiltered && (
         <button
           onClick={onClear}
-          className="text-xs font-bold uppercase tracking-wide text-gray-400 hover:text-white transition px-3 py-2 border border-gray-700 rounded hover:border-gray-500"
+          className="text-xs font-bold uppercase tracking-wide text-ink-muted hover:text-ink transition px-3 py-2 border border-line rounded hover:border-gray-500"
         >
           Clear all
         </button>
