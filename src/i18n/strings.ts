@@ -112,6 +112,17 @@ export const STRINGS: Record<string, Entry> = {
   'intake.changePhoto': { en: 'Change photo', hi: 'फोटो बदलें' },
   'intake.city': { en: 'City', hi: 'शहर' },
   'intake.state': { en: 'State', hi: 'राज्य' },
+  'intake.cityLabel': { en: 'Which city?', hi: 'कौन सा शहर?' },
+  'intake.cityPlaceholder': { en: 'Choose your city…', hi: 'अपना शहर चुनिए…' },
+  'intake.cityOther': { en: 'Somewhere else', hi: 'कोई और जगह' },
+  'intake.cityRoutable': {
+    en: 'departments mapped',
+    hi: 'विभाग पता हैं',
+  },
+  'intake.cityUnmapped': {
+    en: "We haven't mapped departments for this city yet, so the complaint goes to the municipal corporation as a general route.",
+    hi: 'इस शहर के विभाग हमने अभी नहीं जोड़े हैं, इसलिए शिकायत नगर निगम को सामान्य रूप से भेजी जाएगी।',
+  },
   'intake.submit': { en: 'Write my complaint', hi: 'मेरी शिकायत लिखें' },
   'intake.reading': { en: 'Reading your report…', hi: 'आपकी बात पढ़ रहे हैं…' },
   'intake.manual': { en: "I'll fill the form myself", hi: 'मैं खुद फॉर्म भरूंगा' },

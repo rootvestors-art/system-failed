@@ -8,9 +8,24 @@ import {
   pickAudioMimeType,
   type TriageResult,
 } from '../services/triage.ts'
-import { resolveAgency, resolveJurisdiction, resolveRouting } from '../data/jurisdictions.ts'
+import {
+  resolveAgency,
+  resolveJurisdiction,
+  resolveRouting,
+  JURISDICTIONS,
+} from '../data/jurisdictions.ts'
 import PhotoInput from './PhotoInput.tsx'
 import { useLang } from '../i18n/index.tsx'
+
+/**
+ * Cities whose department ownership we have actually mapped. Anything outside
+ * this list falls through to the national fallback, which is honest but much
+ * less useful — so the list is offered directly rather than left to free text.
+ */
+const MAPPED_CITIES = JURISDICTIONS.map((j) => ({ city: j.city, state: j.state }))
+
+/** Sentinel for the "somewhere else" option. */
+const OTHER_CITY = '__other__'
 
 /** Hard stop on recording length — a description needs a sentence, not a monologue. */
 const MAX_RECORDING_MS = 30_000
@@ -56,6 +71,8 @@ export default function SmartIntake({ onApply, onSkip }: Props) {
   const [photo, setPhoto] = useState<File | null>(null)
   const [city, setCity] = useState('')
   const [state, setState] = useState('')
+  const [isOtherCity, setIsOtherCity] = useState(false)
+
   const [running, setRunning] = useState(false)
   const [result, setResult] = useState<TriageResult | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -79,6 +96,23 @@ export default function SmartIntake({ onApply, onSkip }: Props) {
     typeof window !== 'undefined' &&
     Boolean((window as any).SpeechRecognition || (window as any).webkitSpeechRecognition)
   const recordSupported = canRecordAudio()
+
+  /**
+   * Selecting a mapped city fills the state too — every city in the registry
+   * implies exactly one — so the citizen answers one question, not two.
+   */
+  function handleCityChange(value: string) {
+    if (value === OTHER_CITY) {
+      setIsOtherCity(true)
+      setCity('')
+      setState('')
+      return
+    }
+    setIsOtherCity(false)
+    const match = MAPPED_CITIES.find((c) => c.city === value)
+    setCity(value)
+    setState(match?.state ?? '')
+  }
 
   // /report?demo=1 — prefill a realistic report and triage it immediately.
   useEffect(() => {
@@ -388,29 +422,62 @@ export default function SmartIntake({ onApply, onSkip }: Props) {
           <PhotoInput value={photo} onChange={setPhoto} onError={setError} />
         </div>
 
-        <div className="grid grid-cols-2 gap-2 content-start">
-          <div>
-            <label className="block text-xs text-ink-faint font-bold mb-2">
-              {t('intake.city')}
-            </label>
-            <input
-              className={inputClass}
-              placeholder="Bengaluru"
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-            />
-          </div>
-          <div>
-            <label className="block text-xs text-ink-faint font-bold mb-2">
-              {t('intake.state')}
-            </label>
-            <input
-              className={inputClass}
-              placeholder="Karnataka"
-              value={state}
-              onChange={(e) => setState(e.target.value)}
-            />
-          </div>
+        {/*
+          One dropdown instead of two free-text boxes.
+          Every mapped city implies its state, so asking for both was redundant —
+          and free text let someone type a city we cannot route, which produced a
+          confident-looking complaint addressed to nobody. "Somewhere else" keeps
+          the rest of India reachable via the national fallback rather than
+          locking them out.
+        */}
+        <div className="content-start">
+          <label
+            htmlFor="intake-city"
+            className="block text-xs text-ink-faint font-bold mb-2"
+          >
+            {t('intake.cityLabel')}
+          </label>
+          <select
+            id="intake-city"
+            className={inputClass}
+            value={isOtherCity ? OTHER_CITY : city}
+            onChange={(e) => handleCityChange(e.target.value)}
+          >
+            <option value="">{t('intake.cityPlaceholder')}</option>
+            {MAPPED_CITIES.map((c) => (
+              <option key={c.city} value={c.city}>
+                {c.city}
+              </option>
+            ))}
+            <option value={OTHER_CITY}>{t('intake.cityOther')}</option>
+          </select>
+
+          {/* State is derived, so it is shown as confirmation rather than asked for. */}
+          {!isOtherCity && state && (
+            <p className="text-ink-faint text-xs mt-1.5">
+              {state} · {t('intake.cityRoutable')}
+            </p>
+          )}
+
+          {isOtherCity && (
+            <div className="grid grid-cols-2 gap-2 mt-2">
+              <input
+                className={inputClass}
+                placeholder={t('intake.city')}
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+              />
+              <input
+                className={inputClass}
+                placeholder={t('intake.state')}
+                value={state}
+                onChange={(e) => setState(e.target.value)}
+              />
+            </div>
+          )}
+          {isOtherCity && (
+            <p className="text-amber-700 text-xs mt-1.5">{t('intake.cityUnmapped')}</p>
+          )}
         </div>
       </div>
 
